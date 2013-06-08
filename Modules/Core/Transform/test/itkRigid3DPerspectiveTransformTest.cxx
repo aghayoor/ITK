@@ -25,7 +25,7 @@ int itkRigid3DPerspectiveTransformTest(int ,char * [] )
 {
 
 
-  typedef itk::Rigid3DPerspectiveTransform<double>  TransformType;
+  typedef itk::Rigid3DPerspectiveTransform< itk::DefaultParameterValueType>  TransformType;
 
   const double epsilon = 1e-10;
   const unsigned int N = 3;

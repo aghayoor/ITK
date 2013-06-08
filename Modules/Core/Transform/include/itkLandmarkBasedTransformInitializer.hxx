@@ -142,27 +142,27 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
 
   // [Q]
   //
-  vnl_matrix<double> Q( ImageDimension+1,ImageDimension+1, 0.0F );
+  vnl_matrix<itk::DefaultParameterValueType> Q( ImageDimension+1,ImageDimension+1, 0.0F );
   for( unsigned int i =0; i<NumberOfLandMarks; i++)
     { // Iterate for the number of landmakrs
-    vnl_matrix< double > qTemp( ImageDimension+1, 1 );
+    vnl_matrix< itk::DefaultParameterValueType > qTemp( ImageDimension+1, 1 );
     // convert vector to colume matrix
     for( unsigned int k=0; k<ImageDimension+1;k++)
       {
       qTemp(k,0)=q.get(k,i);
       }
-    vnl_matrix< double > qTempT( 1, ImageDimension+1 );
+    vnl_matrix< itk::DefaultParameterValueType > qTempT( 1, ImageDimension+1 );
     qTempT= qTemp.transpose();
     Q = Q +  qTemp*qTempT;
     }
 
   // [C]
   //
-  vnl_matrix<double> C( ImageDimension+1,ImageDimension, 0 );
+  vnl_matrix<itk::DefaultParameterValueType> C( ImageDimension+1,ImageDimension, 0 );
   for( unsigned int i =0; i<NumberOfLandMarks; i++)
     {
-    vnl_matrix< double > qTemp( ImageDimension+1, 1 );
-    vnl_matrix< double > pTemp( 1, ImageDimension );
+    vnl_matrix< itk::DefaultParameterValueType > qTemp( ImageDimension+1, 1 );
+    vnl_matrix< itk::DefaultParameterValueType > pTemp( 1, ImageDimension );
     // convert vector to colume matrix
     for( unsigned int k=0; k<ImageDimension+1;k++)
       {
@@ -179,20 +179,20 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   // [Solve Qa=C]
   // :: Solving code is from
   // http://www.itk.org/pipermail/insight-users/2008-December/028207.html
-  vnl_matrix<double> transposeAffine =
-    vnl_qr<double> ( Q ).solve( C );
-  vnl_matrix<double> Affine= transposeAffine.transpose();
+  vnl_matrix<itk::DefaultParameterValueType> transposeAffine =
+    vnl_qr<itk::DefaultParameterValueType> ( Q ).solve( C );
+  vnl_matrix<itk::DefaultParameterValueType> Affine= transposeAffine.transpose();
 
-  vnl_matrix<double> AffineRotation =
-    vnl_matrix<double>(Affine.get_n_columns(0,ImageDimension));
+  vnl_matrix<itk::DefaultParameterValueType> AffineRotation =
+    vnl_matrix<itk::DefaultParameterValueType>(Affine.get_n_columns(0,ImageDimension));
 
   // [Convert ITK Affine Transformation from vnl]
   //
   // Define Matrix Type
   //
-  itk::Matrix<double,ImageDimension,ImageDimension> mA =
-    itk::Matrix<double,ImageDimension,ImageDimension>(AffineRotation);
-  itk::Vector<double,ImageDimension> mT;
+  itk::Matrix<itk::DefaultParameterValueType,ImageDimension,ImageDimension> mA =
+    itk::Matrix<itk::DefaultParameterValueType,ImageDimension,ImageDimension>(AffineRotation);
+  itk::Vector<itk::DefaultParameterValueType,ImageDimension> mT;
   for(unsigned int t=0;t<ImageDimension;t++)
     {
     mT[t] = Affine(t,ImageDimension);
@@ -293,7 +293,7 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   // Otherwise the versor will be an identity versor.
   if ( m_FixedLandmarks.size() >= ImageDimension )
     {
-    itk::Matrix< double, ImageDimension, ImageDimension > M;
+    itk::Matrix< itk::DefaultParameterValueType, ImageDimension, ImageDimension > M;
 
     fixedItr  = m_FixedLandmarks.begin();
     movingItr = m_MovingLandmarks.begin();
@@ -334,7 +334,7 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
 
     // -- build the 4x4 matrix N --
 
-    itk::Matrix< double, 4, 4 > N;
+    itk::Matrix< itk::DefaultParameterValueType, 4, 4 > N;
 
     // on-diagonal elements
     N[0][0] =  M[0][0] + M[1][1] + M[2][2];
@@ -354,13 +354,13 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     itkDebugMacro(<< "M matrix " << M);
     itkDebugMacro(<< "N matrix " << N);
 
-    vnl_matrix< double > eigenVectors(4, 4);
-    vnl_vector< double > eigenValues(4);
+    vnl_matrix< itk::DefaultParameterValueType > eigenVectors(4, 4);
+    vnl_vector< itk::DefaultParameterValueType > eigenValues(4);
 
     typedef itk::SymmetricEigenAnalysis<
-      itk::Matrix< double, 4, 4 >,
-      vnl_vector< double >,
-      vnl_matrix< double > > SymmetricEigenAnalysisType;
+      itk::Matrix< itk::DefaultParameterValueType, 4, 4 >,
+      vnl_vector< itk::DefaultParameterValueType >,
+      vnl_matrix< itk::DefaultParameterValueType > > SymmetricEigenAnalysisType;
     SymmetricEigenAnalysisType symmetricEigenSystem(4);
 
     symmetricEigenSystem.ComputeEigenValuesAndVectors(N, eigenValues, eigenVectors);

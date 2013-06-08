@@ -91,7 +91,7 @@ RecursiveMultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
     LinearInterpolatorType;
     typename LinearInterpolatorType::Pointer interpolator =
       LinearInterpolatorType::New();
-    typedef itk::IdentityTransform< double, OutputImageType::ImageDimension >
+    typedef itk::IdentityTransform< itk::DefaultParameterValueType, OutputImageType::ImageDimension >
     IdentityTransformType;
     typename IdentityTransformType::Pointer identityTransform =
       IdentityTransformType::New();

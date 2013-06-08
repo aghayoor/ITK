@@ -85,7 +85,7 @@ int main( int argc, char * argv[] )
 
   FilterType::Pointer filter = FilterType::New();
 
-  typedef itk::AffineTransform< double, Dimension >  TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension >  TransformType;
 
   TransformType::Pointer transform = TransformType::New();
 

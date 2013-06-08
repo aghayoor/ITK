@@ -30,7 +30,7 @@ int itkCenteredEuler3DTransformTest(int, char *[] )
   const unsigned int N = 3;
   bool               Ok = true;
 
-  typedef itk::CenteredEuler3DTransform<double> EulerTransformType;
+  typedef itk::CenteredEuler3DTransform< itk::DefaultParameterValueType> EulerTransformType;
   EulerTransformType::Pointer eulerTransform = EulerTransformType::New();
 
   // Testing Identity

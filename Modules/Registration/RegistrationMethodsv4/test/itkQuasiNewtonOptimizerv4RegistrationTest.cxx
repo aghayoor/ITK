@@ -94,7 +94,7 @@ int itkQuasiNewtonOptimizerv4RegistrationTestMain(int argc, char *argv[])
 
 
   /** create a composite transform holder for other transforms  */
-  typedef itk::CompositeTransform<double, Dimension>    CompositeType;
+  typedef itk::CompositeTransform< itk::DefaultParameterValueType, Dimension>    CompositeType;
   typedef typename CompositeType::ScalarType            ScalarType;
 
   typename CompositeType::Pointer compositeTransform = CompositeType::New();
@@ -134,7 +134,7 @@ int itkQuasiNewtonOptimizerv4RegistrationTestMain(int argc, char *argv[])
   displacementTransform->SetGaussianSmoothingVarianceForTheTotalField( 6 );
 
   //identity transform for fixed image
-  typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension> IdentityTransformType;
   typename IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
   identityTransform->SetIdentity();
 
@@ -338,15 +338,15 @@ int itkQuasiNewtonOptimizerv4RegistrationTest(int argc, char *argv[])
 
   if (Dimension==2)
     {
-    typedef itk::AffineTransform<double, 2>   AffineTransformType;
-    //typedef itk::Euler2DTransform<double>             AffineTransformType;
+    typedef itk::AffineTransform< itk::DefaultParameterValueType, 2>   AffineTransformType;
+    //typedef itk::Euler2DTransform< itk::DefaultParameterValueType>             AffineTransformType;
     return itkQuasiNewtonOptimizerv4RegistrationTestMain
       <2, AffineTransformType>(argc, argv);
     }
   else if (Dimension==3)
     {
-    typedef itk::AffineTransform<double, 3>   AffineTransformType;
-    //typedef itk::Euler3DTransform<double>             AffineTransformType;
+    typedef itk::AffineTransform< itk::DefaultParameterValueType, 3>   AffineTransformType;
+    //typedef itk::Euler3DTransform< itk::DefaultParameterValueType>             AffineTransformType;
     return itkQuasiNewtonOptimizerv4RegistrationTestMain
       <3, AffineTransformType>(argc, argv);
     }

@@ -126,14 +126,14 @@ int itkANTSNeighborhoodCorrelationImageToImageMetricv4Test( int, char ** const )
   typedef itk::Vector<double, ImageDimension>     VectorType;
   typedef itk::Image<VectorType, ImageDimension>  VectorImageType;
 
-  typedef itk::Transform<double, ImageDimension>  TransformType;
-  typedef itk::IdentityTransform<double, ImageDimension>
+  typedef itk::Transform< itk::DefaultParameterValueType, ImageDimension>  TransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, ImageDimension>
                                                   IdentityTransformType;
-  typedef itk::CompositeTransform<double, ImageDimension>
+  typedef itk::CompositeTransform< itk::DefaultParameterValueType, ImageDimension>
                                                   CompositeTransformType;
-  typedef itk::TranslationTransform<double, ImageDimension>
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, ImageDimension>
                                                   TranslationTransformType;
-  typedef itk::DisplacementFieldTransform<double, ImageDimension>
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, ImageDimension>
                                                   DisplacementTransformType;
   typedef DisplacementTransformType::DisplacementFieldType FieldType;
 

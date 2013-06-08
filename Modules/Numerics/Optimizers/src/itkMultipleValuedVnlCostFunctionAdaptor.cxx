@@ -65,21 +65,15 @@ MultipleValuedVnlCostFunctionAdaptor
 
   ParametersType parameters( inparameters.size() );
   // Use scales if they are provided
-  if ( this->m_ScalesInitialized )
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < parameters.size(); i++ )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] = inparameters[i] * invScales[i];
-      }
-    }
-  else
-    {
-    parameters.SetData( const_cast< double * >( inparameters.data_block() ) );
+    parameters[i] = ( this->m_ScalesInitialized )
+      ? inparameters[i] * invScales[i]
+      : inparameters[i];
     }
 
   measures = this->m_CostFunction->GetValue(parameters);
-
   // Notify observers. This is used for overcoming the limitaion of VNL
   // optimizers of not providing callbacks per iteration.
   m_CachedValue = measures;
@@ -103,17 +97,12 @@ MultipleValuedVnlCostFunctionAdaptor
 
   DerivativeType externalGradient;
   ParametersType parameters( inparameters.size() );
-  if ( this->m_ScalesInitialized )
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < parameters.size(); i++ )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] = inparameters[i] *  invScales[i];
-      }
-    }
-  else
-    {
-    parameters.SetData( const_cast< double * >( inparameters.data_block() ) );
+    parameters[i] = ( this->m_ScalesInitialized )
+      ? inparameters[i] *  invScales[i]
+      : inparameters[i];
     }
 
   this->m_CostFunction->GetDerivative(parameters, externalGradient);
@@ -131,21 +120,15 @@ MultipleValuedVnlCostFunctionAdaptor
   DerivativeType externalGradient;
   ParametersType parameters( x.size() );
 
-  if ( this->m_ScalesInitialized )
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < parameters.size(); i++ )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] = x[i] * invScales[i];
-      }
-    }
-  else
-    {
-    parameters.SetData( const_cast< double * >( x.data_block() ) );
+    parameters[i] = ( this->m_ScalesInitialized )
+      ? x[i] * invScales[i]
+      : x[i];
     }
 
-  *ff = static_cast< InternalMeasureType >(
-    this->m_CostFunction->GetValue(parameters) );
+  *ff = static_cast< InternalMeasureType >( this->m_CostFunction->GetValue(parameters) );
   this->m_CostFunction->GetDerivative(parameters, externalGradient);
 
   this->ConvertExternalToInternalGradient(externalGradient, *g);

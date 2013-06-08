@@ -32,8 +32,8 @@
 
 #include "itkGaussianImageSource.h"
 
-  typedef double InputPixelType;
-  typedef double CoordValueType;
+  typedef itk::DefaultParameterValueType InputPixelType;
+  typedef itk::DefaultParameterValueType CoordValueType;
 
 
   // Setup for 2D Images

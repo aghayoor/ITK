@@ -79,7 +79,7 @@ public:
    *
    *  The KernelBased spline transform types are defined here.
    */
-  typedef KernelTransform< double, itkGetStaticConstMacro(ImageDimension) > KernelTransformType;
+  typedef KernelTransform< itk::DefaultParameterValueType, itkGetStaticConstMacro(ImageDimension) > KernelTransformType;
   typedef typename KernelTransformType::PointSetType                        LandmarkPointSetType;
   typedef typename LandmarkPointSetType::PointType                          LandmarkPointType;
   typedef typename KernelTransformType::Pointer                             KernelTransformPointerType;

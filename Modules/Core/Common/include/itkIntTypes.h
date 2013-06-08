@@ -158,6 +158,11 @@ typedef signed long   OffsetValueType;
 /** Type to count and reference number of threads */
 typedef unsigned int  ThreadIdType;
 
+/** Type for default Transform and Optimizers.  Historically this was hard coded as double */
+//typedef float DefaultParameterValueType;
+typedef double DefaultParameterValueType;
+
+
 /** Type to count and reference the modification time of objects.
  * May in the future be replaced by SizeValueType to avoid overflows.
  */

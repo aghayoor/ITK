@@ -102,7 +102,7 @@ public:
   typedef typename ImageType::ConstPointer ImageConstPointer;
 
   /** Affine transform for mapping to and from principal axis */
-  typedef AffineTransform< double, itkGetStaticConstMacro(ImageDimension) > AffineTransformType;
+  typedef AffineTransform< itk::DefaultParameterValueType, itkGetStaticConstMacro(ImageDimension) > AffineTransformType;
   typedef typename AffineTransformType::Pointer                             AffineTransformPointer;
 
   /** Set the input image. */

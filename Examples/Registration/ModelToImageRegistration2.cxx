@@ -172,7 +172,7 @@ int main( int argc, char * argv [] )
   typedef itk::Image< MaskPixelType, Dimension >  MaskImageType;
 
 
-  typedef itk::Rigid2DTransform< double  > TransformType;
+  typedef itk::Rigid2DTransform< itk::DefaultParameterValueType  > TransformType;
 
   typedef TransformType::ParametersType          ParametersType;
 

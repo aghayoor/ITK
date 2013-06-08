@@ -135,7 +135,7 @@ int itkExpectationBasedPointSetMetricRegistrationTest( int argc, char *argv[] )
     count++;
     }
 
-  typedef itk::AffineTransform<double, Dimension> AffineTransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension> AffineTransformType;
   AffineTransformType::Pointer transform = AffineTransformType::New();
   transform->SetIdentity();
 

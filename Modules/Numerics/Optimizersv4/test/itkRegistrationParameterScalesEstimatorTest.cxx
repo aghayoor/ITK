@@ -25,7 +25,7 @@
  *  Create a simple metric to use for testing here.
  */
 template< class TFixedImage,class TMovingImage,class TVirtualImage = TFixedImage,
-          class TInternalComputationValueType = double,
+          class TInternalComputationValueType = itk::DefaultParameterValueType,
           class TMetricTraits = itk::DefaultImageToImageMetricTraitsv4<TFixedImage,TMovingImage,TVirtualImage,TInternalComputationValueType>
           >
 class ITK_EXPORT RegistrationParameterScalesEstimatorTestMetric:
@@ -179,9 +179,9 @@ public:
       }
     }
 
-  virtual double EstimateStepScale(const ParametersType &step)
+  virtual itk::DefaultParameterValueType EstimateStepScale(const ParametersType &step)
     {
-    double norm = step.two_norm();
+    itk::DefaultParameterValueType norm = step.two_norm();
     return norm;
     }
 
@@ -228,11 +228,11 @@ int itkRegistrationParameterScalesEstimatorTest(int , char* [])
   // Image done
 
   // Transform begins
-  typedef itk::AffineTransform<double, ImageDimension>      MovingTransformType;
+  typedef itk::AffineTransform<itk::DefaultParameterValueType, ImageDimension>      MovingTransformType;
   MovingTransformType::Pointer movingTransform =  MovingTransformType::New();
   movingTransform->SetIdentity();
 
-  typedef itk::TranslationTransform<double, ImageDimension> FixedTransformType;
+  typedef itk::TranslationTransform<itk::DefaultParameterValueType, ImageDimension> FixedTransformType;
   FixedTransformType::Pointer fixedTransform =    FixedTransformType::New();
   fixedTransform->SetIdentity();
   // Transform done

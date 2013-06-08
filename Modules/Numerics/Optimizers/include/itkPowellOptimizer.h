@@ -68,8 +68,9 @@ public:
   typedef SmartPointer< Self >           Pointer;
   typedef SmartPointer< const Self >     ConstPointer;
 
-  typedef SingleValuedNonLinearOptimizer::ParametersType
-  ParametersType;
+  typedef SingleValuedNonLinearOptimizer::ParametersType ParametersType;
+
+  typedef itk::DefaultParameterValueType InternalComputationType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -96,19 +97,19 @@ public:
 
   /** Set/Get StepLength for the (scaled) spacing of the sampling of
    * parameter space while bracketing the extremum */
-  itkSetMacro(StepLength, double);
-  itkGetConstReferenceMacro(StepLength, double);
+  itkSetMacro(StepLength, InternalComputationType);
+  itkGetConstReferenceMacro(StepLength, InternalComputationType);
 
   /** Set/Get StepTolerance.  Once the local extreme is known to be within this
    * distance of the current parameter values, optimization terminates */
-  itkSetMacro(StepTolerance, double);
-  itkGetConstReferenceMacro(StepTolerance, double);
+  itkSetMacro(StepTolerance, InternalComputationType);
+  itkGetConstReferenceMacro(StepTolerance, InternalComputationType);
 
   /** Set/Get ValueTolerance.  Once this current cost function value is known
    * to be within this tolerance of the cost function value at the local
    * extreme, optimization terminates */
-  itkSetMacro(ValueTolerance, double);
-  itkGetConstReferenceMacro(ValueTolerance, double);
+  itkSetMacro(ValueTolerance, InternalComputationType);
+  itkGetConstReferenceMacro(ValueTolerance, InternalComputationType);
 
   /** Return Current Value */
   itkGetConstReferenceMacro(CurrentCost, MeasureType);
@@ -132,8 +133,8 @@ public:
   itkGetConstReferenceMacro(CatchGetValueException, bool);
   itkSetMacro(CatchGetValueException, bool);
 
-  itkGetConstReferenceMacro(MetricWorstPossibleValue, double);
-  itkSetMacro(MetricWorstPossibleValue, double);
+  itkGetConstReferenceMacro(MetricWorstPossibleValue, InternalComputationType);
+  itkSetMacro(MetricWorstPossibleValue, InternalComputationType);
 
   const std::string GetStopConditionDescription() const;
 
@@ -143,31 +144,31 @@ protected:
   virtual ~PowellOptimizer();
   void PrintSelf(std::ostream & os, Indent indent) const;
 
-  itkSetMacro(CurrentCost, double);
+  itkSetMacro(CurrentCost, InternalComputationType);
 
   /** Used to specify the line direction through the n-dimensional parameter
    * space the is currently being bracketed and optimized. */
   void SetLine(const ParametersType & origin,
-               const vnl_vector< double > & direction);
+               const vnl_vector< InternalComputationType > & direction);
 
   /** Get the value of the n-dimensional cost function at this scalar step
    * distance along the current line direction from the current line origin.
    * Line origin and distances are set via SetLine */
-  double GetLineValue(double x) const;
+  InternalComputationType GetLineValue(InternalComputationType x) const;
 
-  double GetLineValue(double x, ParametersType & tempCoord) const;
+  InternalComputationType GetLineValue(InternalComputationType x, ParametersType & tempCoord) const;
 
   /** Set the given scalar step distance (x) and function value (fx) as the
    * "best-so-far" optimizer values. */
-  void   SetCurrentLinePoint(double x, double fx);
+  void   SetCurrentLinePoint(InternalComputationType x, InternalComputationType fx);
 
   /** Used in bracketing the extreme along the current line.
    * Adapted from NRC */
-  void   Swap(double *a, double *b) const;
+  void   Swap(InternalComputationType *a, InternalComputationType *b) const;
 
   /** Used in bracketing the extreme along the current line.
    * Adapted from NRC */
-  void   Shift(double *a, double *b, double *c, double d) const;
+  void   Shift(InternalComputationType *a, InternalComputationType *b, InternalComputationType *c, InternalComputationType d) const;
 
   /** The LineBracket routine from NRC. Later reimplemented from the description
    * of the method available in the Wikipedia.
@@ -178,11 +179,11 @@ protected:
    *
    * IMPORTANT: The value of ax and the value of the function at ax (i.e., fa),
    * must both be provided to this function. */
-  virtual void   LineBracket(double *ax, double *bx, double *cx,
-                             double *fa, double *fb, double *fc);
+  virtual void   LineBracket(InternalComputationType *ax, InternalComputationType *bx, InternalComputationType *cx,
+                             InternalComputationType *fa, InternalComputationType *fb, InternalComputationType *fc);
 
-  virtual void   LineBracket(double *ax, double *bx, double *cx,
-                             double *fa, double *fb, double *fc,
+  virtual void   LineBracket(InternalComputationType *ax, InternalComputationType *bx, InternalComputationType *cx,
+                             InternalComputationType *fa, InternalComputationType *fb, InternalComputationType *fc,
                              ParametersType & tempCoord);
 
   /** Given a bracketing triple of points and their function values, returns
@@ -190,13 +191,13 @@ protected:
    * current line and wrt the current origin set via SetLine.   Optimization
    * terminates based on MaximumIteration, StepTolerance, or ValueTolerance.
    * Implemented as Brent line optimers from NRC.  */
-  virtual void   BracketedLineOptimize(double ax, double bx, double cx,
-                                       double fa, double fb, double fc,
-                                       double *extX, double *extVal);
+  virtual void   BracketedLineOptimize(InternalComputationType ax, InternalComputationType bx, InternalComputationType cx,
+                                       InternalComputationType fa, InternalComputationType fb, InternalComputationType fc,
+                                       InternalComputationType *extX, InternalComputationType *extVal);
 
-  virtual void   BracketedLineOptimize(double ax, double bx, double cx,
-                                       double fa, double fb, double fc,
-                                       double *extX, double *extVal,
+  virtual void   BracketedLineOptimize(InternalComputationType ax, InternalComputationType bx, InternalComputationType cx,
+                                       InternalComputationType fa, InternalComputationType fb, InternalComputationType fc,
+                                       InternalComputationType *extX, InternalComputationType *extVal,
                                        ParametersType & tempCoord);
 
   itkGetMacro(SpaceDimension, unsigned int);
@@ -226,19 +227,19 @@ private:
   unsigned int m_MaximumLineIteration;
 
   bool   m_CatchGetValueException;
-  double m_MetricWorstPossibleValue;
+  InternalComputationType m_MetricWorstPossibleValue;
 
   /** Set if the Metric should be maximized: Default = False */
   bool m_Maximize;
 
   /** The minimal size of search */
-  double m_StepLength;
-  double m_StepTolerance;
+  InternalComputationType m_StepLength;
+  InternalComputationType m_StepTolerance;
 
   ParametersType       m_LineOrigin;
-  vnl_vector< double > m_LineDirection;
+  vnl_vector< InternalComputationType > m_LineDirection;
 
-  double m_ValueTolerance;
+  InternalComputationType m_ValueTolerance;
 
   /** Internal storage for the value type / used as a cache  */
   MeasureType m_CurrentCost;

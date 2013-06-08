@@ -122,7 +122,7 @@ int main( int argc, char * argv[] )
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
-  typedef itk::TranslationTransform< double, Dimension >  TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension >  TransformType;
 
   TransformType::Pointer transform = TransformType::New();
 

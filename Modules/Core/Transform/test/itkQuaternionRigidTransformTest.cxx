@@ -23,7 +23,7 @@
 int itkQuaternionRigidTransformTest(int, char * [] )
 {
 
-  typedef double                                        CoordinateType;
+  typedef itk::DefaultParameterValueType CoordinateType;
   typedef itk::QuaternionRigidTransform<CoordinateType> TransformType;
 
   const double       epsilon = 1e-10;
@@ -240,7 +240,7 @@ int itkQuaternionRigidTransformTest(int, char * [] )
       }
 
     // VNL uses transposed matrices.
-    vnl_matrix_fixed<double, 3, 3> mrotation = qrotation.rotation_matrix_transpose();
+    vnl_matrix_fixed<itk::DefaultParameterValueType, 3, 3> mrotation = qrotation.rotation_matrix_transpose();
 
     // Verify the Matrix content
     TransformType::MatrixType matrix = rotation->GetMatrix();
@@ -577,7 +577,7 @@ int itkQuaternionRigidTransformTest(int, char * [] )
       }
 
     // VNL uses transposed matrices.
-    vnl_matrix_fixed<double, 3, 3> mrotation = qrotation.rotation_matrix_transpose();
+    vnl_matrix_fixed<itk::DefaultParameterValueType, 3, 3> mrotation = qrotation.rotation_matrix_transpose();
 
     // Verify the Matrix content
     TransformType::MatrixType matrix = rotation->GetMatrix();

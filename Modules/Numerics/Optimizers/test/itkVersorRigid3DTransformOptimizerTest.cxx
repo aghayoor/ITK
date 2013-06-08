@@ -56,7 +56,7 @@ public:
   typedef itk::SmartPointer<Self>             Pointer;
   typedef itk::SmartPointer<const Self>       ConstPointer;
 
-  typedef itk::VersorRigid3DTransform<double>        TransformType;
+  typedef itk::VersorRigid3DTransform< itk::DefaultParameterValueType>        TransformType;
 
   itkNewMacro( Self );
   itkTypeMacro( versorRigid3DCostFunction, SingleValuedCostFunction );
@@ -66,12 +66,12 @@ public:
   typedef Superclass::ParametersType              ParametersType;
   typedef Superclass::DerivativeType              DerivativeType;
 
-  typedef itk::Versor< double >                   VersorType;
+  typedef itk::Versor< itk::DefaultParameterValueType > VersorType;
   typedef VersorType::VectorType                  AxisType;
-  typedef itk::Vector< double,  3 >               VectorType;
-  typedef itk::Point<  double,  3 >               PointType;
+  typedef itk::Vector< itk::DefaultParameterValueType,  3 >               VectorType;
+  typedef itk::Point<  itk::DefaultParameterValueType,  3 >               PointType;
 
-  typedef double MeasureType;
+  typedef itk::DefaultParameterValueType MeasureType;
 
 
   versorRigid3DCostFunction()
@@ -87,7 +87,7 @@ public:
     m_Q1[2] =  0.0;
 
     VersorType versor;
-    const double angle = 10.0 * vcl_atan( 1.0 ) / 45.0;
+    const itk::DefaultParameterValueType angle = 10.0 * vcl_atan( 1.0 ) / 45.0;
     versor.SetRotationAroundX( angle );
 
     m_Transform->SetRotation( versor );
@@ -245,7 +245,7 @@ int itkVersorRigid3DTransformOptimizerTest(int, char* [] )
 
   typedef versorRigid3DCostFunction::ParametersType    ParametersType;
 
-  typedef itk::VersorRigid3DTransform< double > TransformType;
+  typedef itk::VersorRigid3DTransform< itk::DefaultParameterValueType > TransformType;
 
   typedef itk::Versor< double >                   VersorType;
 

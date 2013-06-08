@@ -39,7 +39,7 @@ bool RunTest(
   bool pass = true;
 
   // Transform Type
-  typedef itk::VersorRigid3DTransform< double >     TransformType;
+  typedef itk::VersorRigid3DTransform< itk::DefaultParameterValueType >     TransformType;
   typedef TransformType::ParametersType             ParametersType;
 
   // calculate image centers

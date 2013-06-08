@@ -87,8 +87,8 @@ int itkDemonsImageToImageMetricv4Test(int, char ** const)
     }
 
   /* Transforms */
-  typedef itk::TranslationTransform<double,imageDimensionality> TranslationTransformType;
-  typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform< double, imageDimensionality> DisplacementTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,imageDimensionality> TranslationTransformType;
+  typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform< itk::DefaultParameterValueType, imageDimensionality> DisplacementTransformType;
 
   TranslationTransformType::Pointer translationTransform = TranslationTransformType::New();
   translationTransform->SetIdentity();

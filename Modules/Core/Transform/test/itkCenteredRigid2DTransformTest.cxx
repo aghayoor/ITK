@@ -58,7 +58,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
   const unsigned int N = 2;
   bool               Ok = true;
 
-  typedef itk::CenteredRigid2DTransform<double> CenteredRigidTransformType;
+  typedef itk::CenteredRigid2DTransform< itk::DefaultParameterValueType> CenteredRigidTransformType;
   CenteredRigidTransformType::Pointer transform = CenteredRigidTransformType::New();
 
   // 15 degrees in radians

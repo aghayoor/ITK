@@ -482,10 +482,10 @@ int itkImageToImageMetricv4Test(int, char ** const)
     }
 
   // Transforms
-  typedef itk::TranslationTransform<double,
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,
                                ImageToImageMetricv4TestImageDimensionality>
                                                             FixedTransformType;
-  typedef itk::TranslationTransform<double,
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,
                                ImageToImageMetricv4TestImageDimensionality>
                                                             MovingTransformType;
   FixedTransformType::Pointer fixedTransform = FixedTransformType::New();
@@ -581,7 +581,7 @@ int itkImageToImageMetricv4Test(int, char ** const)
   //
 
   // Create a displacement field transform
-  typedef itk::DisplacementFieldTransform<double,
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType,
                               ImageToImageMetricv4TestImageDimensionality>
                                                       DisplacementTransformType;
   DisplacementTransformType::Pointer displacementTransform =

@@ -95,7 +95,7 @@ int main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::AffineTransform< double, Dimension >  TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension >  TransformType;
   TransformType::Pointer transform = TransformType::New();
   // Software Guide : EndCodeSnippet
 

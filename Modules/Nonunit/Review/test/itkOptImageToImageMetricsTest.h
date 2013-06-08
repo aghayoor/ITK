@@ -273,7 +273,7 @@ void AffineLinearTest( FixedImageReaderType* fixedImageReader,
 {
   typedef typename MovingImageReaderType::OutputImageType MovingImageType;
   typedef itk::LinearInterpolateImageFunction< MovingImageType, double > InterpolatorType;
-  typedef itk::AffineTransform<double, 2> TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, 2> TransformType;
 
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
   TransformType::Pointer transform = TransformType::New();
@@ -292,7 +292,7 @@ void RigidLinearTest( FixedImageReaderType* fixedImageReader,
   typedef typename MovingImageReaderType::OutputImageType MovingImageType;
 
   typedef itk::LinearInterpolateImageFunction< MovingImageType, double > InterpolatorType;
-  typedef itk::Rigid2DTransform<double> TransformType;
+  typedef itk::Rigid2DTransform< itk::DefaultParameterValueType> TransformType;
 
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
   TransformType::Pointer transform = TransformType::New();
@@ -310,7 +310,7 @@ void TranslationLinearTest( FixedImageReaderType* fixedImageReader,
   typedef typename MovingImageReaderType::OutputImageType MovingImageType;
 
   typedef itk::LinearInterpolateImageFunction< MovingImageType, double > InterpolatorType;
-  typedef itk::TranslationTransform<double, 2> TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, 2> TransformType;
 
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
   TransformType::Pointer transform = TransformType::New();
@@ -329,7 +329,7 @@ void DoDebugTest( FixedImageReaderType* fixedImageReader,
   typedef typename MovingImageReaderType::OutputImageType MovingImageType;
 
   typedef itk::LinearInterpolateImageFunction< MovingImageType, double > InterpolatorType;
-  typedef itk::Rigid2DTransform<double> TransformType;
+  typedef itk::Rigid2DTransform< itk::DefaultParameterValueType> TransformType;
 
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
   TransformType::Pointer transform = TransformType::New();

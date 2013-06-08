@@ -103,7 +103,7 @@ protected:
     IndexType idx;
     if( physical )
       {
-      typedef double CoordinateType;
+      typedef itk::DefaultParameterValueType CoordinateType;
       Point< CoordinateType, ImageDimension > point;
       // copy the position to a point, required by TransformPhysicalPointToIndex
       for( int i=0; i<ImageDimension; i++ )

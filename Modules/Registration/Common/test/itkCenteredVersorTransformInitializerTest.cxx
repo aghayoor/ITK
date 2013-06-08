@@ -49,7 +49,7 @@ int itkCenteredVersorTransformInitializerTest(int , char* [] )
 
 
   // Transform Type
-  typedef itk::VersorRigid3DTransform< double >     TransformType;
+  typedef itk::VersorRigid3DTransform< itk::DefaultParameterValueType >     TransformType;
   typedef TransformType::ParametersType             ParametersType;
 
   SizeType size;

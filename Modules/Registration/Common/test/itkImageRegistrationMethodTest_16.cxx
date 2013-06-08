@@ -48,7 +48,7 @@ bool DoRegistration ()
   typedef typename MovingImageType::SizeType                 SizeType;
 
   // Transform Type
-  typedef itk::AffineTransform< double, dimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, dimension > TransformType;
   typedef typename TransformType::ParametersType    ParametersType;
 
   typedef typename FixedImageType::PixelType     FixedImagePixelType;
@@ -60,7 +60,7 @@ bool DoRegistration ()
                                   MovingImagePixelType,
                                   dimension >       ImageSourceType;
   // Transform Type
-  typedef itk::AffineTransform< double, dimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, dimension > TransformType;
   typedef typename TransformType::ParametersType    ParametersType;
 
   // Optimizer Type

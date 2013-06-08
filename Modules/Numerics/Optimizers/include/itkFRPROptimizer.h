@@ -90,14 +90,14 @@ protected:
   /** Get the value of the n-dimensional cost function at this scalar step
    * distance along the current line direction from the current line origin.
    * Line origin and distances are set via SetLine */
-  virtual void GetValueAndDerivative(ParametersType & p, double *val,
+  virtual void GetValueAndDerivative(ParametersType & p, itk::DefaultParameterValueType *val,
                                      ParametersType *xi);
 
   virtual void   LineOptimize(ParametersType *p, ParametersType & xi,
-                              double *val);
+                              itk::DefaultParameterValueType *val);
 
   virtual void   LineOptimize(ParametersType *p, ParametersType & xi,
-                              double *val,
+                              itk::DefaultParameterValueType *val,
                               ParametersType & tempCoord);
 
 private:

@@ -166,7 +166,7 @@ int itkKullbackLeiblerCompareHistogramImageToImageMetricTest(int, char* [] )
 //-----------------------------------------------------------
 // Set up a transformer
 //-----------------------------------------------------------
-  typedef itk::AffineTransform< double, ImageDimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, ImageDimension > TransformType;
   typedef TransformType::ParametersType                  ParametersType;
 
   TransformType::Pointer transformer    = TransformType::New();

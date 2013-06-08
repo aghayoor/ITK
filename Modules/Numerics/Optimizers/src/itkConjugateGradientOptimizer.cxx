@@ -82,17 +82,18 @@ ConjugateGradientOptimizer::MeasureType
 ConjugateGradientOptimizer
 ::GetValue() const
 {
-  ParametersType parameters = this->GetCurrentPosition();
+  const ParametersType & currentPositionInternalValue = this->GetCurrentPosition();
+  const unsigned int paramSize=currentPositionInternalValue.size();
+  InternalParametersType vnlCompatibleParameters(paramSize);
 
-  if ( m_ScalesInitialized )
+  const ScalesType & scales = this->GetScales();
+  for ( unsigned int i = 0; i < paramSize; ++i )
     {
-    const ScalesType & scales = this->GetScales();
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] *= scales[i];
-      }
+    vnlCompatibleParameters[i] = ( m_ScalesInitialized )
+      ? currentPositionInternalValue[i] * scales[i]
+      : currentPositionInternalValue[i];
     }
-  return this->GetNonConstCostFunctionAdaptor()->f(parameters);
+  return this->GetNonConstCostFunctionAdaptor()->f(vnlCompatibleParameters);
 }
 
 /**
@@ -109,41 +110,38 @@ ConjugateGradientOptimizer
     this->GetNonConstCostFunctionAdaptor()->NegateCostFunctionOn();
     }
 
-  ParametersType initialPosition = this->GetInitialPosition();
+  ParametersType currentPositionInternalValue( this->GetInitialPosition() );
+  const unsigned int paramSize=currentPositionInternalValue.size();
+  InternalParametersType vnlCompatibleParameters(paramSize);
 
-  ParametersType parameters(initialPosition);
-
-  // If the user provides the scales then we set otherwise we don't
-  // for computation speed.
-  // We also scale the initial parameters up if scales are defined.
+  // We also scale the initial vnlCompatibleParameters up if scales are defined.
   // This compensates for later scaling them down in the cost function adaptor
   // and at the end of this function.
+  const ScalesType & scales = this->GetScales();
   if ( m_ScalesInitialized )
     {
-    const ScalesType & scales = this->GetScales();
     this->GetNonConstCostFunctionAdaptor()->SetScales(scales);
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] *= scales[i];
-      }
+    }
+  for ( unsigned int i = 0; i < paramSize; ++i )
+    {
+    vnlCompatibleParameters[i] = ( m_ScalesInitialized )
+      ? currentPositionInternalValue[i]*scales[i]
+      : currentPositionInternalValue[i];
     }
 
   // vnl optimizers return the solution by reference
   // in the variable provided as initial position
-  m_VnlOptimizer->minimize(parameters);
+  m_VnlOptimizer->minimize(vnlCompatibleParameters);
 
-  // we scale the parameters down if scales are defined
-  if ( m_ScalesInitialized )
+  // we scale the vnlCompatibleParameters down if scales are defined
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < paramSize; ++i )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); ++i )
-      {
-      parameters[i] *= invScales[i];
-      }
+    currentPositionInternalValue[i] = ( m_ScalesInitialized )
+      ? vnlCompatibleParameters[i] * invScales[i]
+      : vnlCompatibleParameters[i] ;
     }
-
-  this->SetCurrentPosition(parameters);
-
+  this->SetCurrentPosition(currentPositionInternalValue);
   this->InvokeEvent( EndEvent() );
 }
 

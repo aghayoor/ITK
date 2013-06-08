@@ -35,7 +35,7 @@ class ITK_EXPORT CylinderSpatialObject:
 public:
 
   typedef CylinderSpatialObject                        Self;
-  typedef double                                       ScalarType;
+  typedef itk::DefaultParameterValueType               ScalarType;
   typedef SmartPointer< Self >                         Pointer;
   typedef SmartPointer< const Self >                   ConstPointer;
   typedef SpatialObject< 3 >                           Superclass;

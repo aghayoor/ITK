@@ -155,7 +155,7 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::CenteredSimilarity2DTransform< double > TransformType;
+  typedef itk::CenteredSimilarity2DTransform< itk::DefaultParameterValueType > TransformType;
   // Software Guide : EndCodeSnippet
 
 
@@ -550,7 +550,7 @@ int main( int argc, char *argv[] )
     }
 
 
-  typedef itk::IdentityTransform< double, Dimension > IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension > IdentityTransformType;
   IdentityTransformType::Pointer identity = IdentityTransformType::New();
 
   // Compute the difference image between the

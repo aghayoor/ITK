@@ -40,7 +40,7 @@ int itkTransformToDisplacementFieldSourceTest1( int argc, char *argv[] )
   /** Typedefs. */
   const unsigned int Dimension = 3;
   typedef float  ScalarPixelType;
-  typedef double CoordRepresentationType;
+  typedef itk::DefaultParameterValueType CoordRepresentationType;
   //  const unsigned int  SplineOrder = 3;
 
   typedef itk::Image<

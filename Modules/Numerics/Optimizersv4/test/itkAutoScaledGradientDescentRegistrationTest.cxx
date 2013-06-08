@@ -81,7 +81,7 @@ int itkAutoScaledGradientDescentRegistrationTestTemplated(
   movingTransform->SetIdentity();
 
   // Transform for the fixed image
-  typedef itk::IdentityTransform<double, Dimension> FixedTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension> FixedTransformType;
   typename FixedTransformType::Pointer fixedTransform = FixedTransformType::New();
   fixedTransform->SetIdentity();
 
@@ -318,14 +318,14 @@ int itkAutoScaledGradientDescentRegistrationTest(int argc, char ** const argv)
   const unsigned int Dimension = 2;
 
   std::cout << std::endl << "Optimizing translation transform with shift scales" << std::endl;
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   bool usePhysicalSpaceForShift = false;
   int ret1 = itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(
     numberOfIterations, shiftOfStep, "shift", usePhysicalSpaceForShift,
     estimateLearningRateOnce, estimateLearningRateAtEachIteration, estimateScales);
 
   std::cout << std::endl << "Optimizing translation transform with Jacobian scales" << std::endl;
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   int ret2 = itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(
     numberOfIterations, 0.0, "jacobian", usePhysicalSpaceForShift,
     estimateLearningRateOnce, estimateLearningRateAtEachIteration, estimateScales);

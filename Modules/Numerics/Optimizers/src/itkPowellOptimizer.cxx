@@ -55,7 +55,7 @@ PowellOptimizer
 void
 PowellOptimizer
 ::SetLine(const PowellOptimizer::ParametersType & origin,
-          const vnl_vector< double > & direction)
+          const vnl_vector< InternalComputationType > & direction)
 {
   const Optimizer::ScalesType & scales = this->GetScales();
   for ( unsigned int i = 0; i < m_SpaceDimension; i++ )
@@ -65,25 +65,25 @@ PowellOptimizer
     }
 }
 
-double
+PowellOptimizer::InternalComputationType
 PowellOptimizer
-::GetLineValue(double x) const
+::GetLineValue(InternalComputationType x) const
 {
   PowellOptimizer::ParametersType tempCoord(m_SpaceDimension);
 
   return this->GetLineValue(x, tempCoord);
 }
 
-double
+PowellOptimizer::InternalComputationType
 PowellOptimizer
-::GetLineValue(double x, ParametersType & tempCoord) const
+::GetLineValue(InternalComputationType x, ParametersType & tempCoord) const
 {
   for ( unsigned int i = 0; i < m_SpaceDimension; i++ )
     {
     tempCoord[i] = this->m_LineOrigin[i] + x * this->m_LineDirection[i];
     }
   itkDebugMacro(<< "x = " << x);
-  double val;
+  InternalComputationType val;
   try
     {
     val = ( this->m_CostFunction->GetValue(tempCoord) );
@@ -109,7 +109,7 @@ PowellOptimizer
 
 void
 PowellOptimizer
-::SetCurrentLinePoint(double x, double fx)
+::SetCurrentLinePoint(InternalComputationType x, InternalComputationType fx)
 {
   for ( unsigned int i = 0; i < m_SpaceDimension; i++ )
     {
@@ -128,9 +128,9 @@ PowellOptimizer
 
 void
 PowellOptimizer
-::Swap(double *a, double  *b) const
+::Swap(InternalComputationType *a, InternalComputationType  *b) const
 {
-  double tf;
+  InternalComputationType tf;
 
   tf = *a;
   *a = *b;
@@ -139,7 +139,7 @@ PowellOptimizer
 
 void
 PowellOptimizer
-::Shift(double *a, double *b, double *c, double d) const
+::Shift(InternalComputationType *a, InternalComputationType *b, InternalComputationType *c, InternalComputationType d) const
 {
   *a = *b;
   *b = *c;
@@ -166,8 +166,8 @@ PowellOptimizer
 //
 void
 PowellOptimizer
-::LineBracket(double *x1, double *x2, double *x3,
-              double *f1, double *f2, double *f3)
+::LineBracket(InternalComputationType *x1, InternalComputationType *x2, InternalComputationType *x3,
+              InternalComputationType *f1, InternalComputationType *f2, InternalComputationType *f3)
 {
   PowellOptimizer::ParametersType tempCoord(m_SpaceDimension);
 
@@ -176,15 +176,15 @@ PowellOptimizer
 
 void
 PowellOptimizer
-::LineBracket(double *x1, double *x2, double *x3,
-              double *f1, double *f2, double *f3,
+::LineBracket(InternalComputationType *x1, InternalComputationType *x2, InternalComputationType *x3,
+              InternalComputationType *f1, InternalComputationType *f2, InternalComputationType *f3,
               ParametersType & tempCoord)
 {
   //
   // Compute the golden ratio as a constant to be
   // used when extrapolating the bracket
   //
-  const double goldenRatio = ( 1.0 + vcl_sqrt(5.0) ) / 2.0;
+  const InternalComputationType goldenRatio = ( 1.0 + vcl_sqrt(5.0) ) / 2.0;
 
   //
   // Get the value of the function for point x2
@@ -226,9 +226,9 @@ PowellOptimizer
 
 void
 PowellOptimizer
-::BracketedLineOptimize(double ax, double bx, double cx,
-                        double fa, double functionValueOfb, double fc,
-                        double *extX, double *extVal)
+::BracketedLineOptimize(InternalComputationType ax, InternalComputationType bx, InternalComputationType cx,
+                        InternalComputationType fa, InternalComputationType functionValueOfb, InternalComputationType fc,
+                        InternalComputationType *extX, InternalComputationType *extVal)
 {
   PowellOptimizer::ParametersType tempCoord(m_SpaceDimension);
 
@@ -237,16 +237,16 @@ PowellOptimizer
 
 void
 PowellOptimizer
-::BracketedLineOptimize(double ax, double bx, double cx,
-                        double itkNotUsed(fa), double functionValueOfb, double itkNotUsed(fc),
-                        double *extX, double *extVal,
+::BracketedLineOptimize(InternalComputationType ax, InternalComputationType bx, InternalComputationType cx,
+                        InternalComputationType itkNotUsed(fa), InternalComputationType functionValueOfb, InternalComputationType itkNotUsed(fc),
+                        InternalComputationType *extX, InternalComputationType *extVal,
                         ParametersType & tempCoord)
 {
-  double x;
-  double v = 0.0;
-  double w;        /* Abscissae, descr. see above  */
-  double a;
-  double b;
+  InternalComputationType x;
+  InternalComputationType v = 0.0;
+  InternalComputationType w;        /* Abscissae, descr. see above  */
+  InternalComputationType a;
+  InternalComputationType b;
 
   a = ( ax < cx ? ax : cx );
   b = ( ax > cx ? ax : cx );
@@ -254,14 +254,14 @@ PowellOptimizer
   x = bx;
   w = bx;
 
-  const double goldenSectionRatio = ( 3.0 - vcl_sqrt(5.0) ) / 2;  /* Gold
+  const InternalComputationType goldenSectionRatio = ( 3.0 - vcl_sqrt(5.0) ) / 2;  /* Gold
                                                                     section
                                                                     ratio    */
-  const double POWELL_TINY = 1.0e-20;
+  const InternalComputationType POWELL_TINY = 1.0e-20;
 
-  double functionValueOfX;        /* f(x)        */
-  double functionValueOfV;        /* f(v)        */
-  double functionValueOfW;        /* f(w)        */
+  InternalComputationType functionValueOfX;        /* f(x)        */
+  InternalComputationType functionValueOfV;        /* f(v)        */
+  InternalComputationType functionValueOfW;        /* f(w)        */
 
   functionValueOfV   =    functionValueOfb;
   functionValueOfX   =    functionValueOfV;
@@ -271,12 +271,12 @@ PowellOptimizer
         m_CurrentLineIteration < m_MaximumLineIteration;
         m_CurrentLineIteration++ )
     {
-    double middle_range = ( a + b ) / 2;
+    InternalComputationType middle_range = ( a + b ) / 2;
 
-    double new_step;          /* Step at this iteration       */
+    InternalComputationType new_step;          /* Step at this iteration       */
 
-    double tolerance1;
-    double tolerance2;
+    InternalComputationType tolerance1;
+    InternalComputationType tolerance2;
 
     tolerance1 = m_StepTolerance * vcl_fabs(x) + POWELL_TINY;
     tolerance2 = 2.0 * tolerance1;
@@ -299,18 +299,18 @@ PowellOptimizer
     /* Decide if the interpolation can be tried  */
     if ( vcl_fabs(x - w) >= tolerance1  )    /* If x and w are distinct      */
       {
-      double t;
+      InternalComputationType t;
       t = ( x - w ) * ( functionValueOfX - functionValueOfV );
 
-      double q;    /* ted as p/q; division operation*/
+      InternalComputationType q;    /* ted as p/q; division operation*/
       q = ( x - v ) * ( functionValueOfX - functionValueOfW );
 
-      double p;     /* Interpolation step is calcula-*/
+      InternalComputationType p;     /* Interpolation step is calcula-*/
       p = ( x - v ) * q - ( x - w ) * t;
 
       q = 2 * ( q - t );
 
-      if ( q > (double)0 )    /* q was calculated with the op-*/
+      if ( q > (InternalComputationType)0 )    /* q was calculated with the op-*/
         {
         p = -p;      /* posite sign; make q positive  */
         }
@@ -347,9 +347,9 @@ PowellOptimizer
 
     /* Obtain the next approximation to min  */
     /* and reduce the enveloping range  */
-    double t = x + new_step;  /* Tentative point for the min  */
+    InternalComputationType t = x + new_step;  /* Tentative point for the min  */
 
-    double functionValueOft;
+    InternalComputationType functionValueOft;
 
     functionValueOft = this->GetLineValue(t, tempCoord);
 
@@ -428,8 +428,8 @@ PowellOptimizer
   m_LineDirection.set_size(m_SpaceDimension);
   this->m_CurrentPosition.set_size(m_SpaceDimension);
 
-  vnl_matrix< double > xi(m_SpaceDimension, m_SpaceDimension);
-  vnl_vector< double > xit(m_SpaceDimension);
+  vnl_matrix< InternalComputationType > xi(m_SpaceDimension, m_SpaceDimension);
+  vnl_vector< InternalComputationType > xit(m_SpaceDimension);
   xi.set_identity();
   xit.fill(0);
   xit[0] = 1;
@@ -443,9 +443,9 @@ PowellOptimizer
   pt = p;
 
   unsigned int ibig;
-  double       fp, del, fptt;
-  double       ax, xx, bx;
-  double       fa, fx, fb;
+  InternalComputationType       fp, del, fptt;
+  InternalComputationType       ax, xx, bx;
+  InternalComputationType       fa, fx, fb;
 
   xx = 0;
   this->SetLine(p, xit);
@@ -509,7 +509,7 @@ PowellOptimizer
     fptt = this->GetLineValue(0, tempCoord);
     if ( fptt < fp )
       {
-      double t = 2.0 * ( fp - 2.0 * fx + fptt )
+      InternalComputationType t = 2.0 * ( fp - 2.0 * fx + fptt )
                  * vnl_math_sqr(fp - fx - del)
                  - del *vnl_math_sqr(fp - fptt);
       if ( t < 0.0 )

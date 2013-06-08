@@ -49,7 +49,9 @@ public:
 
   /**  ParametersType typedef.
    *  It defines a position in the optimization search space. */
-  typedef Superclass::ParametersType ParametersType;
+  typedef Superclass::ParametersType    ParametersType;
+  /* VNL only supports double */
+  typedef OptimizerParameters< double > InternalParametersType;
 
   /** Set the cost Function. This method has to be overloaded
    *  by derived classes because the CostFunctionAdaptor requires

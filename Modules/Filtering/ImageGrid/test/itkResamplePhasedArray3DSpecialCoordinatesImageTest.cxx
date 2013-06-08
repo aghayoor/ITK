@@ -33,7 +33,7 @@ typedef ImageType::Pointer                  ImagePointerType;
 typedef ImageType::RegionType               ImageRegionType;
 typedef ImageType::SizeType                 ImageSizeType;
 typedef ImageType::IndexType                ImageIndexType;
-typedef double                              CoordRepType;
+typedef itk::DefaultParameterValueType CoordRepType;
 
 
 int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )

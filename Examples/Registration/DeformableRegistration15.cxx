@@ -134,11 +134,11 @@ int main( int argc, char *argv[] )
   const unsigned int SpaceDimension = ImageDimension;
 
   const unsigned int SplineOrder = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
 
-  typedef itk::VersorRigid3DTransform< double > RigidTransformType;
+  typedef itk::VersorRigid3DTransform< itk::DefaultParameterValueType > RigidTransformType;
 
-  typedef itk::AffineTransform< double, SpaceDimension > AffineTransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, SpaceDimension > AffineTransformType;
 
   typedef itk::BSplineTransform<
                             CoordinateRepType,
@@ -177,7 +177,7 @@ int main( int argc, char *argv[] )
   registration->SetInterpolator(  interpolator  );
 
   // Auxiliary identity transform.
-  typedef itk::IdentityTransform<double,SpaceDimension> IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType,SpaceDimension> IdentityTransformType;
   IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
 
 

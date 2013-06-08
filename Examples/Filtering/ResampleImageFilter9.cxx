@@ -88,7 +88,7 @@ int main( int argc, char * argv[] )
   nearestFilter->SetInterpolator( interpolatorNearest );
   linearFilter->SetInterpolator( interpolatorLinear );
 
-  typedef itk::IdentityTransform< double, Dimension >  TransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension >  TransformType;
   TransformType::Pointer transform = TransformType::New();
 
   nearestFilter->SetTransform( transform );

@@ -171,7 +171,7 @@ int main( int argc, char * argv[] )
 
   const unsigned int SpaceDimension = ImageDimension;
   const unsigned int SplineOrder = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
 
   typedef itk::BSplineTransform<
                             CoordinateRepType,

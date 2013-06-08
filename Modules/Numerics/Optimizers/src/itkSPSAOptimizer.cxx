@@ -224,23 +224,12 @@ SPSAOptimizer
   itkDebugMacro("AdvanceOneStep");
 
   /** Maximize of Minimize the function? */
-  double direction;
-  if ( this->m_Maximize )
-    {
-    direction = 1.0;
-    }
-  else
-    {
-    direction = -1.0;
-    }
+  const itk::DefaultParameterValueType direction = ( this->m_Maximize ) ? 1.0 : -1.0;
 
   /** The number of parameters: */
   const unsigned int spaceDimension =
     m_CostFunction->GetNumberOfParameters();
 
-  /** Instantiate the newPosition vector and get the current
-   * parameters */
-  ParametersType         newPosition(spaceDimension);
   const ParametersType & currentPosition = this->GetCurrentPosition();
 
   /** Compute the gradient as an average of q estimates, where
@@ -261,14 +250,15 @@ SPSAOptimizer
     }
 
   /** Compute the gain a_k */
-  const double ak = this->Compute_a(m_CurrentIteration);
+  const itk::DefaultParameterValueType ak = this->Compute_a(m_CurrentIteration);
   /** And save it for users that are interested */
   m_LearningRate = ak;
 
   /**
    * Compute the new parameters.
    */
-  newPosition = currentPosition + ( direction * ak ) * m_Gradient;
+  ParametersType         newPosition(spaceDimension);
+  newPosition =  currentPosition + ( direction * ak ) * m_Gradient;
   this->SetCurrentPosition(newPosition);
 
   /** Compute the GradientMagnitude (for checking convergence) */
@@ -285,10 +275,10 @@ SPSAOptimizer
  * described by Spall.
  */
 
-double SPSAOptimizer
+itk::DefaultParameterValueType SPSAOptimizer
 ::Compute_a(SizeValueType k) const
 {
-  return static_cast< double >(
+  return static_cast< itk::DefaultParameterValueType >(
            m_Sa / vcl_pow(m_A + k + 1, m_Alpha) );
 } // end Compute_a
 
@@ -299,10 +289,10 @@ double SPSAOptimizer
  * described by Spall.
  */
 
-double SPSAOptimizer
+itk::DefaultParameterValueType SPSAOptimizer
 ::Compute_c(SizeValueType k) const
 {
-  return static_cast< double >(
+  return static_cast< itk::DefaultParameterValueType >(
            m_Sc / vcl_pow(k + 1, m_Gamma) );
 } // end Compute_c
 
@@ -356,7 +346,7 @@ SPSAOptimizer::ComputeGradient(
   const unsigned int spaceDimension = parameters.GetSize();
 
   /** Compute c_k */
-  const double ck = this->Compute_c(m_CurrentIteration);
+  const itk::DefaultParameterValueType ck = this->Compute_c(m_CurrentIteration);
 
   /** Instantiate the vectors thetaplus, thetamin,
    * set the gradient to the correct size, and get the scales.
@@ -386,13 +376,13 @@ SPSAOptimizer::ComputeGradient(
       }
 
     /** Compute the cost function value at thetaplus */
-    const double valueplus = this->GetValue(thetaplus);
+    const itk::DefaultParameterValueType valueplus = this->GetValue(thetaplus);
 
     /** Compute the cost function value at thetamin */
-    const double valuemin = this->GetValue(thetamin);
+    const itk::DefaultParameterValueType valuemin = this->GetValue(thetamin);
 
     /** Compute the contribution to the gradient g_k  */
-    const double valuediff = ( valueplus - valuemin ) / ( 2 * ck );
+    const itk::DefaultParameterValueType valuediff = ( valueplus - valuemin ) / ( 2 * ck );
     for ( unsigned int j = 0; j < spaceDimension; j++ )
       {
       // remember to divide the gradient by the NumberOfPerturbations!
@@ -403,7 +393,7 @@ SPSAOptimizer::ComputeGradient(
   /** Apply scaling (see below) and divide by the NumberOfPerturbations */
   for ( unsigned int j = 0; j < spaceDimension; j++ )
     {
-    gradient[j] /= ( vnl_math_sqr(scales[j]) * static_cast< double >( m_NumberOfPerturbations ) );
+    gradient[j] /= ( vnl_math_sqr(scales[j]) * static_cast< itk::DefaultParameterValueType >( m_NumberOfPerturbations ) );
     }
   /**
    * Scaling was still needed, because the gradient
@@ -452,10 +442,10 @@ SPSAOptimizer::ComputeGradient(
 void
 SPSAOptimizer::GuessParameters(
   SizeValueType numberOfGradientEstimates,
-  double initialStepSize)
+  itk::DefaultParameterValueType initialStepSize)
 {
   /** Guess A */
-  this->SetA(static_cast< double >( this->GetMaximumNumberOfIterations() ) / 10.0);
+  this->SetA(static_cast< itk::DefaultParameterValueType >( this->GetMaximumNumberOfIterations() ) / 10.0);
 
   if ( !m_CostFunction )
     {
@@ -485,11 +475,10 @@ SPSAOptimizer::GuessParameters(
       averageAbsoluteGradient[j] += vcl_fabs(m_Gradient[j]);
       }
     } // end for ++n
-  averageAbsoluteGradient /= static_cast< double >( numberOfGradientEstimates );
+  averageAbsoluteGradient /= static_cast< itk::DefaultParameterValueType >( numberOfGradientEstimates );
 
-  /** Set a in order to make the first steps approximately have an
-    initialStepSize */
-  this->SetSa( initialStepSize * vcl_pow(m_A + 1.0, m_Alpha)
+  /** Set a in order to make the first steps approximately have an initialStepSize */
+  this->SetSa( initialStepSize * vcl_pow(m_A + NumericTraits< itk::DefaultParameterValueType >::One, m_Alpha)
                / averageAbsoluteGradient.max_value() );
 } //end GuessParameters
 

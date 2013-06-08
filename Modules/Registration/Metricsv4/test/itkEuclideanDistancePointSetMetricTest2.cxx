@@ -88,8 +88,8 @@ int itkEuclideanDistancePointSetMetricTest2Run()
 
   // Test with displacement field transform
   std::cout << "Testing with displacement field transform." << std::endl;
-  //typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform<double, Dimension> DisplacementFieldTransformType;
-  typedef itk::DisplacementFieldTransform<double, Dimension> DisplacementFieldTransformType;
+  //typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform< itk::DefaultParameterValueType, Dimension> DisplacementFieldTransformType;
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, Dimension> DisplacementFieldTransformType;
   typename DisplacementFieldTransformType::Pointer displacementTransform = DisplacementFieldTransformType::New();
 
   // Setup the physical space to match the point set virtual domain,

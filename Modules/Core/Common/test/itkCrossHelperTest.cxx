@@ -30,7 +30,7 @@ int itkCrossHelperTest( int argc, char* argv[] )
   const unsigned int Dimension3D = 3;
   const unsigned int Dimension4D = 4;
 
-  typedef double CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
 
   typedef itk::Vector< CoordRepType, Dimension2D > Vector2DType;
   typedef itk::Vector< CoordRepType, Dimension3D > Vector3DType;

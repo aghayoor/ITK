@@ -176,7 +176,7 @@ int main( int argc, char *argv[] )
 
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::TranslationTransform< double, Dimension > TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension > TransformType;
   typedef itk::GradientDescentOptimizer                  OptimizerType;
   typedef itk::LinearInterpolateImageFunction<
                                     InternalImageType,

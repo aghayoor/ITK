@@ -81,7 +81,7 @@ int itkOptMattesMutualInformationImageToImageMetricThreadsTest1( int argc, char*
   typedef itk::MattesMutualInformationImageToImageMetric< ImageType, ImageType > MetricType;
   MetricType::Pointer metric = MetricType::New();
 
-  typedef itk::TranslationTransform< double, Dimension >  TranformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension >  TranformType;
   TranformType::Pointer transform = TranformType::New();
 
   unsigned int numberOfSamples = 100;

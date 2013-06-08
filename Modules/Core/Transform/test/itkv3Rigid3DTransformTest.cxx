@@ -23,7 +23,7 @@
 static bool TestSettingTranslation(void)
 {
 
-    itk::Matrix<double, 3, 3> R;
+    itk::Matrix<itk::DefaultParameterValueType, 3, 3> R;
     R.SetIdentity();
     const double alpha = vnl_math::pi / 180.0;
     R[0][0] =        vcl_cos( alpha );
@@ -32,17 +32,17 @@ static bool TestSettingTranslation(void)
     R[1][1] =        vcl_cos( alpha );
 
 
-    itk::Vector< double, 3> T; T[0]=100;T[1]=200;T[2]=300;
-    itkv3::Rigid3DTransform<double>::Pointer r1=itkv3::Rigid3DTransform<double>::New();
+    itk::Vector< itk::DefaultParameterValueType, 3> T; T[0]=100;T[1]=200;T[2]=300;
+    itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::Pointer r1=itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::New();
     //r1->SetIdentity();
     r1->SetMatrix( R );
     r1->Translate( T );
-    itkv3::Rigid3DTransform<double>::ParametersType p1;
+    itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::ParametersType p1;
     p1.set_size(12);
     p1=r1->GetParameters();
 
-    itkv3::Rigid3DTransform<double>::Pointer r2=itkv3::Rigid3DTransform<double>::New();
-    itkv3::Rigid3DTransform<double>::ParametersType p2;
+    itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::Pointer r2=itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::New();
+    itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::ParametersType p2;
     p2.set_size(12);
     for(int r=0;r<3;r++)
       {
@@ -55,11 +55,11 @@ static bool TestSettingTranslation(void)
     p2[10]=T[1];
     p2[11]=T[2];
     r2->SetParameters( p2 );
-    itkv3::Rigid3DTransform<double>::Pointer r3=itkv3::Rigid3DTransform<double>::New();
+    itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::Pointer r3=itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::New();
     r3->SetFixedParameters( r1->GetFixedParameters() );
     r3->SetParameters( r1->GetParameters() );
 
-    itkv3::Rigid3DTransform<double>::ParametersType p3;
+    itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::ParametersType p3;
     p3.set_size(12);
     p3=r3->GetParameters();
     if( (p1 == p2)  && (p1 == p3))
@@ -83,7 +83,7 @@ int itkv3Rigid3DTransformTest(int ,char * [] )
 {
 
 
-  typedef itkv3::Rigid3DTransform<double>  TransformType;
+  typedef itkv3::Rigid3DTransform< itk::DefaultParameterValueType>  TransformType;
   typedef TransformType::ParametersType    ParametersType;
 
   const double epsilon = 1e-10;

@@ -87,7 +87,7 @@ int itkMultiResolutionImageRegistrationMethodTest_1(int, char* [] )
   typedef itk::Image<PixelType,dimension>               MovingImageType;
 
   // Transform Type
-  typedef itk::AffineTransform< double,dimension >  TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType,dimension >  TransformType;
 
   // Optimizer Type
   typedef itk::GradientDescentOptimizer             OptimizerType;

@@ -461,7 +461,7 @@ public:
   // some helper methods - not really required, but really useful!
 
   /** Affine transform for mapping to and from principal axis */
-  typedef AffineTransform< double, VImageDimension > AffineTransformType;
+  typedef AffineTransform< itk::DefaultParameterValueType, VImageDimension > AffineTransformType;
   typedef typename AffineTransformType::Pointer      AffineTransformPointer;
 
   /** Get the affine transform from principal axes to physical axes

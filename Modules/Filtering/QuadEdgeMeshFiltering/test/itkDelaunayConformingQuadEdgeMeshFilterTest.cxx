@@ -34,7 +34,7 @@ int itkDelaunayConformingQuadEdgeMeshFilterTest( int argc, char* argv[] )
     }
 
   // ** TYPEDEF **
-  typedef double Coord;
+  typedef itk::DefaultParameterValueType Coord;
 
   typedef itk::QuadEdgeMesh< Coord, 3 >                      MeshType;
   typedef itk::MeshFileReader< MeshType >                    ReaderType;

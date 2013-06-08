@@ -161,7 +161,7 @@ public:
   typedef itk::VectorIndexSelectionCastImageFilter<FieldType, FloatImageType> IndexSelectCasterType;
 
   /** Typedef support for the interpolation function */
-  typedef double                                                  CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   typedef VectorInterpolateImageFunction<FieldType, CoordRepType> InterpolatorType;
   typedef typename InterpolatorType::Pointer                      InterpolatorPointer;
 

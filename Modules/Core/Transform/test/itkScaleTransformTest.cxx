@@ -24,7 +24,7 @@ int itkScaleTransformTest(int ,char * [] )
 {
 
 
-  typedef itk::ScaleTransform<double>  TransformType;
+  typedef itk::ScaleTransform< itk::DefaultParameterValueType>  TransformType;
 
 
   const double epsilon = 1e-10;

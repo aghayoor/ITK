@@ -453,7 +453,7 @@ int main( int argc, char *argv[] )
     }
 
 
-  typedef itk::IdentityTransform< double, Dimension > IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension > IdentityTransformType;
   IdentityTransformType::Pointer identity = IdentityTransformType::New();
 
   // Compute the difference image between the

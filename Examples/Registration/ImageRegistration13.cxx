@@ -105,7 +105,7 @@ int main( int argc, char *argv[] )
   // The CenteredRigid2DTransform applies a rigid transform in 2D space.
   // Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
-  typedef itk::CenteredRigid2DTransform< double >  TransformType;
+  typedef itk::CenteredRigid2DTransform< itk::DefaultParameterValueType >  TransformType;
   typedef itk::RegularStepGradientDescentOptimizer OptimizerType;
   // Software Guide : EndCodeSnippet
 

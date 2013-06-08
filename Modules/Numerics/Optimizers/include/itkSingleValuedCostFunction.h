@@ -45,7 +45,7 @@ public:
 
   /**  MeasureType typedef.
    *  It defines a type used to return the cost function value. */
-  typedef double MeasureType;
+  typedef itk::DefaultParameterValueType MeasureType;
 
   /**  ParametersType typedef.
    *  It defines a position in the optimization search space. */

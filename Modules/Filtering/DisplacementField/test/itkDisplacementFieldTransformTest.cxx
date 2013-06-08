@@ -22,7 +22,7 @@
 #include "itkCenteredAffineTransform.h"
 
 const unsigned int dimensions = 2;
-typedef itk::DisplacementFieldTransform<double, dimensions>
+typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, dimensions>
 DisplacementTransformType;
 typedef DisplacementTransformType::ScalarType ScalarType;
 
@@ -186,7 +186,7 @@ int itkDisplacementFieldTransformTest(int, char *[] )
 
 
   /* Initialize Affine transform and use to create displacement field */
-  typedef itk::CenteredAffineTransform<double, 2> AffineTransformType;
+  typedef itk::CenteredAffineTransform< itk::DefaultParameterValueType, 2> AffineTransformType;
   typedef AffineTransformType::Pointer            AffineTransformPointer;
   typedef AffineTransformType::MatrixType         AffineMatrixType;
   AffineMatrixType affineMatrix;

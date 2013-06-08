@@ -696,7 +696,7 @@ int main( int argc, char *argv[] )
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::Euler2DTransform<double>    TransformType;
+  typedef itk::Euler2DTransform< itk::DefaultParameterValueType>    TransformType;
   TransformType::Pointer transform = TransformType::New();
 
   shape->SetTransform( transform );

@@ -39,18 +39,18 @@ public:
       }
     }
 
-  double Evaluate( const IndexType& index )
+  itk::DefaultParameterValueType Evaluate( const IndexType& index )
     {
-    double accum = m_Offset;
+    itk::DefaultParameterValueType accum = m_Offset;
     for( int j = 0; j < VDimension; j++ )
       {
-      accum += m_Coeff[j] * (double) index[j];
+      accum += m_Coeff[j] * (itk::DefaultParameterValueType) index[j];
       }
     return accum;
     }
 
-  double m_Coeff[VDimension];
-  double m_Offset;
+  itk::DefaultParameterValueType m_Coeff[VDimension];
+  itk::DefaultParameterValueType m_Offset;
 
 };
 
@@ -112,7 +112,7 @@ int itkExpandImageFilterTest(int, char* [] )
   typedef itk::ExpandImageFilter<ImageType,ImageType> ExpanderType;
   ExpanderType::Pointer expander = ExpanderType::New();
 
-  typedef itk::NearestNeighborInterpolateImageFunction<ImageType,double> InterpolatorType;
+  typedef itk::NearestNeighborInterpolateImageFunction<ImageType,itk::DefaultParameterValueType> InterpolatorType;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   expander->SetInterpolator( interpolator );
@@ -155,7 +155,7 @@ int itkExpandImageFilterTest(int, char* [] )
   while( !outIter.IsAtEnd() )
     {
     ImageType::IndexType index = outIter.GetIndex();
-    double value = outIter.Get();
+    itk::DefaultParameterValueType value = outIter.Get();
 
     if( validRegion.IsInside( index ) )
       {
@@ -164,7 +164,7 @@ int itkExpandImageFilterTest(int, char* [] )
       ImageType::IndexType inputIndex;
       expanderOutput->TransformIndexToPhysicalPoint( outIter.GetIndex(), point );
       input->TransformPhysicalPointToIndex(point, inputIndex );
-      double trueValue = pattern.Evaluate( inputIndex );
+      itk::DefaultParameterValueType trueValue = pattern.Evaluate( inputIndex );
 
       if( vnl_math_abs( trueValue - value ) > 1e-4 )
         {

@@ -125,7 +125,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   movingImage->Allocate();
 
   // Set the transform type..
-  typedef itk::VersorRigid3DTransform< double > TransformType;
+  typedef itk::VersorRigid3DTransform< itk::DefaultParameterValueType > TransformType;
   TransformType::Pointer transform = TransformType::New();
   typedef itk::LandmarkBasedTransformInitializer< TransformType,
                                                   FixedImageType, MovingImageType > TransformInitializerType;
@@ -231,7 +231,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   movingImage->Allocate();
 
   // Set the transform type..
-  typedef itk::Rigid2DTransform< double > TransformType;
+  typedef itk::Rigid2DTransform< itk::DefaultParameterValueType > TransformType;
   TransformType::Pointer transform = TransformType::New();
   typedef itk::LandmarkBasedTransformInitializer< TransformType,
                                                   FixedImageType, MovingImageType > TransformInitializerType;
@@ -373,7 +373,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   movingImage->SetRequestedRegion( mRegion );
   movingImage->Allocate();
 
-  typedef itk::AffineTransform<double,Dimension> TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType,Dimension> TransformType;
   TransformType::Pointer transform = TransformType::New();
   typedef itk::LandmarkBasedTransformInitializer< TransformType,
                                                   ImageType, ImageType > TransformInitializerType;

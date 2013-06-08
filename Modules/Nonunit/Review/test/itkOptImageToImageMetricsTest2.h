@@ -206,7 +206,7 @@ void BSplineLinearTest( FixedImageReaderType* fixedImageReader,
 
   const unsigned int SpaceDimension = 2;
   const unsigned int VSplineOrder = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
 
   typedef itk::BSplineTransform<
                             CoordinateRepType,

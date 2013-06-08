@@ -46,7 +46,7 @@ int itkBSplineTransformTest1()
 
   const unsigned int SpaceDimension = 3;
   const unsigned int SplineOrder = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
   typedef itk::BSplineTransform
   <CoordinateRepType, SpaceDimension, SplineOrder> TransformType;
 
@@ -492,13 +492,13 @@ int itkBSplineTransformTest2()
    * Define a vector field as Dimension number of images
    */
   const unsigned int Dimension = 2;
-  typedef double PixelType;
+  typedef itk::DefaultParameterValueType PixelType;
 
   typedef itk::Image<PixelType, Dimension> ImageType;
 
   // Set up the transform
   const unsigned int SplineOrder = 3;
-  typedef double CoordRep;
+  typedef itk::DefaultParameterValueType CoordRep;
 
   typedef itk::BSplineTransform<CoordRep, Dimension, SplineOrder> TransformType;
 
@@ -611,7 +611,7 @@ int itkBSplineTransformTest3()
 
   const unsigned int SpaceDimension = 3;
   const unsigned int SplineOrder = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
   typedef itk::BSplineTransform
   <CoordinateRepType, SpaceDimension, SplineOrder> TransformType;
 

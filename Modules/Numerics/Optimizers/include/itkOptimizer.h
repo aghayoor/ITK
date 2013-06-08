@@ -51,15 +51,21 @@ public:
 
   /**  Parameters type.
    *  It defines a position in the optimization search space. */
-  typedef OptimizerParameters< double > ParametersType;
+  typedef OptimizerParameters< itk::DefaultParameterValueType > ParametersType;
 
   /**  Scale type.
    *  This array defines scale to be applied to parameters before
    *  being evaluated in the cost function. This allows to
    *  map to a more convenient space. In particular this is
    *  used to normalize parameter spaces in which some parameters
-   *  have a different dynamic range.   */
-  typedef Array< double > ScalesType;
+   *  have a different dynamic range.
+   *
+   *  Setting a scale value to zero implies that parameter will be
+   *  initialized to zero at initialization.  Implementation
+   *  details and final effects of a zero scale are dependant on
+   *  each optimizers implementation.
+   *  */
+  typedef Array< itk::DefaultParameterValueType > ScalesType;
 
   /**  Set the position to initialize the optimization. */
   virtual void SetInitialPosition(const ParametersType & param);
@@ -84,6 +90,9 @@ public:
   virtual const std::string GetStopConditionDescription() const;
 
 protected:
+  /*  Vnl only supports double */
+  typedef OptimizerParameters< double >  VnlParametersType;
+
   Optimizer();
   virtual ~Optimizer() {}
   void PrintSelf(std::ostream & os, Indent indent) const;
@@ -99,8 +108,8 @@ protected:
   ParametersType m_CurrentPosition;
 
 private:
-  Optimizer(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Optimizer(const Self &);     //purposely not implemented
+  void operator=(const Self &);//purposely not implemented
 
   ParametersType m_InitialPosition;
   ScalesType     m_Scales;

@@ -45,8 +45,11 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(LBFGSOptimizer, SingleValuedNonLinearVnlOptimizer);
 
+  typedef itk::DefaultParameterValueType InternalComputationType;
+  typedef double VnlOptimizerType;
+
   /** InternalParameters typedef. */
-  typedef   vnl_vector< double > InternalParametersType;
+  typedef   vnl_vector< VnlOptimizerType > InternalParametersType;
 
   /** Internal optimizer type. */
   typedef   vnl_lbfgs InternalOptimizerType;
@@ -78,9 +81,9 @@ public:
    * be found. The optimization terminates when:
    * ||G|| < gtol max(1,||X||) where ||.|| denotes the Euclidean norm.
    */
-  virtual void SetGradientConvergenceTolerance(double gtol);
+  virtual void SetGradientConvergenceTolerance(InternalComputationType gtol);
 
-  itkGetMacro(GradientConvergenceTolerance, double);
+  itkGetMacro(GradientConvergenceTolerance, InternalComputationType);
 
   /** Set/Get the line search accuracy. This is a positive real number
    * with a default value of 0.9, which controls the accuracy of the line
@@ -88,17 +91,17 @@ public:
    * respect to the cost of the iterations it may be advantageous to set
    * the value to a small value (say 0.1).
    */
-  virtual void SetLineSearchAccuracy(double tol);
+  virtual void SetLineSearchAccuracy(InternalComputationType tol);
 
-  itkGetMacro(LineSearchAccuracy, double);
+  itkGetMacro(LineSearchAccuracy, InternalComputationType);
 
   /** Set/Get the default step size. This is a positive real number
    * with a default value of 1.0 which determines the stpe size in the line
    * search.
    */
-  virtual void SetDefaultStepLength(double stp);
+  virtual void SetDefaultStepLength(InternalComputationType stp);
 
-  itkGetMacro(DefaultStepLength, double);
+  itkGetMacro(DefaultStepLength, InternalComputationType);
 
   /** Return Current Value */
   MeasureType GetValue() const;
@@ -123,9 +126,9 @@ private:
 
   bool         m_Trace;
   unsigned int m_MaximumNumberOfFunctionEvaluations;
-  double       m_GradientConvergenceTolerance;
-  double       m_LineSearchAccuracy;
-  double       m_DefaultStepLength;
+  InternalComputationType       m_GradientConvergenceTolerance;
+  InternalComputationType       m_LineSearchAccuracy;
+  InternalComputationType       m_DefaultStepLength;
 };
 } // end namespace itk
 

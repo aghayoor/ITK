@@ -472,7 +472,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
-  typedef itk::CenteredEuler3DTransform< double >  TransformType;
+  typedef itk::CenteredEuler3DTransform< itk::DefaultParameterValueType >  TransformType;
 
   TransformType::Pointer transform = TransformType::New();
 

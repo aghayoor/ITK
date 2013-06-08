@@ -49,7 +49,7 @@ int itkRigid2DTransformTest(int ,char * [] )
 
   itk::OutputWindow::SetInstance(itk::TextOutput::New().GetPointer());
 
-  typedef itk::Rigid2DTransform<double>  TransformType;
+  typedef itk::Rigid2DTransform< itk::DefaultParameterValueType>  TransformType;
 
   const double epsilon = 1e-10;
   const unsigned int N = 2;

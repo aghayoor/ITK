@@ -106,7 +106,7 @@ int ImageToImageMetricv4RegistrationTestRun( typename TMetric::Pointer metric, i
   typename TImage::Pointer movingImage = shiftFilter->GetOutput();
 
   // create an affine transform
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   typename TranslationTransformType::Pointer translationTransform = TranslationTransformType::New();
   translationTransform->SetIdentity();
 

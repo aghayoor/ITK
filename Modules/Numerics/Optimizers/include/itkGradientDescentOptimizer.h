@@ -97,10 +97,10 @@ public:
   void    StopOptimization(void);
 
   /** Set the learning rate. */
-  itkSetMacro(LearningRate, double);
+  itkSetMacro(LearningRate, itk::DefaultParameterValueType);
 
   /** Get the learning rate. */
-  itkGetConstReferenceMacro(LearningRate, double);
+  itkGetConstReferenceMacro(LearningRate, itk::DefaultParameterValueType);
 
   /** Set the number of iterations. */
   itkSetMacro(NumberOfIterations, SizeValueType);
@@ -112,7 +112,7 @@ public:
   itkGetConstMacro(CurrentIteration, SizeValueType);
 
   /** Get the current value. */
-  itkGetConstReferenceMacro(Value, double);
+  itkGetConstReferenceMacro(Value, itk::DefaultParameterValueType);
 
   /** Get Stop condition. */
   itkGetConstReferenceMacro(StopCondition, StopConditionType);
@@ -131,14 +131,14 @@ protected:
 
   bool m_Maximize;
 
-  double m_LearningRate;
+  itk::DefaultParameterValueType m_LearningRate;
 
 private:
   GradientDescentOptimizer(const Self &); //purposely not implemented
   void operator=(const Self &);           //purposely not implemented
 
   bool               m_Stop;
-  double             m_Value;
+  itk::DefaultParameterValueType m_Value;
   StopConditionType  m_StopCondition;
   SizeValueType      m_NumberOfIterations;
   SizeValueType      m_CurrentIteration;

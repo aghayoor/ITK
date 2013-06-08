@@ -128,7 +128,7 @@ int main(int argc, char * argv[] )
 // Set up a Transform
 //-----------------------------------------------------------
 
-  typedef itk::Euler3DTransform< double >      TransformType;
+  typedef itk::Euler3DTransform< itk::DefaultParameterValueType >      TransformType;
 
   TransformType::Pointer transform = TransformType::New();
 

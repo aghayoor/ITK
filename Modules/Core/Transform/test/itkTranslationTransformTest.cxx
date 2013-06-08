@@ -20,7 +20,7 @@
 
 #include "itkTranslationTransform.h"
 
-typedef  itk::Vector<double,2>     VectorType;
+typedef  itk::Vector<itk::DefaultParameterValueType,2>     VectorType;
 
 namespace
 {
@@ -48,7 +48,7 @@ int itkTranslationTransformTest(int ,char *[] )
      actually check that the results are correct. */
 
   /* Create a 2D identity transformation and show its parameters */
-  typedef itk::TranslationTransform<double,2>  TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,2>  TransformType;
   TransformType::Pointer  id2 = TransformType::New();
   vector2 = id2->GetOffset();
   std::cout << "Vector from instantiating an identity transform:"
@@ -115,7 +115,7 @@ int itkTranslationTransformTest(int ,char *[] )
             << std::endl << aff2;
 
       /* Transform a point */
-  itk::Point<double, 2> u2, v2;
+  itk::Point<itk::DefaultParameterValueType, 2> u2, v2;
   u2[0] = 3;
   u2[1] = 5;
   v2 = aff2->TransformPoint(u2);
@@ -128,7 +128,7 @@ int itkTranslationTransformTest(int ,char *[] )
             << v2[0] << " , " << v2[1] << std::endl;
 
   /* Transform a vnl_vector */
-  vnl_vector_fixed<double, 2> x2, y2;
+  vnl_vector_fixed<itk::DefaultParameterValueType, 2> x2, y2;
   x2[0] = 1;
   x2[1] = 2;
   y2 = aff2->TransformVector(x2);
@@ -141,7 +141,7 @@ int itkTranslationTransformTest(int ,char *[] )
             << y2[0] << " , " << y2[1] << std::endl;
 
   /* Transform a vector */
-  itk::Vector<double, 2> u3, v3;
+  itk::Vector<itk::DefaultParameterValueType, 2> u3, v3;
   u3[0] = 3;
   u3[1] = 5;
   v3 = aff2->TransformVector(u3);
@@ -154,7 +154,7 @@ int itkTranslationTransformTest(int ,char *[] )
             << v3[0] << " , " << v3[1] << std::endl;
 
   /* Transform a Covariant vector */
-  itk::Vector<double, 2> u4, v4;
+  itk::Vector<itk::DefaultParameterValueType, 2> u4, v4;
   u4[0] = 3;
   u4[1] = 5;
   v4 = aff2->TransformVector(u4);

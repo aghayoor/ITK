@@ -21,8 +21,8 @@
 #include "itkCenteredAffineTransform.h"
 #include "itkImage.h"
 
-typedef  itk::Matrix<double, 2, 2> MatrixType;
-typedef  itk::Vector<double, 2>    VectorType;
+typedef  itk::Matrix<itk::DefaultParameterValueType, 2, 2> MatrixType;
+typedef  itk::Vector<itk::DefaultParameterValueType, 2>    VectorType;
 
 namespace
 {
@@ -52,10 +52,10 @@ int itkCenteredAffineTransformTest(int, char *[])
      actually check that the results are correct. */
 
   /* Create a 2D identity transformation and show its parameters */
-  typedef itk::Point<double, 6>     ParametersType;
-  typedef itk::Matrix<double, 2, 6> JacobianType;
+  typedef itk::Point<itk::DefaultParameterValueType, 6>     ParametersType;
+  typedef itk::Matrix<itk::DefaultParameterValueType, 2, 6> JacobianType;
 
-  typedef itk::CenteredAffineTransform<double, 2> Affine2DType;
+  typedef itk::CenteredAffineTransform< itk::DefaultParameterValueType, 2> Affine2DType;
   Affine2DType::Pointer id2 = Affine2DType::New();
   matrix2 = id2->GetMatrix();
   vector2 = id2->GetOffset();
@@ -159,7 +159,7 @@ int itkCenteredAffineTransformTest(int, char *[])
   aff2->Print( std::cout );
 
   /* Transform a point */
-  itk::Point<double, 2> u2, v2;
+  itk::Point<itk::DefaultParameterValueType, 2> u2, v2;
   u2[0] = 3;
   u2[1] = 5;
   v2 = aff2->TransformPoint(u2);
@@ -172,7 +172,7 @@ int itkCenteredAffineTransformTest(int, char *[])
   // << v2[0] << " , " << v2[1] << std::endl;
 
   /* Transform a vnl_vector */
-  vnl_vector_fixed<double, 2> x2, y2;
+  vnl_vector_fixed<itk::DefaultParameterValueType, 2> x2, y2;
   x2[0] = 1;
   x2[1] = 2;
   y2 = aff2->TransformVector(x2);
@@ -185,7 +185,7 @@ int itkCenteredAffineTransformTest(int, char *[])
   // << y2[0] << " , " << y2[1] << std::endl;
 
   /* Transform a vector */
-  itk::Vector<double, 2> u3, v3;
+  itk::Vector<itk::DefaultParameterValueType, 2> u3, v3;
   u3[0] = 3;
   u3[1] = 5;
   v3 = aff2->TransformVector(u3);
@@ -198,7 +198,7 @@ int itkCenteredAffineTransformTest(int, char *[])
   // << v3[0] << " , " << v3[1] << std::endl;
 
   /* Transform a Covariant vector */
-  itk::Vector<double, 2> u4, v4;
+  itk::Vector<itk::DefaultParameterValueType, 2> u4, v4;
   u4[0] = 3;
   u4[1] = 5;
   v4 = aff2->TransformVector(u4);
@@ -211,9 +211,9 @@ int itkCenteredAffineTransformTest(int, char *[])
   // << v4[0] << " , " << v4[1] << std::endl;
 
   /* Create a 3D transform and rotate in 3D */
-  typedef itk::CenteredAffineTransform<double, 3> Affine3DType;
+  typedef itk::CenteredAffineTransform< itk::DefaultParameterValueType, 3> Affine3DType;
   Affine3DType::Pointer  aff3 = Affine3DType::New();
-  itk::Vector<double, 3> axis;
+  itk::Vector<itk::DefaultParameterValueType, 3> axis;
   axis[0] = .707;
   axis[1] = .707;
   axis[2] = .707;

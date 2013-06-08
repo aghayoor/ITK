@@ -38,13 +38,13 @@
 
 int main(int itkNotUsed(ac), char* itkNotUsed(av)[])
 {
-  typedef itk::AffineTransform<double,3> AffineTransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType,3> AffineTransformType;
   AffineTransformType::Pointer affine = AffineTransformType::New();
   AffineTransformType::InputPointType cor;
   cor.Fill(12);
   affine->SetCenter(cor);
 
-  typedef itk::BSplineTransform<double,3,5> BSplineTransformType;
+  typedef itk::BSplineTransform< itk::DefaultParameterValueType,3,5> BSplineTransformType;
   BSplineTransformType::Pointer bspline = BSplineTransformType::New();
 
   BSplineTransformType::OriginType origin;

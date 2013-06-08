@@ -50,7 +50,7 @@ int itkDecoratorTest(int, char* [] )
   std::cout << "----------------------------------------------------"
             << std::endl;
 
-  typedef itk::AffineTransform<double, 3>         TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, 3>         TransformType;
   typedef itk::DataObjectDecorator<TransformType> TransformObjectType;
 
   TransformObjectType::Pointer decoratedTransform = TransformObjectType::New();

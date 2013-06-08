@@ -84,28 +84,26 @@ LevenbergMarquardtOptimizer
 {
   MeasureType measures;
 
-  const CostFunctionAdaptorType *adaptor =
-    this->GetCostFunctionAdaptor();
-
+  const CostFunctionAdaptorType *adaptor = this->GetCostFunctionAdaptor();
   if ( adaptor )
     {
-    const MultipleValuedCostFunction *costFunction =
-      adaptor->GetCostFunction();
+    const MultipleValuedCostFunction *costFunction = adaptor->GetCostFunction();
     if ( costFunction )
       {
-      const unsigned int numberOfValues =
-        costFunction->GetNumberOfValues();
+      const unsigned int numberOfValues = costFunction->GetNumberOfValues();
       measures.SetSize(numberOfValues);
-      ParametersType parameters = this->GetCurrentPosition();
-      if ( m_ScalesInitialized )
+
+      const ParametersType & currentPositionInternalValue = this->GetInitialPosition();
+      InternalParametersType vnlCompatibleParameters(currentPositionInternalValue.size());
+
+      const ScalesType & scales = this->GetScales();
+      for ( unsigned int i = 0; i < vnlCompatibleParameters.size(); i++ )
         {
-        const ScalesType & scales = this->GetScales();
-        for ( unsigned int i = 0; i < parameters.size(); i++ )
-          {
-          parameters[i] *= scales[i];
-          }
+        vnlCompatibleParameters[i] = (m_ScalesInitialized)
+          ? currentPositionInternalValue[i]*scales[i]
+          : currentPositionInternalValue[i];
         }
-      this->GetNonConstCostFunctionAdaptor()->f(parameters, measures);
+      this->GetNonConstCostFunctionAdaptor()->f(vnlCompatibleParameters, measures);
       }
     }
   return measures;
@@ -120,45 +118,44 @@ LevenbergMarquardtOptimizer
 {
   this->InvokeEvent( StartEvent() );
 
-  ParametersType initialPosition = GetInitialPosition();
-  ParametersType parameters(initialPosition);
+  ParametersType currentPositionInternalValue( this->GetInitialPosition() );
+  InternalParametersType vnlCompatibleParameters(currentPositionInternalValue.size());
 
   // If the user provides the scales then we set otherwise we don't
   // for computation speed.
-  // We also scale the initial parameters up if scales are defined.
+  // We also scale the initial vnlCompatibleParameters up if scales are defined.
   // This compensates for later scaling them down in the cost function adaptor
   // and at the end of this function.
-  if ( m_ScalesInitialized )
+  const ScalesType & scales = this->GetScales();
+  if( m_ScalesInitialized )
     {
-    const ScalesType & scales = this->GetScales();
     this->GetNonConstCostFunctionAdaptor()->SetScales(scales);
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] *= scales[i];
-      }
+    }
+  for ( unsigned int i = 0; i < vnlCompatibleParameters.size(); ++i )
+    {
+    vnlCompatibleParameters[i] = (m_ScalesInitialized)
+      ? currentPositionInternalValue[i]*scales[i]
+      : currentPositionInternalValue[i];
     }
 
   if ( this->GetCostFunctionAdaptor()->GetUseGradient() )
     {
-    m_VnlOptimizer->minimize_using_gradient(parameters);
+    m_VnlOptimizer->minimize_using_gradient(vnlCompatibleParameters);
     }
   else
     {
-    m_VnlOptimizer->minimize_without_gradient(parameters);
+    m_VnlOptimizer->minimize_without_gradient(vnlCompatibleParameters);
     }
 
-  // we scale the parameters down if scales are defined
-  if ( m_ScalesInitialized )
+  // we scale the vnlCompatibleParameters down if scales are defined
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < vnlCompatibleParameters.size(); i++ )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); ++i )
-      {
-      parameters[i] *= invScales[i];
-      }
+    currentPositionInternalValue[i] = (m_ScalesInitialized)
+      ? invScales[i] * vnlCompatibleParameters[i]
+      : vnlCompatibleParameters[i];
     }
-
-  this->SetCurrentPosition(parameters);
-
+  this->SetCurrentPosition(currentPositionInternalValue);
   this->InvokeEvent( EndEvent() );
 }
 

@@ -73,7 +73,7 @@ int main( int argc, char * argv[] )
   filter->SetInterpolator( interpolator );
 
 
-  typedef itk::IdentityTransform< double, Dimension >  TransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension >  TransformType;
   TransformType::Pointer transform = TransformType::New();
 
   filter->SetTransform( transform );

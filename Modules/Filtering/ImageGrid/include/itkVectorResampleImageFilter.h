@@ -55,7 +55,9 @@ namespace itk
  * \wikiexample{VectorImages/VectorResampleImageFilter,Translate a vector image}
  * \endwiki
  */
-template< class TInputImage, class TOutputImage, class TInterpolatorPrecisionType = double >
+template< class TInputImage, class TOutputImage,
+  class TInterpolatorPrecisionType = double,
+  class TTransformPrecisionType =itk::DefaultParameterValueType >
 class ITK_EXPORT VectorResampleImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
@@ -88,7 +90,7 @@ public:
    * \todo Check that input and output images have the same number of
    * dimensions; this is required by the current implementation of
    * AffineTransform. */
-  typedef Transform< TInterpolatorPrecisionType, itkGetStaticConstMacro(ImageDimension),
+  typedef Transform< TTransformPrecisionType, itkGetStaticConstMacro(ImageDimension),
                      itkGetStaticConstMacro(ImageDimension) > TransformType;
   typedef typename TransformType::ConstPointer
   TransformPointerType;

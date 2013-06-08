@@ -40,14 +40,14 @@ template< class TFixedImage,
           class TMovingImage >
 class ITK_EXPORT CenteredVersorTransformInitializer:
   public CenteredTransformInitializer<
-    VersorRigid3DTransform< double >,
+    VersorRigid3DTransform< itk::DefaultParameterValueType >,
     TFixedImage, TMovingImage >
 {
 public:
   /** Standard class typedefs. */
   typedef CenteredVersorTransformInitializer Self;
   typedef CenteredTransformInitializer<
-    VersorRigid3DTransform< double >,
+    VersorRigid3DTransform< itk::DefaultParameterValueType >,
     TFixedImage, TMovingImage >          Superclass;
 
   typedef SmartPointer< Self >       Pointer;

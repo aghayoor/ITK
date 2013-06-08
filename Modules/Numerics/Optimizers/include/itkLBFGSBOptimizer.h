@@ -75,10 +75,13 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(LBFGSBOptimizer, SingleValuedNonLinearVnlOptimizer);
 
+  typedef itk::DefaultParameterValueType InternalComputationType;
+  typedef double VnlOptimizerValueType;
+
   /**  BoundValue type.
    *  Use for defining the lower and upper bounds on the variables.
    */
-  typedef Array< double > BoundValueType;
+  typedef Array< InternalComputationType > BoundValueType;
 
   /** BoundSelection type
    * Use for defining the boundary condition for each variables.
@@ -86,7 +89,7 @@ public:
   typedef Array< long > BoundSelectionType;
 
   /** Internal boundary value storage type */
-  typedef vnl_vector< double > InternalBoundValueType;
+  typedef vnl_vector< VnlOptimizerValueType > InternalBoundValueType;
 
   /** Internal boundary selection storage type */
   typedef vnl_vector< long > InternalBoundSelectionType;
@@ -131,17 +134,17 @@ public:
    * Typical values for factor: 1e+12 for low accuracy;
    * 1e+7 for moderate accuracy and 1e+1 for extremely high accuracy.
    */
-  virtual void SetCostFunctionConvergenceFactor(double);
+  virtual void SetCostFunctionConvergenceFactor(InternalComputationType);
 
-  itkGetMacro(CostFunctionConvergenceFactor, double);
+  itkGetMacro(CostFunctionConvergenceFactor, InternalComputationType);
 
   /** Set/Get the ProjectedGradientTolerance. Algorithm terminates
    * when the project gradient is below the tolerance. Default value
    * is 1e-5.
    */
-  virtual void SetProjectedGradientTolerance(double);
+  virtual void SetProjectedGradientTolerance(InternalComputationType);
 
-  itkGetMacro(ProjectedGradientTolerance, double);
+  itkGetMacro(ProjectedGradientTolerance, InternalComputationType);
 
   /** Set/Get the MaximumNumberOfIterations. Default is 500 */
   virtual void SetMaximumNumberOfIterations(unsigned int);
@@ -172,7 +175,7 @@ public:
 
   /** Get the current infinity norm of the project gradient of the cost
    * function. */
-  itkGetConstReferenceMacro(InfinityNormOfProjectedGradient, double);
+  itkGetConstReferenceMacro(InfinityNormOfProjectedGradient, InternalComputationType);
 
   /** Get the reason for termination */
   const std::string GetStopConditionDescription() const;
@@ -194,13 +197,13 @@ private:
 
   bool         m_Trace;
   bool         m_OptimizerInitialized;
-  double       m_CostFunctionConvergenceFactor;
-  double       m_ProjectedGradientTolerance;
+  InternalComputationType       m_CostFunctionConvergenceFactor;
+  InternalComputationType       m_ProjectedGradientTolerance;
   unsigned int m_MaximumNumberOfIterations;
   unsigned int m_MaximumNumberOfEvaluations;
   unsigned int m_MaximumNumberOfCorrections;
   unsigned int m_CurrentIteration;
-  double       m_InfinityNormOfProjectedGradient;
+  InternalComputationType       m_InfinityNormOfProjectedGradient;
 
   InternalOptimizerType * m_VnlOptimizer;
   BoundValueType          m_LowerBound;

@@ -67,9 +67,9 @@ LBFGSBOptimizer
   m_InfinityNormOfProjectedGradient(0.0),
   m_VnlOptimizer(0)
 {
-  m_LowerBound       = InternalBoundValueType(0);
-  m_UpperBound       = InternalBoundValueType(0);
-  m_BoundSelection   = InternalBoundSelectionType(0);
+  m_LowerBound       = BoundValueType(0);
+  m_UpperBound       = BoundValueType(0);
+  m_BoundSelection   = BoundSelectionType(0);
 }
 
 /**
@@ -161,13 +161,17 @@ LBFGSBOptimizer
  */
 void
 LBFGSBOptimizer
-::SetLowerBound(
-  const BoundValueType & value)
+::SetLowerBound( const BoundValueType & value)
 {
   this->m_LowerBound = value;
   if ( m_OptimizerInitialized )
     {
-    m_VnlOptimizer->set_lower_bound(m_LowerBound);
+    InternalBoundValueType VnlLowerBound(value.size());
+    for(unsigned int i = 0; i< VnlLowerBound.size(); ++i)
+      {
+      VnlLowerBound[i] = value[i];
+      }
+    m_VnlOptimizer->set_lower_bound(VnlLowerBound);
     }
   this->Modified();
 }
@@ -177,13 +181,17 @@ LBFGSBOptimizer
  */
 void
 LBFGSBOptimizer
-::SetUpperBound(
-  const BoundValueType & value)
+::SetUpperBound( const BoundValueType & value)
 {
   this->m_UpperBound = value;
   if ( m_OptimizerInitialized )
     {
-    m_VnlOptimizer->set_upper_bound(m_UpperBound);
+    InternalBoundValueType VnlUpperBound(value.size());
+    for(unsigned int i = 0; i < VnlUpperBound.size(); ++i)
+      {
+      VnlUpperBound[i] = value[i];
+      }
+    m_VnlOptimizer->set_upper_bound(VnlUpperBound);
     }
   this->Modified();
 }
@@ -209,7 +217,12 @@ LBFGSBOptimizer
   m_BoundSelection = value;
   if ( m_OptimizerInitialized )
     {
-    m_VnlOptimizer->set_bound_selection(m_BoundSelection);
+    InternalBoundSelectionType VnlBoundSelection(value.size());
+    for(unsigned int i = 0; i < VnlBoundSelection.size(); ++i)
+      {
+      VnlBoundSelection[i] = value[i];
+      }
+    m_VnlOptimizer->set_bound_selection(VnlBoundSelection);
     }
   this->Modified();
 }
@@ -222,7 +235,7 @@ LBFGSBOptimizer
  */
 void
 LBFGSBOptimizer
-::SetCostFunctionConvergenceFactor(double value)
+::SetCostFunctionConvergenceFactor(InternalComputationType value)
 {
   if ( value < 1.0 )
     {
@@ -245,7 +258,7 @@ LBFGSBOptimizer
  */
 void
 LBFGSBOptimizer
-::SetProjectedGradientTolerance(double value)
+::SetProjectedGradientTolerance(InternalComputationType value)
 {
   m_ProjectedGradientTolerance = value;
   if ( m_OptimizerInitialized )
@@ -318,16 +331,13 @@ LBFGSBOptimizer::SetCostFunction(SingleValuedCostFunction *costFunction)
   m_VnlOptimizer = new InternalOptimizerType(*adaptor, this);
 
   // set the optimizer parameters
-  m_VnlOptimizer->set_lower_bound(m_LowerBound);
-  m_VnlOptimizer->set_upper_bound(m_UpperBound);
-  m_VnlOptimizer->set_bound_selection(m_BoundSelection);
-  m_VnlOptimizer->set_cost_function_convergence_factor(
-    m_CostFunctionConvergenceFactor);
-  m_VnlOptimizer->set_projected_gradient_tolerance(
-    m_ProjectedGradientTolerance);
+  this->SetLowerBound(m_LowerBound);
+  this->SetUpperBound(m_UpperBound);
+  this->SetBoundSelection(m_BoundSelection);
+  m_VnlOptimizer->set_cost_function_convergence_factor( m_CostFunctionConvergenceFactor);
+  m_VnlOptimizer->set_projected_gradient_tolerance( m_ProjectedGradientTolerance);
   m_VnlOptimizer->set_max_function_evals(m_MaximumNumberOfEvaluations);
-  m_VnlOptimizer->set_max_variable_metric_corrections(
-    m_MaximumNumberOfCorrections);
+  m_VnlOptimizer->set_max_variable_metric_corrections( m_MaximumNumberOfCorrections);
 
   m_OptimizerInitialized = true;
 
@@ -343,7 +353,7 @@ LBFGSBOptimizer
 {
   // Check if all the bounds parameters are the same size as the initial
   // parameters.
-  unsigned int numberOfParameters = m_CostFunction->GetNumberOfParameters();
+  const unsigned int numberOfParameters = m_CostFunction->GetNumberOfParameters();
 
   if ( this->GetInitialPosition().Size() < numberOfParameters )
     {
@@ -372,8 +382,7 @@ LBFGSBOptimizer
 
   this->SetCurrentPosition( this->GetInitialPosition() );
 
-  ParametersType parameters( this->GetInitialPosition() );
-
+  VnlParametersType parameters( this->GetInitialPosition() ); // Use implicit cast conversion construction
   this->InvokeEvent( StartEvent() );
 
   // vnl optimizers return the solution by reference
@@ -387,8 +396,8 @@ LBFGSBOptimizer
     itkExceptionMacro(<< "Error occurred in optimization");
     }
 
-  this->SetCurrentPosition(parameters);
-
+  //TODO: This should be more efficient if ParametersType == VnlParametersType
+  this->SetCurrentPosition(ParametersType(parameters)); // Use implicit cast conversion construction
   this->InvokeEvent( EndEvent() );
 }
 

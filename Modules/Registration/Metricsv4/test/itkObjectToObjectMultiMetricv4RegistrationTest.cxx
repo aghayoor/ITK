@@ -198,7 +198,7 @@ int itkObjectToObjectMultiMetricv4RegistrationTest(int argc, char *argv[])
     }
 
   // create an affine transform
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   TranslationTransformType::Pointer translationTransform = TranslationTransformType::New();
   translationTransform->SetIdentity();
 

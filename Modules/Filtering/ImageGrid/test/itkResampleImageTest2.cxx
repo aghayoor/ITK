@@ -83,11 +83,11 @@ int itkResampleImageTest2(int argc, char * argv [] )
   typedef ImageType::Pointer                     ImagePointerType;
   typedef ImageType::RegionType                  ImageRegionType;
   typedef ImageType::SizeType                    ImageSizeType;
-  typedef double                                 CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
 
-  typedef itk::AffineTransform<CoordRepType,NDimensions>
+  typedef itk::AffineTransform<itk::DefaultParameterValueType,NDimensions>
                                                  AffineTransformType;
-  typedef NonlinearAffineTransform<CoordRepType,NDimensions>
+  typedef NonlinearAffineTransform<itk::DefaultParameterValueType,NDimensions>
                                                  NonlinearAffineTransformType;
   typedef itk::LinearInterpolateImageFunction<ImageType,CoordRepType>
                                                  InterpolatorType;
@@ -128,7 +128,7 @@ int itkResampleImageTest2(int argc, char * argv [] )
   ExtrapolatorType::Pointer extrapolator = ExtrapolatorType::New();
 
   // Create and configure a resampling filter
-  typedef itk::ResampleImageFilter< ImageType, ImageType > ResampleFilterType;
+  typedef itk::ResampleImageFilter< ImageType, ImageType, CoordRepType, itk::DefaultParameterValueType > ResampleFilterType;
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 

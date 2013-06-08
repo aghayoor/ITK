@@ -31,7 +31,7 @@ int itkBSplineExponentialDiffeomorphicTransformTest(int ,char *[] )
 {
 
   const unsigned int dimensions = 2;
-  typedef itk::BSplineExponentialDiffeomorphicTransform<double, dimensions>
+  typedef itk::BSplineExponentialDiffeomorphicTransform< itk::DefaultParameterValueType, dimensions>
                                                     DisplacementTransformType;
 
   typedef DisplacementTransformType::ScalarType     ScalarType;

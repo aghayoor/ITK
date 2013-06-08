@@ -85,8 +85,8 @@ int itkMeanSquaresImageToImageMetricv4OnVectorTest2Run( typename TMetric::Measur
     }
 
   /* Transforms */
-  typedef itk::TranslationTransform<double,imageDimensionality> FixedTransformType;
-  typedef itk::TranslationTransform<double,imageDimensionality> MovingTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,imageDimensionality> FixedTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,imageDimensionality> MovingTransformType;
 
   typename FixedTransformType::Pointer fixedTransform = FixedTransformType::New();
   typename MovingTransformType::Pointer movingTransform = MovingTransformType::New();

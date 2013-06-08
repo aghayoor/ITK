@@ -42,7 +42,7 @@ namespace itk
  */
 
 template<class TFixedImage,class TMovingImage,class TVirtualImage = TFixedImage,
-          class TInternalComputationValueType = double,
+          class TInternalComputationValueType = DefaultParameterValueType,
           class TMetricTraits = DefaultImageToImageMetricTraitsv4<TFixedImage,TMovingImage,TVirtualImage,TInternalComputationValueType>
           >
 class ITK_EXPORT JointHistogramMutualInformationImageToImageMetricv4 :

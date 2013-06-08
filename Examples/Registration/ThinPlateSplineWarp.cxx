@@ -60,7 +60,7 @@ int main( int argc, char * argv[] )
   typedef   itk::Vector< float, ImageDimension >             FieldVectorType;
   typedef   itk::Image< FieldVectorType,  ImageDimension >   DisplacementFieldType;
   typedef   itk::ImageFileWriter< DisplacementFieldType >    FieldWriterType;
-  typedef   double                                           CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
   typedef   itk::ThinPlateSplineKernelTransform< CoordinateRepType,
         ImageDimension>                                      TransformType;
   typedef   itk::Point< CoordinateRepType,

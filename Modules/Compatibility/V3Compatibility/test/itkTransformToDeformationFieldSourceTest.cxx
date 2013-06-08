@@ -41,7 +41,7 @@ int itkTransformToDeformationFieldSourceTest( int argc, char * argv [] )
   /** Typedefs. */
   const unsigned int  Dimension = 2;
   typedef float       ScalarPixelType;
-  typedef double      CoordRepresentationType;
+  typedef itk::DefaultParameterValueType CoordRepresentationType;
   const unsigned int  SplineOrder = 3;
 
   typedef itk::Vector<

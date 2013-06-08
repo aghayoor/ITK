@@ -114,7 +114,7 @@ int itkImageRegistrationMethodTest_14(int, char* [] )
   typedef itk::Image<PixelType,dimension>               MovingImageType;
 
   // Transform Type
-  typedef itk::QuaternionRigidTransform< double >       TransformType;
+  typedef itk::QuaternionRigidTransform< itk::DefaultParameterValueType >       TransformType;
 
   // Optimizer Type
   typedef itk::QuaternionRigidTransformGradientDescentOptimizer

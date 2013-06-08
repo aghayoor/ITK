@@ -149,7 +149,7 @@ int itkMultiTransformTest(int, char *[] )
   const unsigned int NDimensions = itkMultiTransformTestNDimensions;
 
   /* Create multi-transform */
-  typedef MultiTransformTestTransform<double, NDimensions>  MultiTransformType;
+  typedef MultiTransformTestTransform< itk::DefaultParameterValueType, NDimensions>  MultiTransformType;
   typedef MultiTransformType::Superclass                    Superclass;
   typedef Superclass::ScalarType                            ScalarType;
 
@@ -338,7 +338,7 @@ int itkMultiTransformTest(int, char *[] )
    */
 
   /* Create a displacement field transform */
-  typedef itk::DisplacementFieldTransform<double, NDimensions> DisplacementTransformType;
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, NDimensions> DisplacementTransformType;
   DisplacementTransformType::Pointer displacementTransform = DisplacementTransformType::New();
   typedef DisplacementTransformType::DisplacementFieldType FieldType;
   typedef DisplacementTransformType::DisplacementFieldType DisplacementFieldType;

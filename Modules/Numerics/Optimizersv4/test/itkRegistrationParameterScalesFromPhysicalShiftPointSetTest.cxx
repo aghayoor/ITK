@@ -107,11 +107,11 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   movingPoints->SetPoint(2, testPoint + offset);
 
   // Transforms
-  typedef itk::AffineTransform<double, Dimension>      MovingTransformType;
+  typedef itk::AffineTransform<itk::DefaultParameterValueType, Dimension>      MovingTransformType;
   MovingTransformType::Pointer movingTransform =  MovingTransformType::New();
   movingTransform->SetIdentity();
 
-  typedef itk::TranslationTransform<double, Dimension> FixedTransformType;
+  typedef itk::TranslationTransform<itk::DefaultParameterValueType, Dimension> FixedTransformType;
   FixedTransformType::Pointer fixedTransform =    FixedTransformType::New();
   fixedTransform->SetIdentity();
 
@@ -268,9 +268,9 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   //
   // Testing local scales for a transform with local support, ex. DisplacementFieldTransform
   //
-  typedef itk::DisplacementFieldTransform<double, Dimension>  DisplacementTransformType;
-  typedef DisplacementTransformType::DisplacementFieldType    FieldType;
-  typedef itk::Vector<double, Dimension>                      VectorType;
+  typedef itk::DisplacementFieldTransform<itk::DefaultParameterValueType, Dimension> DisplacementTransformType;
+  typedef DisplacementTransformType::DisplacementFieldType                           FieldType;
+  typedef itk::Vector<itk::DefaultParameterValueType, Dimension>                     VectorType;
 
   VectorType zero;
   zero.Fill(0.0);

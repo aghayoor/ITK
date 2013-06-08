@@ -133,10 +133,10 @@ static int RunTest(int argc, char * argv [] )
 
 
   const unsigned int SpaceDimension = ImageDimension;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
 
   typedef itk::BSplineTransform<
-                            CoordinateRepType,
+                            itk::DefaultParameterValueType,
                             SpaceDimension,
                             VSplineOrder >     TransformType;
 

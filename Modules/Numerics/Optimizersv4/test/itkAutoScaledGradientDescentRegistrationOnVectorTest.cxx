@@ -75,7 +75,7 @@ int itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated(int numberOfIt
   movingTransform->SetIdentity();
 
   // Transform for the fixed image
-  typedef itk::IdentityTransform<double, Dimension> FixedTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension> FixedTransformType;
   typename FixedTransformType::Pointer fixedTransform = FixedTransformType::New();
   fixedTransform->SetIdentity();
 
@@ -231,11 +231,11 @@ int itkAutoScaledGradientDescentRegistrationOnVectorTest(int argc, char ** const
   const unsigned int Dimension = 2;
 
   std::cout << std::endl << "Optimizing translation transform with shift scales" << std::endl;
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   int ret1 = itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated<TranslationTransformType>(numberOfIterations, shiftOfStep, "shift");
 
   std::cout << std::endl << "Optimizing translation transform with Jacobian scales" << std::endl;
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   int ret2 = itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated<TranslationTransformType>(numberOfIterations, 0.0, "jacobian");
 
   if ( ret1 == EXIT_SUCCESS && ret2 == EXIT_SUCCESS )

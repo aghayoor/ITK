@@ -46,7 +46,7 @@ typedef itk::Image<InputPixelType,ImageDimension> ImageType;
 typedef itk::ImageAdaptor<  ImageType,
                             RedChannelPixelAccessor > ImageAdaptorType;
 
-typedef double CoordRepType;
+typedef itk::DefaultParameterValueType CoordRepType;
 
 typedef itk::LinearInterpolateImageFunction<
                                   ImageAdaptorType,
@@ -221,8 +221,8 @@ int itkImageAdaptorInterpolateImageFunctionTest(int, char* [] )
 
   // an integer position inside the image
   {
-  double darray[3] = {10, 20, 40};
-  double temp = 70.0;
+  itk::DefaultParameterValueType darray[3] = {10, 20, 40};
+  itk::DefaultParameterValueType temp = 70.0;
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = ImageAdaptorInterpolate::TestContinuousIndex( interp, cindex, true, output );
@@ -243,8 +243,8 @@ int itkImageAdaptorInterpolateImageFunctionTest(int, char* [] )
 
   // position at the image border
   {
-  double darray[3] = {0, 20, 40};
-  double temp = 60.0;
+  itk::DefaultParameterValueType darray[3] = {0, 20, 40};
+  itk::DefaultParameterValueType temp = 60.0;
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = ImageAdaptorInterpolate::TestContinuousIndex( interp, cindex, true, output );
@@ -265,9 +265,9 @@ int itkImageAdaptorInterpolateImageFunctionTest(int, char* [] )
 
   // position near image border
   {
-  double epsilon = 1.0e-10;
-  double darray[3] = {19 - epsilon, 20, 40};
-  double temp = 79.0;
+  itk::DefaultParameterValueType epsilon = 1.0e-10;
+  itk::DefaultParameterValueType darray[3] = {19 - epsilon, 20, 40};
+  itk::DefaultParameterValueType temp = 79.0;
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = ImageAdaptorInterpolate::TestContinuousIndex( interp, cindex, true, output );
@@ -288,8 +288,8 @@ int itkImageAdaptorInterpolateImageFunctionTest(int, char* [] )
 
   // position outside the image
   {
-  double darray[3] = {20, 20, 40};
-  double temp = 1.0;
+  itk::DefaultParameterValueType darray[3] = {20, 20, 40};
+  itk::DefaultParameterValueType temp = 1.0;
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = ImageAdaptorInterpolate::TestContinuousIndex( interp, cindex, false, output );
@@ -310,8 +310,8 @@ int itkImageAdaptorInterpolateImageFunctionTest(int, char* [] )
 
   // at non-integer position
   {
-  double darray[3] = {5.25, 12.5, 42.0};
-  double temp = 59.75;
+  itk::DefaultParameterValueType darray[3] = {5.25, 12.5, 42.0};
+  itk::DefaultParameterValueType temp = 59.75;
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = ImageAdaptorInterpolate::TestContinuousIndex( interp, cindex, true, output );

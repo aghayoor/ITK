@@ -24,7 +24,7 @@ int itkScaleLogarithmicTransformTest(int ,char * [] )
 {
 
 
-  typedef itk::ScaleLogarithmicTransform<double>  TransformType;
+  typedef itk::ScaleLogarithmicTransform< itk::DefaultParameterValueType>  TransformType;
 
 
   const double epsilon = 1e-10;

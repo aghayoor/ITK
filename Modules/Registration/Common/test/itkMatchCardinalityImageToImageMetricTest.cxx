@@ -33,7 +33,7 @@ int itkMatchCardinalityImageToImageMetricTest(int argc, char* argv[] )
     }
 
   typedef itk::Image<unsigned char,2>          ImageType;
-  typedef itk::TranslationTransform<double, 2> TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, 2> TransformType;
   typedef TransformType::OutputVectorType      OffsetType;
   typedef itk::MatchCardinalityImageToImageMetric<ImageType,ImageType>
                                                MetricType;

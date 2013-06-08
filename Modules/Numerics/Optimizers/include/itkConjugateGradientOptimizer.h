@@ -49,6 +49,7 @@ public:
 
   /** InternalParameters typedef. */
   typedef   vnl_vector< double > InternalParametersType;
+  typedef   Superclass::ParametersType ParametersType;
 
   /** Internal Optimizer Type */
   typedef   vnl_conjugate_gradient InternalOptimizerType;

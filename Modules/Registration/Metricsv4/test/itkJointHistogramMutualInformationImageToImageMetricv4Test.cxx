@@ -83,9 +83,9 @@ int itkJointHistogramMutualInformationImageToImageMetricv4Test( int , char * [] 
     }
 
   /* Transforms */
-  typedef itk::TranslationTransform<double,imageDimensionality>
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,imageDimensionality>
                                                             FixedTransformType;
-  typedef itk::TranslationTransform<double,imageDimensionality>
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,imageDimensionality>
                                                             MovingTransformType;
   FixedTransformType::Pointer fixedTransform = FixedTransformType::New();
   MovingTransformType::Pointer movingTransform = MovingTransformType::New();

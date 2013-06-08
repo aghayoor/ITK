@@ -60,7 +60,7 @@ public:
 };
 
 // Transform type
-typedef itk::Transform<double, 2, 2> itkEuclideanDistancePointSetMetricRegistrationTestTransformType;
+typedef itk::Transform< itk::DefaultParameterValueType, 2, 2> itkEuclideanDistancePointSetMetricRegistrationTestTransformType;
 
 /////////////////////////////////////////////////////////
 template< class TTransform, class TMetric, class TPointSet >
@@ -221,7 +221,7 @@ int itkEuclideanDistancePointSetMetricRegistrationTest( int argc, char *argv[] )
   PointSetMetricType::Pointer metric = PointSetMetricType::New();
 
   // transform
-  typedef itk::AffineTransform<double, Dimension> AffineTransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension> AffineTransformType;
   AffineTransformType::Pointer affineTransform = AffineTransformType::New();
   affineTransform->SetIdentity();
   std::cout << "XX Test with affine transform: " << std::endl;
@@ -237,7 +237,7 @@ int itkEuclideanDistancePointSetMetricRegistrationTest( int argc, char *argv[] )
   //Displacement field transform
   //
 
-  typedef itk::DisplacementFieldTransform<double, Dimension> DisplacementFieldTransformType;
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, Dimension> DisplacementFieldTransformType;
   DisplacementFieldTransformType::Pointer displacementTransform = DisplacementFieldTransformType::New();
 
   // Setup the physical space to match the point set virtual domain,

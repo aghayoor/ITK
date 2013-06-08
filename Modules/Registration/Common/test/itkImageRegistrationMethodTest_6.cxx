@@ -52,7 +52,7 @@ int itkImageRegistrationMethodTest_6(int argc, char* argv[] )
                                   MovingImageType::PixelType,
                                   dimension >         ImageSourceType;
   // Transform Type
-  typedef itk::AffineTransform< double, dimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, dimension > TransformType;
   typedef TransformType::ParametersType             ParametersType;
 
   // Optimizer Type

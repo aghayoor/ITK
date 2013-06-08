@@ -19,12 +19,12 @@
 #include "itkScaleVersor3DTransform.h"
 #include <iostream>
 
-class TransformHelperType : public itk::ScaleVersor3DTransform<double>
+class TransformHelperType : public itk::ScaleVersor3DTransform< itk::DefaultParameterValueType>
 {
 public:
 
   typedef TransformHelperType                 Self;
-  typedef itk::ScaleVersor3DTransform<double> Superclass;
+  typedef itk::ScaleVersor3DTransform< itk::DefaultParameterValueType> Superclass;
   typedef itk::SmartPointer<Self>             Pointer;
   typedef itk::SmartPointer<const Self>       ConstPointer;
 

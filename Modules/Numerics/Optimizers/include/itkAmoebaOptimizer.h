@@ -126,15 +126,15 @@ public:
    * diameter and the difference in cost function values at the corners of
    * the simplex falls below user specified thresholds. The simplex
    * diameter threshold is set via SetParametersConvergenceTolerance().*/
-  itkSetMacro(ParametersConvergenceTolerance, double);
-  itkGetConstMacro(ParametersConvergenceTolerance, double);
+  itkSetMacro(ParametersConvergenceTolerance, VnlParametersType::ValueType);
+  itkGetConstMacro(ParametersConvergenceTolerance, VnlParametersType::ValueType);
 
   /** The optimization algorithm will terminate when the simplex
    * diameter and the difference in cost function values at the corners of
    * the simplex falls below user specified thresholds. The cost function
    * convergence threshold is set via SetFunctionConvergenceTolerance().*/
-  itkSetMacro(FunctionConvergenceTolerance, double);
-  itkGetConstMacro(FunctionConvergenceTolerance, double);
+  itkSetMacro(FunctionConvergenceTolerance, VnlParametersType::ValueType);
+  itkGetConstMacro(FunctionConvergenceTolerance, VnlParametersType::ValueType);
 
   /** Report the reason for stopping. */
   const std::string GetStopConditionDescription() const;
@@ -154,14 +154,12 @@ protected:
 
 private:
   /**Check that the settings are valid. If not throw an exception.*/
-  void ValidateSettings();
-  //purposely not implemented
-  AmoebaOptimizer(const Self &);
-  //purposely not implemented
+  void ValidateSettings();       //purposely not implemented
+  AmoebaOptimizer(const Self &); //purposely not implemented
   void operator=(const Self &);
 
   NumberOfIterationsType          m_MaximumNumberOfIterations;
-  ParametersType::ValueType       m_ParametersConvergenceTolerance;
+  VnlParametersType::ValueType    m_ParametersConvergenceTolerance;
   CostFunctionType::MeasureType   m_FunctionConvergenceTolerance;
   bool                            m_AutomaticInitialSimplex;
   ParametersType                  m_InitialSimplexDelta;

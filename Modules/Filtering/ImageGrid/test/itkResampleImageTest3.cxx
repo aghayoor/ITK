@@ -48,7 +48,7 @@ int itkResampleImageTest3(int argc, char * argv [] )
   typedef ImageType::Pointer                     ImagePointerType;
   typedef ImageType::RegionType                  ImageRegionType;
   typedef ImageType::SizeType                    ImageSizeType;
-  typedef double                                 CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
 
   typedef itk::IdentityTransform<CoordRepType,NDimensions>  TransformType;
   typedef itk::LinearInterpolateImageFunction<ImageType,CoordRepType>
@@ -57,7 +57,8 @@ int itkResampleImageTest3(int argc, char * argv [] )
   typedef itk::ImageFileReader< ImageType >                ReaderType;
   typedef itk::ImageFileWriter< ImageType >                WriterType;
   typedef itk::ChangeInformationImageFilter< ImageType >   ChangeInfoType;
-  typedef itk::ResampleImageFilter< ImageType, ImageType > ResampleFilterType;
+  typedef itk::ResampleImageFilter< ImageType, ImageType,
+          itk::DefaultParameterValueType, itk::DefaultParameterValueType > ResampleFilterType;
 
   ReaderType::Pointer reader1 = ReaderType::New();
     reader1->SetFileName( argv[1] );

@@ -32,22 +32,23 @@ namespace itk
  *
  * \ingroup ITKOptimizers
  */
-template< class TInternalComputationValueType >
+template< class TInternalComputationValueType = itk::DefaultParameterValueType>
 class ITK_EXPORT CostFunctionTemplate:public Object
 {
 public:
   /** Standard class typedefs. */
-  typedef CostFunctionTemplate       Self;
-  typedef Object                     Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef CostFunctionTemplate<TInternalComputationValueType> Self;
+  typedef Object                                              Superclass;
+  typedef SmartPointer< Self >                                Pointer;
+  typedef SmartPointer< const Self >                          ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(CostFunctionTemplate, Object);
 
   /**  ParametersType typedef.
    *  It defines a position in the optimization search space. */
-  typedef TInternalComputationValueType                        ParametersValueType;
+  typedef TInternalComputationValueType InternalComputationValueType;
+  typedef TInternalComputationValueType ParametersValueType;
   typedef OptimizerParameters< TInternalComputationValueType > ParametersType;
 
   /** Return the number of parameters required to compute
@@ -66,7 +67,7 @@ private:
 };
 
 /** This helps to meet backward compatibility */
-typedef CostFunctionTemplate<double> CostFunction;
+typedef CostFunctionTemplate<itk::DefaultParameterValueType> CostFunction;
 
 } // end namespace itk
 

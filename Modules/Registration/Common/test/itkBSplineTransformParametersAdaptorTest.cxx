@@ -23,7 +23,7 @@ int itkBSplineTransformParametersAdaptorTest(int, char * [] )
 {
   const unsigned int SpaceDimension = 3;
   const unsigned int SplineOrder = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
   typedef itk::BSplineTransform<CoordinateRepType, SpaceDimension, SplineOrder> TransformType;
 
   /**

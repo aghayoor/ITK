@@ -103,7 +103,7 @@ CalculateOrientedImage(
   // Set up the transform.  Here the center of rotation is the
   // centroid of the object, the rotation matrix is specified by the
   // eigenvectors, and there is no translation.
-  typedef itk::AffineTransform< double, TLabelImage::ImageDimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, TLabelImage::ImageDimension > TransformType;
   typename TransformType::Pointer transform = TransformType::New();
   typename TransformType::MatrixType rotationMatrix(vnl_RotationMatrix);
   typename TransformType::CenterType center;

@@ -134,10 +134,10 @@ static int RunTest(int argc, char * argv [] )
 
 
   const unsigned int SpaceDimension = ImageDimension;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
 
   typedef itk::BSplineDeformableTransform<
-                            CoordinateRepType,
+                            itk::DefaultParameterValueType,
                             SpaceDimension,
                             VSplineOrder >     TransformType;
 
@@ -181,7 +181,7 @@ static int RunTest(int argc, char * argv [] )
   bsplineTransform->SetGridRegion( bsplineRegion );
   bsplineTransform->SetGridDirection( fixedImage->GetDirection() );
 
-  typedef itk::Similarity2DTransform<CoordinateRepType> BulkTransformType;
+  typedef itk::Similarity2DTransform<itk::DefaultParameterValueType> BulkTransformType;
   BulkTransformType::Pointer bulkTransform = BulkTransformType::New();
   bulkTransform->SetIdentity();
 

@@ -60,7 +60,7 @@ namespace itk
  *
  * The following illustrates the typical usage of this class:
  * \verbatim
- * typedef BSplineTransform<double,2,3> TransformType;
+ * typedef BSplineTransform< itk::DefaultParameterValueType,2,3> TransformType;
  * TransformType::Pointer transform = TransformType::New();
  *
  * transform->SetTransformDomainOrigin( origin );

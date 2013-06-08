@@ -111,7 +111,7 @@ int itkBlockMatchingImageFilterTest( int argc, char * argv[] )
   featureSelectionFilter->ComputeStructureTensorsOff();
 
   // Create transformed image from input to match with
-  typedef itk::TranslationTransform< double, Dimension > TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension > TranslationTransformType;
   TranslationTransformType::Pointer transform = TranslationTransformType::New();
   TranslationTransformType::OutputVectorType translation;
   // move each pixel in input image 5 pixels along first(0) dimension

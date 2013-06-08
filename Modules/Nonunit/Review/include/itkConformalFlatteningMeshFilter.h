@@ -67,7 +67,7 @@ public:
 
   /** Type for representing coordinates. */
   //typedef typename TInputMesh::CoordRepType          CoordRepType;
-  typedef double CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

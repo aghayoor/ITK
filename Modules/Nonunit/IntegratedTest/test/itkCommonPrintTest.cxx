@@ -176,12 +176,12 @@ int itkCommonPrintTest(int , char* [])
     itk::BoundingBox<unsigned long>::New();
   std::cout << "------------BoundingBox" << BoundingBoxObj;
 
-  itk::CenteredAffineTransform<double,3>::Pointer CenteredAffineTransformObj =
-    itk::CenteredAffineTransform<double,3>::New();
+  itk::CenteredAffineTransform< itk::DefaultParameterValueType,3>::Pointer CenteredAffineTransformObj =
+    itk::CenteredAffineTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------CenteredAffineTransform" << CenteredAffineTransformObj;
 
-  itk::CenteredRigid2DTransform<double>::Pointer CenteredRigid2DTransformObj =
-    itk::CenteredRigid2DTransform<double>::New();
+  itk::CenteredRigid2DTransform< itk::DefaultParameterValueType>::Pointer CenteredRigid2DTransformObj =
+    itk::CenteredRigid2DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------CenteredRigid2DTransform" << CenteredRigid2DTransformObj;
 
   itk::CenteredTransformInitializer<TransformType,InputType,InputType>::Pointer CenteredTransformInitializerObj =
@@ -214,12 +214,12 @@ int itkCommonPrintTest(int , char* [])
     itk::DynamicLoader::New();
   std::cout << "------------DynamicLoader" << DynamicLoaderObj;
 
-  itk::ElasticBodyReciprocalSplineKernelTransform<double,3>::Pointer ElasticBodyReciprocalSplineKernelTransformObj =
-    itk::ElasticBodyReciprocalSplineKernelTransform<double,3>::New();
+  itk::ElasticBodyReciprocalSplineKernelTransform< itk::DefaultParameterValueType,3>::Pointer ElasticBodyReciprocalSplineKernelTransformObj =
+    itk::ElasticBodyReciprocalSplineKernelTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------ElasticBodyReciprocalSplineKernelTransform" << ElasticBodyReciprocalSplineKernelTransformObj;
 
-  itk::ElasticBodySplineKernelTransform<double,3>::Pointer ElasticBodySplineKernelTransformObj =
-    itk::ElasticBodySplineKernelTransform<double,3>::New();
+  itk::ElasticBodySplineKernelTransform< itk::DefaultParameterValueType,3>::Pointer ElasticBodySplineKernelTransformObj =
+    itk::ElasticBodySplineKernelTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------ElasticBodySplineKernelTransform" << ElasticBodySplineKernelTransformObj;
 
   itk::EllipsoidInteriorExteriorSpatialFunction<2,PointType>::Pointer EllipsoidInteriorExteriorSpatialFunctionObj =
@@ -230,12 +230,12 @@ int itkCommonPrintTest(int , char* [])
     itk::EquivalencyTable::New();
   std:: cout << "-------------EquivalencyTable " << EquivalencyTableObj;
 
-  itk::Euler2DTransform<double>::Pointer Euler2DTransformObj =
-    itk::Euler2DTransform<double>::New();
+  itk::Euler2DTransform< itk::DefaultParameterValueType>::Pointer Euler2DTransformObj =
+    itk::Euler2DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------Euler2DTransform" << Euler2DTransformObj;
 
-  itk::Euler3DTransform<double>::Pointer Euler3DTransformObj =
-    itk::Euler3DTransform<double>::New();
+  itk::Euler3DTransform< itk::DefaultParameterValueType>::Pointer Euler3DTransformObj =
+    itk::Euler3DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------Euler3DTransform" << Euler3DTransformObj;
 
   itk::ExpImageAdaptor<InputType,OutputType>::Pointer ExpImageAdaptorObj =
@@ -270,8 +270,8 @@ int itkCommonPrintTest(int , char* [])
     itk::GaussianSpatialFunction<float,2,PointType>::New();
   std::cout << "------------GaussianSpatialFunction" << GaussianSpatialFunctionObj;
 
-  itk::IdentityTransform<double,3>::Pointer IdentityTransformObj =
-    itk::IdentityTransform<double,3>::New();
+  itk::IdentityTransform< itk::DefaultParameterValueType,3>::Pointer IdentityTransformObj =
+    itk::IdentityTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------IdentityTransform" << IdentityTransformObj;
 
   itk::Image<VectorType,2>::Pointer ImageObj =
@@ -302,8 +302,8 @@ int itkCommonPrintTest(int , char* [])
     itk::KLMSegmentationRegion::New();
   std::cout << "------------KLMSegmentationRegion" << KLMSegmentationRegionObj;
 
-  itk::KernelTransform<double,3>::Pointer KernelTransformObj =
-    itk::KernelTransform<double,3>::New();
+  itk::KernelTransform< itk::DefaultParameterValueType,3>::Pointer KernelTransformObj =
+    itk::KernelTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------KernelTransform" << KernelTransformObj;
 
   itk::LevelSetFunction<InputType>::Pointer LevelSetFunctionObj =
@@ -402,30 +402,30 @@ int itkCommonPrintTest(int , char* [])
     itk::ProgressAccumulator::New();
   std::cout << "------------ProgressAccumulator" << ProgressAccumulatorObj;
 
-  itk::QuaternionRigidTransform<double>::Pointer QuaternionRigidTransformObj =
-    itk::QuaternionRigidTransform<double>::New();
+  itk::QuaternionRigidTransform< itk::DefaultParameterValueType>::Pointer QuaternionRigidTransformObj =
+    itk::QuaternionRigidTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------QuaternionRigidTransform" << QuaternionRigidTransformObj;
 
   itk::RGBToVectorImageAdaptor<RGBImageType>::Pointer RGBToVectorImageAdaptorObj =
     itk::RGBToVectorImageAdaptor<RGBImageType>::New();
   std::cout << "------------RGBToVectorImageAdaptor" << RGBToVectorImageAdaptorObj;
 
-  itk::Rigid2DTransform<double>::Pointer Rigid2DTransformObj =
-    itk::Rigid2DTransform<double>::New();
+  itk::Rigid2DTransform< itk::DefaultParameterValueType>::Pointer Rigid2DTransformObj =
+    itk::Rigid2DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------Rigid2DTransform" << Rigid2DTransformObj;
 
 #ifdef ITKV3_COMPATIBILITY
-  itk::Rigid3DTransform<double>::Pointer Rigid3DTransformObj =
-    itk::Rigid3DTransform<double>::New();
+  itk::Rigid3DTransform< itk::DefaultParameterValueType>::Pointer Rigid3DTransformObj =
+    itk::Rigid3DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------Rigid3DTransform" << Rigid3DTransformObj;
 #endif
 
-  itkv3::Rigid3DTransform<double>::Pointer v3Rigid3DTransformObj =
-    itkv3::Rigid3DTransform<double>::New();
+  itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::Pointer v3Rigid3DTransformObj =
+    itkv3::Rigid3DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------v3Rigid3DTransform" << v3Rigid3DTransformObj;
 
-  itk::Rigid3DPerspectiveTransform<double>::Pointer Rigid3DPerspectiveTransformObj =
-    itk::Rigid3DPerspectiveTransform<double>::New();
+  itk::Rigid3DPerspectiveTransform< itk::DefaultParameterValueType>::Pointer Rigid3DPerspectiveTransformObj =
+    itk::Rigid3DPerspectiveTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------Rigid3DPerspectiveTransform" << Rigid3DPerspectiveTransformObj;
 
   itk::ScaleTransform<float,3>::Pointer ScaleTransformObj =
@@ -440,8 +440,8 @@ int itkCommonPrintTest(int , char* [])
     itk::SegmentationRegion::New();
   std::cout << "------------SegmentationRegion" << SegmentationRegionObj;
 
-  itk::Similarity2DTransform<double>::Pointer Similarity2DTransformObj =
-    itk::Similarity2DTransform<double>::New();
+  itk::Similarity2DTransform< itk::DefaultParameterValueType>::Pointer Similarity2DTransformObj =
+    itk::Similarity2DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------Similarity2DTransform" << Similarity2DTransformObj;
 
   itk::SinImageAdaptor<InputType,OutputType>::Pointer SinImageAdaptorObj =
@@ -468,20 +468,20 @@ int itkCommonPrintTest(int , char* [])
     itk::TextOutput::New();
   std::cout << "------------TextOutput" << TextOutputObj;
 
-  itk::ThinPlateR2LogRSplineKernelTransform<double,3>::Pointer ThinPlateR2LogRSplineKernelTransformObj =
-    itk::ThinPlateR2LogRSplineKernelTransform<double,3>::New();
+  itk::ThinPlateR2LogRSplineKernelTransform< itk::DefaultParameterValueType,3>::Pointer ThinPlateR2LogRSplineKernelTransformObj =
+    itk::ThinPlateR2LogRSplineKernelTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------ThinPlateR2LogRSplineKernelTransform" << ThinPlateR2LogRSplineKernelTransformObj;
 
-  itk::ThinPlateSplineKernelTransform<double,3>::Pointer ThinPlateSplineKernelTransformObj =
-    itk::ThinPlateSplineKernelTransform<double,3>::New();
+  itk::ThinPlateSplineKernelTransform< itk::DefaultParameterValueType,3>::Pointer ThinPlateSplineKernelTransformObj =
+    itk::ThinPlateSplineKernelTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------ThinPlateSplineKernelTransform" << ThinPlateSplineKernelTransformObj;
 
   itk::TorusInteriorExteriorSpatialFunction<>::Pointer TorusInteriorExteriorSpatialFunctionObj =
     itk::TorusInteriorExteriorSpatialFunction<>::New();
   std::cout << "------------TorusInteriorExteriorSpatialFunction" << TorusInteriorExteriorSpatialFunctionObj;
 
-  itk::TranslationTransform<double,3>::Pointer TranslationTransformObj =
-    itk::TranslationTransform<double,3>::New();
+  itk::TranslationTransform< itk::DefaultParameterValueType,3>::Pointer TranslationTransformObj =
+    itk::TranslationTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------TranslationTransform" << TranslationTransformObj;
 
   itk::ValarrayImageContainer<unsigned long,PointType>::Pointer ValarrayImageContainerObj =
@@ -512,20 +512,20 @@ int itkCommonPrintTest(int , char* [])
     itk::Version::New();
   std::cout << "------------Version" << VersionObj;
 
-  itk::ScaleSkewVersor3DTransform<double>::Pointer ScaleSkewVersor3DTransformObj =
-    itk::ScaleSkewVersor3DTransform<double>::New();
+  itk::ScaleSkewVersor3DTransform< itk::DefaultParameterValueType>::Pointer ScaleSkewVersor3DTransformObj =
+    itk::ScaleSkewVersor3DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------ScaleSkewVersor3DTransform" << ScaleSkewVersor3DTransformObj;
 
-  itk::VersorRigid3DTransform<double>::Pointer VersorRigid3DTransformObj =
-    itk::VersorRigid3DTransform<double>::New();
+  itk::VersorRigid3DTransform< itk::DefaultParameterValueType>::Pointer VersorRigid3DTransformObj =
+    itk::VersorRigid3DTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------VersorRigid3DTransform" << VersorRigid3DTransformObj;
 
-  itk::VersorTransform<double>::Pointer VersorTransformObj =
-    itk::VersorTransform<double>::New();
+  itk::VersorTransform< itk::DefaultParameterValueType>::Pointer VersorTransformObj =
+    itk::VersorTransform< itk::DefaultParameterValueType>::New();
   std::cout << "------------VersorTransform" << VersorTransformObj;
 
-  itk::VolumeSplineKernelTransform<double,3>::Pointer VolumeSplineKernelTransformObj =
-    itk::VolumeSplineKernelTransform<double,3>::New();
+  itk::VolumeSplineKernelTransform< itk::DefaultParameterValueType,3>::Pointer VolumeSplineKernelTransformObj =
+    itk::VolumeSplineKernelTransform< itk::DefaultParameterValueType,3>::New();
   std::cout << "------------VolumeSplineKernelTransform" << VolumeSplineKernelTransformObj;
 
   itk::XMLFileOutputWindow::Pointer XMLFileOutputWindowObj =

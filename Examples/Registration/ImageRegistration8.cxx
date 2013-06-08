@@ -152,7 +152,7 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
-  typedef itk::VersorRigid3DTransform< double > TransformType;
+  typedef itk::VersorRigid3DTransform< itk::DefaultParameterValueType > TransformType;
   // Software Guide : EndCodeSnippet
   typedef itk::VersorRigid3DTransformOptimizer                                  OptimizerType;
   typedef itk::MeanSquaresImageToImageMetric< FixedImageType, MovingImageType > MetricType;
@@ -556,7 +556,7 @@ int main( int argc, char *argv[] )
     writer2->Update();
     }
 
-  typedef itk::IdentityTransform< double, Dimension > IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension > IdentityTransformType;
   IdentityTransformType::Pointer identity = IdentityTransformType::New();
   // Compute the difference image between the
   // fixed and moving image before registration.

@@ -29,7 +29,7 @@ enum{ WindowRadius = 2 };
 
 typedef unsigned char                               PixelType;
 typedef itk::Image<PixelType,ImageDimension>        ImageType;
-typedef double                                      CoordRepType;
+typedef itk::DefaultParameterValueType CoordRepType;
 typedef itk::Function::HammingWindowFunction<2>     WindowFunctionType;
 typedef itk::ConstantBoundaryCondition< ImageType > BoundaryConditionType;
 

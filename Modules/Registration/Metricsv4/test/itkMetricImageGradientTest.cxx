@@ -403,7 +403,7 @@ int itkMetricImageGradientTest( int argc, char *argv[] )
         // Transform
         typedef itk::Image<double, 2> ImageType;
 
-        typedef itk::AffineTransform<double, 2> TransformType;
+        typedef itk::AffineTransform< itk::DefaultParameterValueType, 2> TransformType;
 
         TransformType::Pointer transform = TransformType::New();
         transform->SetIdentity();
@@ -425,7 +425,7 @@ int itkMetricImageGradientTest( int argc, char *argv[] )
       if ( dimensionality == 3 )
         {
         // Transform
-        typedef itk::AffineTransform<double, 3> TransformType;
+        typedef itk::AffineTransform< itk::DefaultParameterValueType, 3> TransformType;
         TransformType::Pointer transform = TransformType::New();
         transform->SetIdentity();
         double angleRad = itk::Math::pi * rotationDegrees / 180;

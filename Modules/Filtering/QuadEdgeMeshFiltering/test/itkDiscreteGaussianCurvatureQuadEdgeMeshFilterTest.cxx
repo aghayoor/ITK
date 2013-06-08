@@ -33,7 +33,7 @@ int itkDiscreteGaussianCurvatureQuadEdgeMeshFilterTest( int argc, char* argv[] )
     }
 
   const unsigned int Dimension = 3;
-  typedef double CoordType;
+  typedef itk::DefaultParameterValueType CoordType;
 
   typedef itk::QuadEdgeMeshExtendedTraits <
     CoordType,

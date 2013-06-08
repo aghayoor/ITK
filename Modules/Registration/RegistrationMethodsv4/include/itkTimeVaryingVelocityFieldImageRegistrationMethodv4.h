@@ -89,7 +89,7 @@ class Array1DToData;
  * \ingroup ITKRegistrationMethodsv4
  */
 template<typename TFixedImage, typename TMovingImage, typename TOutputTransform =
-  GaussianSmoothingOnUpdateTimeVaryingVelocityFieldTransform<double, TFixedImage::ImageDimension> >
+  GaussianSmoothingOnUpdateTimeVaryingVelocityFieldTransform< itk::DefaultParameterValueType, TFixedImage::ImageDimension> >
 class ITK_EXPORT TimeVaryingVelocityFieldImageRegistrationMethodv4
 : public ImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
 {

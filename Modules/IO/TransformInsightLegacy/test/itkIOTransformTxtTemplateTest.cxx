@@ -31,8 +31,8 @@ template<class ScalarType>
 static int oneTest(const char *goodname,const char *badname)
 {
   unsigned int i;
-  typedef itk::AffineTransform<double,4>  AffineTransformType;
-  typedef itk::AffineTransform<double,10> AffineTransformTypeNotRegistered;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType,4>  AffineTransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType,10> AffineTransformTypeNotRegistered;
   AffineTransformType::Pointer        affine = AffineTransformType::New();
   AffineTransformType::InputPointType cor;
 

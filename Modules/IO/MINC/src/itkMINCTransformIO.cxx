@@ -87,9 +87,9 @@ void MINCTransformIO::ReadOneTransform(VIO_General_transform *xfm)
 
       if(xfm->inverse_flag)
         {
-        AffineTransform<double,3>::Pointer tmp=AffineTransform<double,3>::New();
+        AffineTransform< itk::DefaultParameterValueType,3>::Pointer tmp=AffineTransform< itk::DefaultParameterValueType,3>::New();
         tmp->SetParametersByValue(ParameterArray);
-        tmp->GetInverse(static_cast<AffineTransform<double,3>*>(transform.GetPointer()));
+        tmp->GetInverse(static_cast<AffineTransform< itk::DefaultParameterValueType,3>*>(transform.GetPointer()));
         }
       else
         {
@@ -117,7 +117,7 @@ void MINCTransformIO::ReadOneTransform(VIO_General_transform *xfm)
     {
       if(xfm->displacement_volume_file)
         {
-        typedef DisplacementFieldTransform<double, 3 > DoubleDisplacementFieldTransformType;
+        typedef DisplacementFieldTransform< itk::DefaultParameterValueType, 3 > DoubleDisplacementFieldTransformType;
         typedef DoubleDisplacementFieldTransformType::DisplacementFieldType DoubleGridImageType;
         typedef ImageFileReader< DoubleGridImageType > DoubleMincReaderType;
 
@@ -196,7 +196,7 @@ void MINCTransformIO::WriteOneTransform(const int transformIndex,
       create_linear_transform(&xfm[xfm.size()-1],&lin );
     } else if(transformType.find("DisplacementFieldTransform_double_3_3") != std::string::npos && curTransform->GetFixedParameters().Size() == 18) {
       bool _inverse_grid=false;
-      typedef DisplacementFieldTransform<double, 3 > DoubleDisplacementFieldTransformType;
+      typedef DisplacementFieldTransform< itk::DefaultParameterValueType, 3 > DoubleDisplacementFieldTransformType;
       DoubleDisplacementFieldTransformType* _grid_transform=static_cast<DoubleDisplacementFieldTransformType*>(const_cast<TransformType*>(curTransform));
       char tmp[1024];
       sprintf(tmp,"%s_grid_%d.mnc",xfm_file_base,serial);

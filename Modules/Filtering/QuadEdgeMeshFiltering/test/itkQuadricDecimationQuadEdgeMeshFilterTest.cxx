@@ -36,7 +36,7 @@ int itkQuadricDecimationQuadEdgeMeshFilterTest( int argc, char* argv[] )
     }
 
 // ** TYPEDEF **
-  typedef double        CoordType;
+  typedef itk::DefaultParameterValueType CoordType;
   const unsigned int    Dimension = 3;
 
   typedef itk::QuadEdgeMesh< CoordType, Dimension >      MeshType;

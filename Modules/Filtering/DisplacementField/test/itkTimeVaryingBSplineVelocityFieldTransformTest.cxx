@@ -112,7 +112,7 @@ int itkTimeVaryingBSplineVelocityFieldTransformTest( int, char* [] )
     }
   timeVaryingVelocityFieldSize[3] = 5;
 
-  typedef itk::TimeVaryingBSplineVelocityFieldTransform<double, 3> TransformType;
+  typedef itk::TimeVaryingBSplineVelocityFieldTransform< itk::DefaultParameterValueType, 3> TransformType;
   TransformType::Pointer transform = TransformType::New();
   transform->SetLowerTimeBound( 0.0 );
   transform->SetUpperTimeBound( 1.0 );

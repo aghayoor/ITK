@@ -64,21 +64,15 @@ SingleValuedVnlCostFunctionAdaptor
 
   // Use scales if they are provided
   ParametersType parameters( inparameters.size() );
-  if ( m_ScalesInitialized )
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < parameters.size(); i++ )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] = inparameters[i] * invScales[i];
-      }
-    }
-  else
-    {
-    parameters.SetData( const_cast< double * >( inparameters.data_block() ) );
+    parameters[i] = ( m_ScalesInitialized )
+      ? inparameters[i] * invScales[i]
+      : inparameters[i];
     }
 
   InternalMeasureType value = static_cast< InternalMeasureType >( m_CostFunction->GetValue(parameters) );
-
   if ( m_NegateCostFunction )
     {
     value *= -1.0;
@@ -106,19 +100,13 @@ SingleValuedVnlCostFunctionAdaptor
 
   // Use scales if they are provided
   ParametersType parameters( inparameters.size() );
-  if ( m_ScalesInitialized )
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < parameters.size(); i++ )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] = inparameters[i] * invScales[i];
-      }
+    parameters[i] = ( m_ScalesInitialized )
+      ? inparameters[i] * invScales[i]
+      : inparameters[i];
     }
-  else
-    {
-    parameters.SetData( const_cast< double * >( inparameters.data_block() ) );
-    }
-
   m_CostFunction->GetDerivative(parameters, m_CachedDerivative);
   this->ConvertExternalToInternalGradient(m_CachedDerivative, gradient);
 
@@ -139,19 +127,12 @@ SingleValuedVnlCostFunctionAdaptor
 {
   // delegate the computation to the CostFunction
   ParametersType parameters( x.size() );
-  double         measure;
+  itk::DefaultParameterValueType measure;
 
-  if ( m_ScalesInitialized )
+  const ScalesType & invScales = this->GetInverseScales();
+  for ( unsigned int i = 0; i < parameters.size(); ++i )
     {
-    const ScalesType & invScales = this->GetInverseScales();
-    for ( unsigned int i = 0; i < parameters.size(); i++ )
-      {
-      parameters[i] = x[i] * invScales[i];
-      }
-    }
-  else
-    {
-    parameters.SetData( const_cast< double * >( x.data_block() ) );
+    parameters[i] = ( m_ScalesInitialized ) ? x[i] * invScales[i] : x[i] ;
     }
 
   m_CostFunction->GetValueAndDerivative(parameters, measure, m_CachedDerivative);

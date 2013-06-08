@@ -252,7 +252,7 @@ int main( int argc, char * argv[] )
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
-  typedef itk::IdentityTransform< double, Dimension >  TransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension >  TransformType;
 
   TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();

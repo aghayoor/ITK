@@ -90,20 +90,20 @@ int itkMultiGradientImageToImageMetricv4RegistrationTest(int argc, char *argv[])
 
 
   /** create a composite transform holder for other transforms  */
-  typedef itk::CompositeTransform<double, Dimension>    CompositeType;
+  typedef itk::CompositeTransform< itk::DefaultParameterValueType, Dimension>    CompositeType;
   typedef CompositeType::ScalarType                     ScalarType;
 
   CompositeType::Pointer compositeTransform = CompositeType::New();
 
   //create an affine transform
-  typedef itk::AffineTransform<double, Dimension>
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension>
                                                     AffineTransformType;
   AffineTransformType::Pointer affineTransform = AffineTransformType::New();
   affineTransform->SetIdentity();
   std::cout <<" affineTransform params prior to optimization " << affineTransform->GetParameters() << std::endl;
 
   //identity transform for fixed image
-  typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension> IdentityTransformType;
   IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
   identityTransform->SetIdentity();
 

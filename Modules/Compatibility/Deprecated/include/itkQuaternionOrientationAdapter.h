@@ -41,7 +41,7 @@ namespace itk
  */
 namespace QuaternionOrientationAdapterClasses
 {
-typedef QuaternionRigidTransform< double > TransformType;
+typedef QuaternionRigidTransform< itk::DefaultParameterValueType > TransformType;
 typedef TransformType::Pointer             TransformPointerType;
 }
 template< int VDimension >
@@ -53,7 +53,7 @@ public:
   typedef QuaternionOrientationAdapter Self;
 
   typedef OrientationAdapterBase< QuaternionOrientationAdapterClasses::TransformPointerType, VDimension > SuperClass;
-  typedef QuaternionRigidTransform< double >
+  typedef QuaternionRigidTransform< itk::DefaultParameterValueType >
   OrientationRootType;
   typedef QuaternionOrientationAdapterClasses::TransformPointerType
   OrientationType;

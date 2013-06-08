@@ -64,7 +64,7 @@ namespace itk
  */
 template< typename TCoordRep,
           unsigned int VSpaceDimension,
-          typename TImage = Image< double, VSpaceDimension > >
+          typename TImage = Image< itk::DefaultParameterValueType, VSpaceDimension > >
 class ITK_EXPORT PCAShapeSignedDistanceFunction:
   public ShapeSignedDistanceFunction< TCoordRep, VSpaceDimension >
 {
@@ -107,7 +107,7 @@ public:
   typedef std::vector< ImagePointer > ImagePointerVector;
 
   /** Transform typedef support. */
-  typedef Transform< CoordRepType,
+  typedef Transform< typename ParametersType::ValueType,
                      itkGetStaticConstMacro(SpaceDimension),
                      itkGetStaticConstMacro(SpaceDimension) > TransformType;
 
@@ -122,7 +122,7 @@ public:
   typedef std::vector< ExtrapolatorPointer >                  ExtrapolatorPointerVector;
 
   /** function typedef support. */
-  typedef ImageFunction< ImageType, double, CoordRepType > FunctionType;
+  typedef ImageFunction< ImageType, itk::DefaultParameterValueType, CoordRepType > FunctionType;
   typedef typename FunctionType::Pointer                   FunctionPointer;
   typedef std::vector< FunctionPointer >                   FunctionPointerVector;
 

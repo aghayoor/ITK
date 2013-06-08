@@ -58,7 +58,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
   const unsigned int N = 2;
   bool               Ok = true;
 
-  typedef itk::Euler2DTransform<double> EulerTransformType;
+  typedef itk::Euler2DTransform< itk::DefaultParameterValueType> EulerTransformType;
   EulerTransformType::Pointer eulerTransform = EulerTransformType::New();
 
   // Testing Identity

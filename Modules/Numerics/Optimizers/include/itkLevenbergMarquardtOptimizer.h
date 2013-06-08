@@ -45,8 +45,11 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(LevenbergMarquardtOptimizer, MultipleValuedNonLinearVnlOptimizer);
 
+  typedef itk::DefaultParameterValueType InternalComputationType;
+  typedef double VnlOptimizerValueType;
+
   /** InternalParameters typedef. */
-  typedef   vnl_vector< double > InternalParametersType;
+  typedef   vnl_vector< VnlOptimizerValueType > InternalParametersType;
 
   /** Internal optimizer type. */
   typedef   vnl_levenberg_marquardt InternalOptimizerType;
@@ -62,11 +65,11 @@ public:
 
   void SetNumberOfIterations(unsigned int iterations);
 
-  void SetValueTolerance(double tol);
+  void SetValueTolerance(VnlOptimizerValueType tol);
 
-  void SetGradientTolerance(double tol);
+  void SetGradientTolerance(VnlOptimizerValueType tol);
 
-  void SetEpsilonFunction(double epsilon);
+  void SetEpsilonFunction(VnlOptimizerValueType epsilon);
 
   /** Get the current value */
   MeasureType GetValue() const;
@@ -86,9 +89,9 @@ private:
   bool                   m_OptimizerInitialized;
   InternalOptimizerType *m_VnlOptimizer;
   unsigned int           m_NumberOfIterations;
-  double                 m_ValueTolerance;
-  double                 m_GradientTolerance;
-  double                 m_EpsilonFunction;
+  VnlOptimizerValueType  m_ValueTolerance;
+  VnlOptimizerValueType  m_GradientTolerance;
+  VnlOptimizerValueType  m_EpsilonFunction;
 };
 } // end namespace itk
 

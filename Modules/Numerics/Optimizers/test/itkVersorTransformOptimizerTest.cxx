@@ -50,7 +50,7 @@ public:
   typedef itk::SmartPointer<Self>       Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
 
-  typedef itk::VersorTransform<double>   TransformType;
+  typedef itk::VersorTransform< itk::DefaultParameterValueType>   TransformType;
 
   itkNewMacro( Self );
   itkTypeMacro( versorCostFunction, SingleValuedCostFunction );
@@ -60,12 +60,11 @@ public:
   typedef Superclass::ParametersType              ParametersType;
   typedef Superclass::DerivativeType              DerivativeType;
 
-  typedef itk::Versor< double >                   VersorType;
-  typedef VersorType::VectorType                  AxisType;
-  typedef itk::Vector< double,  SpaceDimension >  VectorType;
+  typedef itk::Versor< itk::DefaultParameterValueType >                   VersorType;
+  typedef VersorType::VectorType                                          AxisType;
+  typedef itk::Vector< itk::DefaultParameterValueType,  SpaceDimension >  VectorType;
 
-  typedef double MeasureType;
-
+  typedef itk::DefaultParameterValueType MeasureType;
 
   versorCostFunction()
   {

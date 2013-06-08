@@ -48,7 +48,7 @@ int itkMultiResolutionImageRegistrationMethodTest(int, char* [] )
   typedef itk::Image<float,dimension>                     MovingImageType;
 
   // Transform Type
-  typedef itk::TranslationTransform< double, dimension > TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, dimension > TransformType;
 
   // Optimizer Type
   typedef itk::RegularStepGradientDescentOptimizer       OptimizerType;

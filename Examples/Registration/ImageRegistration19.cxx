@@ -99,7 +99,7 @@ int main( int argc, char *argv[] )
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
 
-  typedef itk::AffineTransform< double, Dimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension > TransformType;
 
   typedef itk::AmoebaOptimizer       OptimizerType;
 

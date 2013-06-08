@@ -35,7 +35,7 @@ int itkKappaStatisticImageToImageMetricTest(int, char* [] )
   typedef itk::KappaStatisticImageToImageMetric< UCharImage2DType, UCharImage2DType >  MetricType;
   typedef itk::ImageRegionIteratorWithIndex< UCharImage2DType >                        UCharIteratorType;
   typedef itk::ImageRegionIteratorWithIndex< DoubleImage2DType >                       DoubleIteratorType;
-  typedef itk::TranslationTransform< double, 2 >                                       TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, 2 >                                       TransformType;
   typedef itk::NearestNeighborInterpolateImageFunction< UCharImage2DType, double >     InterpolatorType;
 
   double epsilon = 0.000001;

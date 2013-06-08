@@ -83,6 +83,8 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(OnePlusOneEvolutionaryOptimizer, SingleValuedNonLinearOptimizer);
 
+  typedef itk::DefaultParameterValueType InternalComputationType;
+
   /** Type of the Cost Function   */
   typedef  SingleValuedCostFunction  CostFunctionType;
   typedef  CostFunctionType::Pointer CostFunctionPointer;
@@ -109,24 +111,24 @@ public:
   itkGetConstReferenceMacro(MaximumIteration, unsigned int);
 
   /** Set/Get the search radius grow factor in parameter space. */
-  itkSetMacro(GrowthFactor, double);
-  itkGetConstReferenceMacro(GrowthFactor, double);
+  itkSetMacro(GrowthFactor, InternalComputationType);
+  itkGetConstReferenceMacro(GrowthFactor, InternalComputationType);
 
   /** Set/Get the search radius shrink factor. */
-  itkSetMacro(ShrinkFactor, double);
-  itkGetConstReferenceMacro(ShrinkFactor, double);
+  itkSetMacro(ShrinkFactor, InternalComputationType);
+  itkGetConstReferenceMacro(ShrinkFactor, InternalComputationType);
 
   /** Set/Get initial search radius in parameter space */
-  itkSetMacro(InitialRadius, double);
-  itkGetConstReferenceMacro(InitialRadius, double);
+  itkSetMacro(InitialRadius, InternalComputationType);
+  itkGetConstReferenceMacro(InitialRadius, InternalComputationType);
 
   /** Set/Get the minimal size of search radius
    * (frobenius_norm of covariance matrix). */
-  itkSetMacro(Epsilon, double);
-  itkGetConstReferenceMacro(Epsilon, double);
+  itkSetMacro(Epsilon, InternalComputationType);
+  itkGetConstReferenceMacro(Epsilon, InternalComputationType);
 
   /** Get the current Frobenius norm of covariance matrix */
-  itkGetConstReferenceMacro(FrobeniusNorm, double);
+  itkGetConstReferenceMacro(FrobeniusNorm, InternalComputationType);
 
   void SetNormalVariateGenerator(NormalVariateGeneratorType *generator);
 
@@ -136,7 +138,7 @@ public:
    * initialRadius: search radius in parameter space
    * grow: search radius grow factor
    * shrink: searhc radius shrink factor */
-  void Initialize(double initialRadius, double grow = -1, double shrink = -1);
+  void Initialize(InternalComputationType initialRadius, InternalComputationType grow = -1, InternalComputationType shrink = -1);
 
   /** Return Current Value */
   itkGetConstReferenceMacro(CurrentCost, MeasureType);
@@ -162,8 +164,8 @@ public:
   itkGetConstReferenceMacro(CatchGetValueException, bool);
   itkSetMacro(CatchGetValueException, bool);
 
-  itkGetConstReferenceMacro(MetricWorstPossibleValue, double);
-  itkSetMacro(MetricWorstPossibleValue, double);
+  itkGetConstReferenceMacro(MetricWorstPossibleValue, InternalComputationType);
+  itkSetMacro(MetricWorstPossibleValue, InternalComputationType);
 
   const std::string GetStopConditionDescription() const;
 
@@ -185,23 +187,23 @@ private:
   unsigned int m_CurrentIteration;
 
   bool   m_CatchGetValueException;
-  double m_MetricWorstPossibleValue;
+  InternalComputationType m_MetricWorstPossibleValue;
 
   /** Set if the Metric should be maximized: Default = False */
   bool m_Maximize;
 
   /** The minimal size of search radius
    * (frobenius_norm of covariance matrix). */
-  double m_Epsilon;
+  InternalComputationType m_Epsilon;
 
   /** Initial search radius in parameter space. */
-  double m_InitialRadius;
+  InternalComputationType m_InitialRadius;
 
   /** Search radius growth factor in parameter space. */
-  double m_GrowthFactor;
+  InternalComputationType m_GrowthFactor;
 
   /** Search radius shrink factor in parameter space, */
-  double m_ShrinkFactor;
+  InternalComputationType m_ShrinkFactor;
 
   /** Flag tells if the optimizer was initialized using Initialize function. */
   bool m_Initialized;
@@ -220,7 +222,7 @@ private:
 
   /** Cache variable for reporting the Frobenius Norm
    */
-  double m_FrobeniusNorm;
+  InternalComputationType m_FrobeniusNorm;
 }; // end of class
 } // end of namespace itk
 

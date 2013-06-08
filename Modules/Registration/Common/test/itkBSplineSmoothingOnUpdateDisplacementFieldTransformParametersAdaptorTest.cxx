@@ -22,7 +22,7 @@
 int itkBSplineSmoothingOnUpdateDisplacementFieldTransformParametersAdaptorTest(int, char * [] )
 {
   const unsigned int SpaceDimension = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
   typedef itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<CoordinateRepType, SpaceDimension> TransformType;
 
   /**

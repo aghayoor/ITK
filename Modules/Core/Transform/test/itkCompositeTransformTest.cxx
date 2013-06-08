@@ -104,7 +104,7 @@ int itkCompositeTransformTest(int, char *[] )
   const unsigned int NDimensions = 2;
 
   /* Create composite transform */
-  typedef itk::CompositeTransform<double, NDimensions> CompositeType;
+  typedef itk::CompositeTransform< itk::DefaultParameterValueType, NDimensions> CompositeType;
   typedef CompositeType::ScalarType                    ScalarType;
 
   CompositeType::Pointer compositeTransform = CompositeType::New();
@@ -831,7 +831,7 @@ int itkCompositeTransformTest(int, char *[] )
   CompositeType::Pointer compositeTransform3 = CompositeType::New();
   CompositeType::Pointer compositeTransform4 = CompositeType::New();
 
-  typedef itk::TranslationTransform<double, NDimensions>  TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, NDimensions>  TranslationTransformType;
   typedef TranslationTransformType::Pointer               TranslationTransformPointer;
   typedef std::vector<TranslationTransformPointer>        TranslationTransformVector;
   TranslationTransformVector  translationTransformVector(12);

@@ -79,7 +79,7 @@ int itkQuasiNewtonOptimizerv4TestTemplated(int numberOfIterations,
   movingTransform->SetIdentity();
 
   // Transform for the fixed image
-  typedef itk::IdentityTransform<double, Dimension> FixedTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension> FixedTransformType;
   typename FixedTransformType::Pointer fixedTransform = FixedTransformType::New();
   fixedTransform->SetIdentity();
 
@@ -247,11 +247,11 @@ int itkQuasiNewtonOptimizerv4Test(int argc, char ** const argv)
   const unsigned int Dimension = 2;
 
   std::cout << std::endl << "Optimizing translation transform with shift scales" << std::endl;
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   int ret1 = itkQuasiNewtonOptimizerv4TestTemplated<TranslationTransformType>(numberOfIterations, shiftOfStep, "shift");
 
   std::cout << std::endl << "Optimizing translation transform with Jacobian scales" << std::endl;
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   int ret2 = itkQuasiNewtonOptimizerv4TestTemplated<TranslationTransformType>(numberOfIterations, shiftOfStep, "jacobian");
 
   if ( ret1 == EXIT_SUCCESS && ret2 == EXIT_SUCCESS )

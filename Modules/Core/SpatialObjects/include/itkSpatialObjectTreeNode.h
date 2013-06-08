@@ -41,7 +41,7 @@ public:
   typedef SpatialObjectTreeNode< TDimension >           Self;
   typedef SmartPointer< Self >                          Pointer;
   typedef SmartPointer< const Self >                    ConstPointer;
-  typedef ScalableAffineTransform< double, TDimension > TransformType;
+  typedef ScalableAffineTransform< itk::DefaultParameterValueType, TDimension > TransformType;
   typedef typename TransformType::Pointer               TransformPointer;
   typedef const TransformType *                         TransformConstPointer;
   typedef typename Superclass::ChildrenListType         ChildrenListType;

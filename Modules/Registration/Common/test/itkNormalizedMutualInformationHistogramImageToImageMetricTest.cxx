@@ -32,7 +32,7 @@ int itkNormalizedMutualInformationHistogramImageToImageMetricTest(int,
     // Create two simple images.
     const unsigned int ImageDimension = 2;
     typedef double PixelType;
-    typedef double CoordinateRepresentationType;
+    typedef itk::DefaultParameterValueType CoordinateRepresentationType;
 
     //Allocate Images
     typedef itk::Image<PixelType,ImageDimension> MovingImageType;

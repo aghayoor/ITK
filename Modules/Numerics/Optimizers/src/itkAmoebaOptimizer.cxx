@@ -76,7 +76,7 @@ AmoebaOptimizer::MeasureType
 AmoebaOptimizer
 ::GetValue() const
 {
-  ParametersType parameters = this->GetCurrentPosition();
+  VnlParametersType parameters ( this->GetCurrentPosition() );
   const unsigned int numberOfParameters = parameters.Size();
   SingleValuedNonLinearVnlOptimizer::CostFunctionAdaptorType *costFunction =
     this->GetNonConstCostFunctionAdaptor();
@@ -155,10 +155,14 @@ AmoebaOptimizer
 {
   const ScalesType & scales = GetScales();
   const ParametersType &initialPosition = GetInitialPosition();
-  InternalParametersType delta( m_InitialSimplexDelta );
+  InternalParametersType delta( m_InitialSimplexDelta.size() );
+  for ( unsigned int i = 0; i < delta.size() ; ++i )
+    {
+    delta[i] = static_cast<InternalParametersType::element_type>( m_InitialSimplexDelta[i] );
+    }
   SingleValuedNonLinearVnlOptimizer::CostFunctionAdaptorType *costFunction =
     this->GetCostFunctionAdaptor();
-  unsigned int n =
+  const unsigned int n =
     static_cast<unsigned int>( costFunction->get_number_of_unknowns() );
 
       //validate the settings (cost function is initialized, the size of its
@@ -191,8 +195,7 @@ AmoebaOptimizer
 
   this->SetCurrentPosition( initialPosition );
 
-  ParametersType parameters( initialPosition );
-  ParametersType bestPosition( initialPosition );
+  VnlParametersType parameters( initialPosition );
 
   // If the user provides the scales then we set otherwise we don't
   // for computation speed.
@@ -232,7 +235,7 @@ AmoebaOptimizer
     }
 
   this->m_VnlOptimizer->minimize( parameters, delta );
-  bestPosition = parameters;
+  VnlParametersType bestPosition( parameters );
   double bestValue = adaptor->f( bestPosition );
           //multiple restart heuristic
   if( this->m_OptimizeWithRestarts )
@@ -286,7 +289,7 @@ AmoebaOptimizer
       }
     }
 
-  this->SetCurrentPosition( bestPosition );
+  this->SetCurrentPosition( ParametersType(bestPosition) );
 
   this->m_StopConditionDescription.str( "" );
   this->m_StopConditionDescription << this->GetNameOfClass() << ": ";

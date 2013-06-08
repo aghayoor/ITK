@@ -26,7 +26,7 @@ int itkBSplineInterpolationWeightFunctionTest(int, char* [] )
 {
 
   { // Creating a local scope
-  typedef double CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   const unsigned int SpaceDimension= 1;
   const unsigned int SplineOrder = 2;
 
@@ -118,7 +118,7 @@ int itkBSplineInterpolationWeightFunctionTest(int, char* [] )
   std::cout << "Test passed. " << std::endl;
   }
   { // Creating a local scope
-  typedef double CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   const unsigned int SpaceDimension= 1;
   const unsigned int SplineOrder = 3;
 
@@ -211,7 +211,7 @@ int itkBSplineInterpolationWeightFunctionTest(int, char* [] )
   }
 
   { // Creating a local scope
-  typedef double CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   const unsigned int SpaceDimension= 3;
   const unsigned int SplineOrder = 3;
   std::cout << "Testing SpaceDimension= " << SpaceDimension;

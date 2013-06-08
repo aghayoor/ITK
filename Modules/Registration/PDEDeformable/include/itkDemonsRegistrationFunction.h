@@ -103,7 +103,7 @@ public:
   typedef typename Superclass::TimeStepType     TimeStepType;
 
   /** Interpolator type. */
-  typedef double                                                          CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   typedef InterpolateImageFunction< MovingImageType, CoordRepType >       InterpolatorType;
   typedef typename InterpolatorType::Pointer                              InterpolatorPointer;
   typedef typename InterpolatorType::PointType                            PointType;

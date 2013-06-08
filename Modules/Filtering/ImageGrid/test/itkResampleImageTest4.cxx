@@ -35,7 +35,7 @@ int itkResampleImageTest4(int argc, char * argv [] )
   typedef ImageType::RegionType               ImageRegionType;
   typedef ImageType::SizeType                 ImageSizeType;
 
-  typedef double                  CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
 
   typedef itk::AffineTransform<CoordRepType,NDimensions>   AffineTransformType;
 
@@ -85,8 +85,9 @@ int itkResampleImageTest4(int argc, char * argv [] )
   interp->SetInputImage(image);
 
   // Create and configure a resampling filter
-  itk::ResampleImageFilter< ImageType, ImageType >::Pointer resample;
-  resample = itk::ResampleImageFilter< ImageType, ImageType >::New();
+  typedef itk::ResampleImageFilter< ImageType, ImageType, CoordRepType, itk::DefaultParameterValueType> ResampleType;
+  ResampleType::Pointer resample;
+  resample = ResampleType::New();
   resample->SetInput(image);
   resample->SetSize(osize);
   resample->SetTransform(aff);

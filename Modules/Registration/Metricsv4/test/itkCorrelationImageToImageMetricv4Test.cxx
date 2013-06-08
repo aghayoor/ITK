@@ -189,8 +189,8 @@ int itkCorrelationImageToImageMetricv4Test(int, char ** const)
     }
 
   /* Transforms */
-  typedef itk::TranslationTransform<double,imageDimensionality> FixedTransformType;
-  typedef itk::TranslationTransform<double,imageDimensionality> MovingTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,imageDimensionality> FixedTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,imageDimensionality> MovingTransformType;
 
   FixedTransformType::Pointer fixedTransform = FixedTransformType::New();
   MovingTransformType::Pointer movingTransform = MovingTransformType::New();

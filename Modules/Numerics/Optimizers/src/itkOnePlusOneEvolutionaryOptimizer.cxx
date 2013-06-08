@@ -29,12 +29,12 @@ OnePlusOneEvolutionaryOptimizer
   m_MetricWorstPossibleValue = 0;
 
   m_Maximize = false;
-  m_Epsilon = (double)1.5e-4;
+  m_Epsilon = (InternalComputationType)1.5e-4;
   m_RandomGenerator = 0;
 
   m_Initialized = false;
   m_GrowthFactor = 1.05;
-  m_ShrinkFactor = vcl_pow(m_GrowthFactor, -0.25);
+  m_ShrinkFactor = vcl_pow(m_GrowthFactor, static_cast<itk::DefaultParameterValueType>(-0.25));
   m_InitialRadius = 1.01;
   m_MaximumIteration = 100;
   m_Stop = false;
@@ -61,7 +61,7 @@ OnePlusOneEvolutionaryOptimizer
 
 void
 OnePlusOneEvolutionaryOptimizer
-::Initialize(double initialRadius, double grow, double shrink)
+::Initialize(InternalComputationType initialRadius, InternalComputationType grow, InternalComputationType shrink)
 {
   m_InitialRadius = initialRadius;
 
@@ -75,7 +75,7 @@ OnePlusOneEvolutionaryOptimizer
     }
   if ( shrink == -1 )
     {
-    m_ShrinkFactor = vcl_pow(m_GrowthFactor, -0.25);
+    m_ShrinkFactor = vcl_pow(m_GrowthFactor, static_cast<InternalComputationType>( -0.25) );
     }
   else
     {
@@ -96,11 +96,11 @@ OnePlusOneEvolutionaryOptimizer
   m_Stop = false;
 
   unsigned int         spaceDimension = m_CostFunction->GetNumberOfParameters();
-  vnl_matrix< double > A(spaceDimension, spaceDimension);
-  vnl_vector< double > parent( this->GetInitialPosition() );
-  vnl_vector< double > f_norm(spaceDimension);
-  vnl_vector< double > child(spaceDimension);
-  vnl_vector< double > delta(spaceDimension);
+  vnl_matrix< InternalComputationType > A(spaceDimension, spaceDimension);
+  vnl_vector< InternalComputationType > parent( this->GetInitialPosition() );
+  vnl_vector< InternalComputationType > f_norm(spaceDimension);
+  vnl_vector< InternalComputationType > child(spaceDimension);
+  vnl_vector< InternalComputationType > delta(spaceDimension);
 
   ParametersType parentPosition(spaceDimension);
   ParametersType childPosition(spaceDimension);
@@ -110,7 +110,7 @@ OnePlusOneEvolutionaryOptimizer
     parentPosition[i] = parent[i];
     }
 
-  double pvalue = m_MetricWorstPossibleValue;
+  InternalComputationType pvalue = m_MetricWorstPossibleValue;
   try
     {
     pvalue = m_CostFunction->GetValue(parentPosition);
@@ -179,7 +179,7 @@ OnePlusOneEvolutionaryOptimizer
       childPosition[i] = child[i];
       }
 
-    double cvalue = m_MetricWorstPossibleValue;
+    InternalComputationType cvalue = m_MetricWorstPossibleValue;
     try
       {
       cvalue = m_CostFunction->GetValue(childPosition);
@@ -208,7 +208,7 @@ OnePlusOneEvolutionaryOptimizer
     itkDebugMacro(<< "iter: " << iter << ": child fitness: "
                   << cvalue);
 
-    double adjust = m_ShrinkFactor;
+    InternalComputationType adjust = m_ShrinkFactor;
     if ( m_Maximize )
       {
       if ( cvalue > pvalue )
@@ -250,7 +250,7 @@ OnePlusOneEvolutionaryOptimizer
 
     m_CurrentCost = pvalue;
     // convergence criterion: f-norm of A < epsilon_A
-    // Compute double precision sum of absolute values of
+    // Compute InternalComputationType precision sum of absolute values of
     // a single precision vector
     m_FrobeniusNorm = A.fro_norm();
     itkDebugMacro(<< "A f-norm:" << m_FrobeniusNorm);
@@ -279,7 +279,7 @@ OnePlusOneEvolutionaryOptimizer
     // f_norm, f_norm)
 
     //A = A + (adjust - 1.0) * A;
-    double alpha = ( ( adjust - 1.0 ) / dot_product(f_norm, f_norm) );
+    InternalComputationType alpha = ( ( adjust - 1.0 ) / dot_product(f_norm, f_norm) );
     for ( unsigned int c = 0; c < spaceDimension; c++ )
       {
       for ( unsigned int r = 0; r < spaceDimension; r++ )

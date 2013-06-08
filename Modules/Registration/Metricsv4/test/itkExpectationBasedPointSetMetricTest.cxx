@@ -66,7 +66,7 @@ int itkExpectationBasedPointSetMetricTestRun()
     }
 
   // Simple translation transform for moving point set
-  typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
+  typedef itk::TranslationTransform<itk::DefaultParameterValueType, Dimension> TranslationTransformType;
   typename TranslationTransformType::Pointer translationTransform = TranslationTransformType::New();
   translationTransform->SetIdentity();
 

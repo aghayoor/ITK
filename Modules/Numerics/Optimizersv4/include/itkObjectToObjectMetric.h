@@ -81,7 +81,7 @@ namespace itk
  *
  * \ingroup ITKOptimizersv4
  */
-template<unsigned int TFixedDimension, unsigned int TMovingDimension, class TVirtualImage = Image<double, TFixedDimension>, class TInternalComputationValueType=double>
+template<unsigned int TFixedDimension, unsigned int TMovingDimension, class TVirtualImage = Image<double, TFixedDimension>, class TInternalComputationValueType = DefaultParameterValueType>
 class ITK_EXPORT ObjectToObjectMetric:
   public ObjectToObjectMetricBaseTemplate< TInternalComputationValueType >
 {

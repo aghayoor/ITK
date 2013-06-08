@@ -54,27 +54,27 @@ public:
   typedef Superclass::ParametersType              ParametersType;
   typedef Superclass::DerivativeType              DerivativeType;
 
-  typedef vnl_vector<double>                      VectorType;
-  typedef vnl_matrix<double>                      MatrixType;
+  typedef vnl_vector<itk::DefaultParameterValueType>                      VectorType;
+  typedef vnl_matrix<itk::DefaultParameterValueType>                      MatrixType;
 
-  typedef double MeasureType;
+  typedef itk::DefaultParameterValueType MeasureType;
 
 
   conjugateCostFunction()
   {
   }
 
-  double GetValue( const ParametersType & position ) const
+  itk::DefaultParameterValueType GetValue( const ParametersType & position ) const
   {
 
-    double x = position[0];
-    double y = position[1];
+    itk::DefaultParameterValueType x = position[0];
+    itk::DefaultParameterValueType y = position[1];
 
     std::cout << "GetValue ( ";
     std::cout << x << " , " << y;
     std::cout << ") = ";
 
-    double val = 0.5*(3*x*x+4*x*y+6*y*y) - 2*x + 8*y;
+    itk::DefaultParameterValueType val = 0.5*(3*x*x+4*x*y+6*y*y) - 2*x + 8*y;
 
     std::cout << val << std::endl;
 
@@ -85,8 +85,8 @@ public:
                             DerivativeType & derivative ) const
   {
 
-    double x = position[0];
-    double y = position[1];
+    itk::DefaultParameterValueType x = position[0];
+    itk::DefaultParameterValueType y = position[1];
 
     std::cout << "GetDerivative ( ";
     std::cout << x << " , " << y;
@@ -178,10 +178,10 @@ int itkConjugateGradientOptimizerTest(int, char* [] )
 
   vnlOptimizerType * vnlOptimizer = itkOptimizer->GetOptimizer();
 
-  const double F_Tolerance      = 1e-3;  // Function value tolerance
-  const double G_Tolerance      = 1e-4;  // Gradient magnitude tolerance
-  const double X_Tolerance      = 1e-8;  // Search space tolerance
-  const double Epsilon_Function = 1e-10; // Step
+  const itk::DefaultParameterValueType F_Tolerance      = 1e-3;  // Function value tolerance
+  const itk::DefaultParameterValueType G_Tolerance      = 1e-4;  // Gradient magnitude tolerance
+  const itk::DefaultParameterValueType X_Tolerance      = 1e-8;  // Search space tolerance
+  const itk::DefaultParameterValueType Epsilon_Function = 1e-10; // Step
   const int    Max_Iterations   =   100; // Maximum number of iterations
 
   vnlOptimizer->set_f_tolerance( F_Tolerance );
@@ -245,7 +245,7 @@ int itkConjugateGradientOptimizerTest(int, char* [] )
   std::cout << finalPosition[1] << ")" << std::endl;
 
   bool pass = true;
-  double trueParameters[2] = { 2, -2 };
+  itk::DefaultParameterValueType trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
     if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )

@@ -167,7 +167,7 @@ int itkDemonsImageToImageMetricv4RegistrationTest(int argc, char *argv[])
   movingImage = matchingFilter->GetOutput();
 
   /** Displacement field transform */
-  typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform< double, Dimension> DisplacementTransformType;
+  typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform< itk::DefaultParameterValueType, Dimension> DisplacementTransformType;
   DisplacementTransformType::Pointer displacementTransform = DisplacementTransformType::New();
 
   typedef DisplacementTransformType::DisplacementFieldType DisplacementFieldType;

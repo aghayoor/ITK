@@ -50,9 +50,9 @@ public:
   {
   }
 
-  double GetValue( const ParametersType & parameters ) const
+  itk::DefaultParameterValueType GetValue( const ParametersType & parameters ) const
   {
-    double val;
+    itk::DefaultParameterValueType val;
 
     if( parameters[0] < 0 )
       {
@@ -106,8 +106,8 @@ public:
   typedef Superclass::DerivativeType DerivativeType;
   typedef Superclass::MeasureType    MeasureType;
 
-  typedef vnl_vector<double> VectorType;
-  typedef vnl_matrix<double> MatrixType;
+  typedef vnl_vector<itk::DefaultParameterValueType> VectorType;
+  typedef vnl_matrix<itk::DefaultParameterValueType> MatrixType;
 
   ParticleSwarmTestF2() : m_A( 2, 2 ), m_Intercept(2)
   {
@@ -120,7 +120,7 @@ public:
     m_Intercept[1]    = -8;
   }
 
-  double GetValue( const ParametersType & parameters ) const
+  itk::DefaultParameterValueType GetValue( const ParametersType & parameters ) const
   {
     return 0.5 * ( m_A(0, 0) * parameters[0] * parameters[0]
                    + m_A(0, 1) * parameters[0] * parameters[1]
@@ -169,7 +169,7 @@ public:
   {
   }
 
-  double GetValue( const ParametersType & parameters ) const
+  itk::DefaultParameterValueType GetValue( const ParametersType & parameters ) const
   {
     return (1 - parameters[0]) * (1 - parameters[0])
            + 100 * (parameters[1] - parameters[0] * parameters[0])

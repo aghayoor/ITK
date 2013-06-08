@@ -109,7 +109,7 @@ int main(int, char *[])
   typedef itk::Vector<double,4>                  PixelType;
   typedef itk::Matrix<double,4,3>                CellDataType;
 
-  typedef double CoordinateType;
+  typedef itk::DefaultParameterValueType CoordinateType;
   typedef double InterpolationWeightType;
 
   typedef itk::DefaultStaticMeshTraits<

@@ -20,8 +20,8 @@
 
 #include "itkAffineTransform.h"
 
-typedef  itk::Matrix<double, 2, 2> Matrix2Type;
-typedef  itk::Vector<double, 2>    Vector2Type;
+typedef  itk::Matrix<itk::DefaultParameterValueType, 2, 2> Matrix2Type;
+typedef  itk::Vector<itk::DefaultParameterValueType, 2>    Vector2Type;
 
 namespace
 {
@@ -109,29 +109,30 @@ int itkAffineTransformTest(int, char *[])
 
   int any = 0;         // Any errors detected in testing?
 
-  Matrix2Type matrix2, matrix2Truth;
   Matrix2Type inverse2;
-  Vector2Type vector2, vector2Truth;
 
   /* Create a 2D identity transformation and show its parameters */
   typedef itk::Point<double, 12>     ParametersType;
   typedef itk::Matrix<double, 2, 12> JacobianType;
 
-  typedef itk::AffineTransform<double, 2> Affine2DType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, 2> Affine2DType;
   Affine2DType::Pointer id2 = Affine2DType::New();
-  matrix2 = id2->GetMatrix();
-  vector2 = id2->GetOffset();
+  Matrix2Type matrix2 = id2->GetMatrix();
+  Vector2Type vector2 = id2->GetOffset();
   std::cout << "Matrix from instantiating an identity transform:"
             << std::endl << matrix2;
   std::cout << "Vector from instantiating an identity transform:"
             << std::endl;
   PrintVector( vector2 );
 
+  Matrix2Type matrix2Truth;
   /* Test identity transform against truth */
   matrix2Truth[0][0] = 1;
   matrix2Truth[0][1] = 0;
   matrix2Truth[1][0] = 0;
   matrix2Truth[1][1] = 1;
+
+  Vector2Type vector2Truth;
   vector2Truth[0] = 0;
   vector2Truth[1] = 0;
 
@@ -379,7 +380,7 @@ int itkAffineTransformTest(int, char *[])
   // << v2[0] << " , " << v2[1] << std::endl;
 
   /* Transform a vnl_vector */
-  vnl_vector_fixed<double, 2> x2, y2, y2T;
+  vnl_vector_fixed<itk::DefaultParameterValueType, 2> x2, y2, y2T;
   x2[0] = 1;
   x2[1] = 2;
   y2 = aff2->TransformVector(x2);
@@ -489,7 +490,7 @@ int itkAffineTransformTest(int, char *[])
   // std::cout << "Back transform a vector :" << std::endl
   // << v4[0] << " , " << v4[1] << std::endl;
 
-  typedef itk::AffineTransform<double, 3> Affine3DType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, 3> Affine3DType;
   Affine3DType::MatrixType matrix3Truth;
 
   /* Create a 3D transform and rotate in 3D */
@@ -573,11 +574,11 @@ int itkAffineTransformTest(int, char *[])
   std::cout << "ComputeJacobianWithRespectToParameters: " << std::endl;
   std::cout << jaffJacobian << std::endl;
 
-  double data[] =
+  itk::DefaultParameterValueType data[] =
         {5, 10, 15, 0, 0, 0, 0, 0, 0, 1, 0, 0,
         0, 0, 0, 5, 10, 15, 0, 0, 0, 0, 1, 0,
         0, 0, 0, 0, 0, 0, 5, 10, 15, 0, 0, 1};
-  vnl_matrix<double>         vnlData( data, 3, 12 );
+  vnl_matrix<itk::DefaultParameterValueType>  vnlData( data, 3, 12 );
   Affine3DType::JacobianType expectedJacobian(vnlData);
   for( unsigned int i = 0; i < 3; i++ )
     {
@@ -690,7 +691,7 @@ int itkAffineTransformTest(int, char *[])
 
     {
     // Test SetParameters and GetInverse
-    typedef itk::AffineTransform<double, 2> TransformType;
+    typedef itk::AffineTransform< itk::DefaultParameterValueType, 2> TransformType;
     TransformType::Pointer transform = TransformType::New();
 
     TransformType::ParametersType parameters2;

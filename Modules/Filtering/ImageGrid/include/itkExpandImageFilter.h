@@ -95,7 +95,7 @@ public:
   typedef typename OutputImageType::Pointer    OutputImagePointer;
 
   /** Typedef support for the interpolation function. */
-  typedef double                                                   CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   typedef InterpolateImageFunction< InputImageType, CoordRepType > InterpolatorType;
   typedef typename InterpolatorType::Pointer                       InterpolatorPointer;
   typedef LinearInterpolateImageFunction< InputImageType, CoordRepType >

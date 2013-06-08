@@ -27,7 +27,7 @@ enum{ ImageDimension = 3 };
 enum{ VectorDimension = 3 }; // RGB is a vector of dimension 3
 typedef itk::RGBPixel<unsigned short>         PixelType;
 typedef itk::Image<PixelType,ImageDimension>  ImageType;
-typedef double                                CoordRepType;
+typedef itk::DefaultParameterValueType CoordRepType;
 typedef itk::VectorLinearInterpolateImageFunction<ImageType,CoordRepType>
                                               InterpolatorType;
 typedef InterpolatorType::IndexType           IndexType;
@@ -231,8 +231,8 @@ int itkRGBInterpolateImageFunctionTest(int, char* [] )
 
   // an integer position inside the image
   {
-  double darray[3] = {10, 20, 40};
-  double temp[3] = {70, 140, 210};
+  itk::DefaultParameterValueType darray[3] = {10, 20, 40};
+  OutputType::ValueType temp[3] = {70, 140, 210};
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = RGBInterpolate::TestContinuousIndex( interp, cindex, true, output );
@@ -247,8 +247,8 @@ int itkRGBInterpolateImageFunctionTest(int, char* [] )
 
   // position at the image border
   {
-  double darray[3] = {0, 20, 40};
-  double temp[3] = {60, 120, 180};
+  itk::DefaultParameterValueType darray[3] = {0, 20, 40};
+  OutputType::ValueType temp[3] = {60, 120, 180};
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = RGBInterpolate::TestContinuousIndex( interp, cindex, true, output );
@@ -263,9 +263,9 @@ int itkRGBInterpolateImageFunctionTest(int, char* [] )
 
   // position near image border
   {
-  double epsilon = 1.0e-10;
-  double darray[3] = {19 - epsilon, 20, 40};
-  double temp[3] = {79, 158, 237};
+  itk::DefaultParameterValueType epsilon = 1.0e-10;
+  itk::DefaultParameterValueType darray[3] = {19 - epsilon, 20, 40};
+  OutputType::ValueType temp[3] = {79, 158, 237};
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = RGBInterpolate::TestContinuousIndex( interp, cindex, true, output );
@@ -280,8 +280,8 @@ int itkRGBInterpolateImageFunctionTest(int, char* [] )
 
   // position outside the image
   {
-  double darray[3] = {20, 20, 40};
-  double temp[3] = {1, 1, 1};
+  itk::DefaultParameterValueType darray[3] = {20, 20, 40};
+  OutputType::ValueType temp[3] = {1, 1, 1};
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = RGBInterpolate::TestContinuousIndex( interp, cindex, false, output );
@@ -296,8 +296,8 @@ int itkRGBInterpolateImageFunctionTest(int, char* [] )
 
   // at non-integer position
   {
-  double darray[3] = {5.25, 12.5, 42.0};
-  double temp[3] = {59.75, 119.5, 179.25};
+  itk::DefaultParameterValueType darray[3] = {5.25, 12.5, 42.0};
+  OutputType::ValueType temp[3] = {59.75, 119.5, 179.25};
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
   passed = RGBInterpolate::TestContinuousIndex( interp, cindex, true, output );

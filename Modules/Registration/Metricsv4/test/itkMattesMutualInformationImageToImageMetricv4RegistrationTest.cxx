@@ -103,19 +103,19 @@ int itkMattesMutualInformationImageToImageMetricv4RegistrationTest(int argc, cha
 
 
   /** create a composite transform holder for other transforms  */
-  typedef itk::CompositeTransform<double, Dimension>    CompositeType;
+  typedef itk::CompositeTransform< itk::DefaultParameterValueType, Dimension>    CompositeType;
   typedef CompositeType::ScalarType                     ScalarType;
 
   CompositeType::Pointer compositeTransform = CompositeType::New();
 
   //create an affine transform
-  typedef itk::AffineTransform<double, Dimension>
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension>
                                                     AffineTransformType;
   AffineTransformType::Pointer affineTransform = AffineTransformType::New();
   affineTransform->SetIdentity();
   std::cout <<" affineTransform params prior to optimization " << affineTransform->GetParameters() << std::endl;
 
-  typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform< double, Dimension> DisplacementTransformType;
+  typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform< itk::DefaultParameterValueType, Dimension> DisplacementTransformType;
   DisplacementTransformType::Pointer displacementTransform = DisplacementTransformType::New();
 
   typedef DisplacementTransformType::DisplacementFieldType DisplacementFieldType;
@@ -139,7 +139,7 @@ int itkMattesMutualInformationImageToImageMetricv4RegistrationTest(int argc, cha
   displacementTransform->SetGaussianSmoothingVarianceForTheTotalField( 6 );
 
   //identity transform for fixed image
-  typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension> IdentityTransformType;
   IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
   identityTransform->SetIdentity();
 

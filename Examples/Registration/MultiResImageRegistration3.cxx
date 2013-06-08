@@ -148,7 +148,7 @@ int main( int argc, char *argv[] )
   typedef   float                                    InternalPixelType;
   typedef itk::Image< InternalPixelType, Dimension > InternalImageType;
 
-  typedef itk::TranslationTransform< double, Dimension > TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension > TransformType;
   typedef itk::RegularStepGradientDescentOptimizer       OptimizerType;
   typedef itk::LinearInterpolateImageFunction<
                                     InternalImageType,

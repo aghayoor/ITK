@@ -36,7 +36,7 @@
 int itkPCAShapeSignedDistanceFunctionTest( int, char *[])
 {
   unsigned int i;
-  typedef double CoordRep;
+  typedef itk::DefaultParameterValueType CoordRep;
   const unsigned int Dimension    = 2;
   const unsigned int ImageWidth   = 3;
   const unsigned int ImageHeight  = 2;
@@ -51,7 +51,7 @@ int itkPCAShapeSignedDistanceFunctionTest( int, char *[])
 
 
   // set up the transform
-  typedef itk::Euler2DTransform<double> transformType;
+  typedef itk::Euler2DTransform< itk::DefaultParameterValueType > transformType;
   transformType::Pointer transform = transformType::New();
   shape->SetTransform(transform);
 
@@ -163,7 +163,7 @@ int itkPCAShapeSignedDistanceFunctionTest( int, char *[])
     p[0] =  point[0] - parameters[startIndexOfTranslationParameters];
     p[1] =  point[1] - parameters[startIndexOfTranslationParameters + 1];
 
-    double angle = parameters[numberOfShapeParameters];
+    itk::DefaultParameterValueType angle = parameters[numberOfShapeParameters];
     q[0] =  p[0] * vcl_cos(-angle) - p[1] * vcl_sin(-angle);
     q[1] =  p[0] * vcl_sin(-angle) + p[1] * vcl_cos(-angle);
 

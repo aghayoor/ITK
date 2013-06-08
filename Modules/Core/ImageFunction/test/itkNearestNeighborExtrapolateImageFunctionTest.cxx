@@ -26,7 +26,7 @@
  */
 int itkNearestNeighborExtrapolateImageFunctionTest( int, char *[])
 {
-  typedef double CoordRep;
+  typedef itk::DefaultParameterValueType CoordRep;
   const unsigned int ImageDimension = 2;
   typedef unsigned char PixelType;
   const   unsigned int VectorDimension = 4;

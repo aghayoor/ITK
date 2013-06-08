@@ -52,8 +52,8 @@ static int oneTest(const char *goodname,const char *gridname)
   unsigned int i;
   double tolerance=1e-5;
 
-  typedef itk::AffineTransform<double,3>                    AffineTransformType;
-  typedef itk::DisplacementFieldTransform<double,3>         DisplacementFieldTransform;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType,3>                    AffineTransformType;
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType,3>         DisplacementFieldTransform;
   typedef DisplacementFieldTransform::DisplacementFieldType DisplacementFieldType;
 
   AffineTransformType::Pointer        affine = AffineTransformType::New();
@@ -282,7 +282,7 @@ int itkIOTransformMINCTest(int argc, char* argv[])
   {
     itksys::SystemTools::ChangeDirectory(argv[1]);
   }
-  itk::TransformFactory< itk::DisplacementFieldTransform<double,3> >::RegisterTransform ();
+  itk::TransformFactory< itk::DisplacementFieldTransform< itk::DefaultParameterValueType,3> >::RegisterTransform ();
 
   int result1 =  oneTest("TransformLinear.xfm", "TransformNonLinear.xfm" );
   int result2 =  secondTest();

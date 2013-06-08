@@ -138,7 +138,7 @@ public:
 #endif
 
   /** Interpolator typedef support. */
-  typedef double                                                   CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   typedef InterpolateImageFunction< InputImageType, CoordRepType > InterpolatorType;
   typedef typename InterpolatorType::Pointer                       InterpolatorPointer;
   typedef LinearInterpolateImageFunction< InputImageType, CoordRepType >

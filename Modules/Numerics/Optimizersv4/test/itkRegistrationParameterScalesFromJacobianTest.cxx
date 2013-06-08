@@ -124,11 +124,11 @@ int itkRegistrationParameterScalesFromJacobianTest(int , char* [])
   // Image done
 
   // Transform begins
-  typedef itk::AffineTransform<double, ImageDimension>      MovingTransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, ImageDimension>      MovingTransformType;
   MovingTransformType::Pointer movingTransform =  MovingTransformType::New();
   movingTransform->SetIdentity();
 
-  typedef itk::TranslationTransform<double, ImageDimension> FixedTransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, ImageDimension> FixedTransformType;
   FixedTransformType::Pointer fixedTransform =    FixedTransformType::New();
   fixedTransform->SetIdentity();
   // Transform done
@@ -251,7 +251,7 @@ int itkRegistrationParameterScalesFromJacobianTest(int , char* [])
     }
 
   // Testing local scales for a transform with local support, ex. DisplacementFieldTransform
-  typedef itk::DisplacementFieldTransform<double, ImageDimension>
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, ImageDimension>
                                                             DisplacementTransformType;
   typedef DisplacementTransformType::DisplacementFieldType  FieldType;
   typedef itk::Vector<double, ImageDimension>               VectorType;

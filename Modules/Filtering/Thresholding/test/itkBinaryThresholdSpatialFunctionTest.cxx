@@ -37,7 +37,7 @@
  */
 int itkBinaryThresholdSpatialFunctionTest( int, char *[])
 {
-  typedef double CoordRep;
+  typedef itk::DefaultParameterValueType CoordRep;
   const unsigned int Dimension = 2;
 
   typedef itk::SphereSignedDistanceFunction<CoordRep,Dimension>   SphereFunctionType;

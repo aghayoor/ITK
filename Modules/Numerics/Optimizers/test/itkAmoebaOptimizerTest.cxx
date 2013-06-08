@@ -60,8 +60,8 @@ public:
   typedef Superclass::DerivativeType              DerivativeType;
   typedef Superclass::MeasureType                 MeasureType;
 
-  typedef vnl_vector<double>                      VectorType;
-  typedef vnl_matrix<double>                      MatrixType;
+  typedef vnl_vector<itk::DefaultParameterValueType>                      VectorType;
+  typedef vnl_matrix<itk::DefaultParameterValueType>                      MatrixType;
 
 
   amoebaTestF1():m_A(SpaceDimension,SpaceDimension),m_B(SpaceDimension)
@@ -76,7 +76,7 @@ public:
     m_Negate = false;
     }
 
-  double GetValue( const ParametersType & parameters ) const
+  itk::DefaultParameterValueType GetValue( const ParametersType & parameters ) const
     {
 
     VectorType v( parameters.Size() );
@@ -85,8 +85,8 @@ public:
       v[i] = parameters[i];
       }
     VectorType Av = m_A * v;
-    double val = ( inner_product<double>( Av , v ) )/2.0;
-    val -= inner_product< double >( m_B , v );
+    itk::DefaultParameterValueType val = ( inner_product<itk::DefaultParameterValueType>( Av , v ) )/2.0;
+    val -= inner_product< itk::DefaultParameterValueType >( m_B , v );
     if( m_Negate )
       {
       val *= -1.0;
@@ -163,9 +163,9 @@ public:
    {
    }
 
-  double GetValue( const ParametersType & parameters ) const
+  itk::DefaultParameterValueType GetValue( const ParametersType & parameters ) const
     {
-    double val;
+    itk::DefaultParameterValueType val;
     if( parameters[0]<0 )
       {
       val = parameters[0]*parameters[0]+4*parameters[0];
@@ -268,10 +268,10 @@ int AmoebaTest1()
   // set optimizer parameters
   itkOptimizer->SetMaximumNumberOfIterations( 10 );
 
-  double xTolerance = 0.01;
+  itk::DefaultParameterValueType xTolerance = 0.01;
   itkOptimizer->SetParametersConvergenceTolerance( xTolerance );
 
-  double fTolerance = 0.001;
+  itk::DefaultParameterValueType fTolerance = 0.001;
   itkOptimizer->SetFunctionConvergenceTolerance( fTolerance );
 
   amoebaTestF1::Pointer costFunction = amoebaTestF1::New();
@@ -326,7 +326,7 @@ int AmoebaTest1()
   OptimizerType::ParametersType finalPosition;
   finalPosition = itkOptimizer->GetCurrentPosition();
 
-  double trueParameters[2] = { 2, -2 };
+  itk::DefaultParameterValueType trueParameters[2] = { 2, -2 };
   bool pass = true;
 
   std::cout << "Right answer   = " << trueParameters[0] << " , " << trueParameters[1] << std::endl;
@@ -449,10 +449,10 @@ int AmoebaTest2()
   unsigned int maxIterations = 100;
   itkOptimizer->SetMaximumNumberOfIterations( maxIterations );
 
-  double xTolerance = 0.01;
+  itk::DefaultParameterValueType xTolerance = 0.01;
   itkOptimizer->SetParametersConvergenceTolerance( xTolerance );
 
-  double fTolerance = 0.001;
+  itk::DefaultParameterValueType fTolerance = 0.001;
   itkOptimizer->SetFunctionConvergenceTolerance( fTolerance );
 
           //the initial simplex is constructed as:
@@ -494,7 +494,7 @@ int AmoebaTest2()
 
             //we should have converged to the local minimum, -2
   finalParameters = itkOptimizer->GetCurrentPosition();
-  double knownParameters = -2.0;
+  itk::DefaultParameterValueType knownParameters = -2.0;
   std::cout<<"Standard Amoeba:\n";
   std::cout << "Known parameters   = " << knownParameters<<"   ";
   std::cout << "Estimated parameters = " << finalParameters << std::endl;

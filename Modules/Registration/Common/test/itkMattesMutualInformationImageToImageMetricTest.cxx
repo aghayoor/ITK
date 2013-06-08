@@ -176,7 +176,7 @@ int TestMattesMetricWithAffineTransform(
 //-----------------------------------------------------------
 // Set up a transformer
 //-----------------------------------------------------------
-  typedef itk::AffineTransform< double, ImageDimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, ImageDimension > TransformType;
   typedef typename TransformType::ParametersType         ParametersType;
 
   typename TransformType::Pointer transformer = TransformType::New();
@@ -507,7 +507,7 @@ int TestMattesMetricWithBSplineTransform(
 //-----------------------------------------------------------
 // Set up a transformer
 //-----------------------------------------------------------
-  typedef itk::BSplineTransform< double, ImageDimension, 3 > TransformType;
+  typedef itk::BSplineTransform< itk::DefaultParameterValueType, ImageDimension, 3 > TransformType;
   typedef typename TransformType::ParametersType             ParametersType;
   typename TransformType::PhysicalDimensionsType dimensions;
   for( unsigned int dim = 0; dim < ImageDimension; dim++ )

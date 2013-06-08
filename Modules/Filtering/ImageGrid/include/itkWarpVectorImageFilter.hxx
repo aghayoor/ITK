@@ -78,8 +78,7 @@ void
 WarpVectorImageFilter< TInputImage, TOutputImage, TDisplacementField >
 ::SetOutputSpacing(const double *spacing)
 {
-  SpacingType s(spacing);
-
+  const SpacingType s(spacing);
   this->SetOutputSpacing(s);
 }
 
@@ -89,8 +88,11 @@ void
 WarpVectorImageFilter< TInputImage, TOutputImage, TDisplacementField >
 ::SetOutputOrigin(const double *origin)
 {
-  PointType p(origin);
-
+  PointType p;
+  for(unsigned int i = 0; i < ImageDimension ; ++i )
+    {
+    p[i] = origin[i];
+    }
   this->SetOutputOrigin(p);
 }
 

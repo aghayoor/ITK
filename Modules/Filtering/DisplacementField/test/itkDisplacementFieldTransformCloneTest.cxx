@@ -42,7 +42,7 @@ int itkDisplacementFieldTransformCloneTest(int, char *[])
   //
   // Create a displacement field transform
   //
-  typedef itk::DisplacementFieldTransform<double, 3> DisplacementTransformType;
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, 3> DisplacementTransformType;
 
   DisplacementTransformType::Pointer displacementTransform =
     DisplacementTransformType::New();

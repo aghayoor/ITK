@@ -20,7 +20,7 @@
 
 int itkTimeVaryingVelocityFieldTransformTest( int, char* [] )
 {
-  typedef itk::Vector<double, 3>      VectorType;
+  typedef itk::Vector<itk::DefaultParameterValueType, 3>      VectorType;
   typedef itk::Image<VectorType, 3>   DisplacementFieldType;
   typedef itk::Image<VectorType, 4>   TimeVaryingVelocityFieldType;
 
@@ -95,7 +95,7 @@ int itkTimeVaryingVelocityFieldTransformTest( int, char* [] )
 
   // Now test the transform
 
-  typedef itk::TimeVaryingVelocityFieldTransform<double, 3> TransformType;
+  typedef itk::TimeVaryingVelocityFieldTransform< itk::DefaultParameterValueType, 3> TransformType;
   TransformType::Pointer transform = TransformType::New();
   transform->SetLowerTimeBound( 0.0 );
   transform->SetUpperTimeBound( 1.0 );

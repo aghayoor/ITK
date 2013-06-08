@@ -100,7 +100,7 @@ int main( int argc, char *argv[] )
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
 
-  typedef itk::TranslationTransform< double, Dimension > TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension > TransformType;
 
   typedef itk::AmoebaOptimizer                           OptimizerType;
   typedef itk::LinearInterpolateImageFunction<

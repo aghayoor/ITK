@@ -48,7 +48,7 @@ SpatialObject< TDimension >
   m_Id = -1;
   m_ParentId = -1;
   m_AffineGeometryFrame = AffineGeometryFrameType::New();
-  m_AffineGeometryFrame->SetIndexToWorldTransform(m_IndexToWorldTransform);
+  m_AffineGeometryFrame->SetIndexToWorldTransform(m_IndexToWorldTransform.GetPointer());
   m_TreeNode = SpatialObjectTreeNode< TDimension >::New();
   m_TreeNode->Set(this);
   m_InternalInverseTransform = TransformType::New();

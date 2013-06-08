@@ -20,7 +20,7 @@
 
 #include "itkAzimuthElevationToCartesianTransform.h"
 
-typedef  double                                     CoordinateRepresentationType;
+typedef itk::DefaultParameterValueType CoordinateRepresentationType;
 typedef  itk::Point<CoordinateRepresentationType,3> PointType;
 
 void PrintPoint( const PointType & p )

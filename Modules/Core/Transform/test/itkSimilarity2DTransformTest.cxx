@@ -52,7 +52,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
   const unsigned int N = 2;
   bool               Ok = true;
 
-  typedef itk::CenteredSimilarity2DTransform<double> SimilarityTransformType;
+  typedef itk::CenteredSimilarity2DTransform< itk::DefaultParameterValueType> SimilarityTransformType;
   SimilarityTransformType::Pointer transform = SimilarityTransformType::New();
 
   // Test the identity transform
@@ -242,7 +242,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
 
     {
     // Test instantiation, inverse computation, back transform etc.
-    typedef itk::Similarity2DTransform<double> TransformType;
+    typedef itk::Similarity2DTransform< itk::DefaultParameterValueType> TransformType;
     TransformType::Pointer t1 = TransformType::New();
 
     // Set parameters
@@ -567,7 +567,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
 
     {
     // Test Set/Get Matrix and Set/Get Offset
-    typedef itk::Similarity2DTransform<double> TransformType;
+    typedef itk::Similarity2DTransform< itk::DefaultParameterValueType> TransformType;
     TransformType::Pointer t1 = TransformType::New();
     TransformType::Pointer t2 = TransformType::New();
 

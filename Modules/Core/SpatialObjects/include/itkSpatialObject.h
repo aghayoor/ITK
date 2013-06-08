@@ -89,7 +89,7 @@ public:
   typedef CovariantVector< double, VDimension > OutputVectorType;
   typedef OutputVectorType *                    OutputVectorPointer;
 
-  typedef ScalableAffineTransform< double, VDimension > TransformType;
+  typedef ScalableAffineTransform< itk::DefaultParameterValueType, VDimension > TransformType;
   typedef typename TransformType::Pointer               TransformPointer;
   typedef const TransformType *                         TransformConstPointer;
 
@@ -98,7 +98,7 @@ public:
   typedef BoundingBox< IdentifierType, VDimension, ScalarType, VectorContainerType > BoundingBoxType;
   typedef typename BoundingBoxType::Pointer                                          BoundingBoxPointer;
 
-  typedef AffineGeometryFrame< double, VDimension > AffineGeometryFrameType;
+  typedef AffineGeometryFrame< itk::DefaultParameterValueType, VDimension > AffineGeometryFrameType;
   typedef typename AffineGeometryFrameType::Pointer AffineGeometryFramePointer;
 
   /** Return type for the list of children */

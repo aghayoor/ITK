@@ -71,85 +71,85 @@ void TransformFactoryBase::RegisterDefaultTransforms()
     //
     // double instances (in alphabetical order)
     //
-    TransformFactory< AffineTransform< double, 2 > >::RegisterTransform ();
-    TransformFactory< AffineTransform< double, 3 > >::RegisterTransform ();
-    TransformFactory< AffineTransform< double, 4 > >::RegisterTransform ();
-    TransformFactory< AffineTransform< double, 5 > >::RegisterTransform ();
-    TransformFactory< AffineTransform< double, 6 > >::RegisterTransform ();
-    TransformFactory< AffineTransform< double, 7 > >::RegisterTransform ();
-    TransformFactory< AffineTransform< double, 8 > >::RegisterTransform ();
-    TransformFactory< AffineTransform< double, 9 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 2 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 3 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 4 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 5 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 6 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 7 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 8 > >::RegisterTransform ();
+    TransformFactory< AffineTransform< itk::DefaultParameterValueType, 9 > >::RegisterTransform ();
 
-    TransformFactory< BSplineTransform< double, 2, 2 > >::RegisterTransform ();
-    TransformFactory< BSplineTransform< double, 3, 3 > >::RegisterTransform ();
+    TransformFactory< BSplineTransform< itk::DefaultParameterValueType, 2, 2 > >::RegisterTransform ();
+    TransformFactory< BSplineTransform< itk::DefaultParameterValueType, 3, 3 > >::RegisterTransform ();
 #ifdef ITKV3_COMPATIBILITY
-    TransformFactory< BSplineDeformableTransform< double, 2, 2 > >::RegisterTransform ();
-    TransformFactory< BSplineDeformableTransform< double, 3, 3 > >::RegisterTransform ();
+    TransformFactory< BSplineDeformableTransform< itk::DefaultParameterValueType, 2, 2 > >::RegisterTransform ();
+    TransformFactory< BSplineDeformableTransform< itk::DefaultParameterValueType, 3, 3 > >::RegisterTransform ();
 #endif
 
-    TransformFactory< CenteredAffineTransform< double, 2 > >::RegisterTransform ();
-    TransformFactory< CenteredAffineTransform< double, 3 > >::RegisterTransform ();
-    TransformFactory< CenteredEuler3DTransform< double > >::RegisterTransform ();
-    TransformFactory< CenteredRigid2DTransform< double > >::RegisterTransform();
-    TransformFactory< CenteredSimilarity2DTransform< double > >::RegisterTransform ();
+    TransformFactory< CenteredAffineTransform< itk::DefaultParameterValueType, 2 > >::RegisterTransform ();
+    TransformFactory< CenteredAffineTransform< itk::DefaultParameterValueType, 3 > >::RegisterTransform ();
+    TransformFactory< CenteredEuler3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
+    TransformFactory< CenteredRigid2DTransform< itk::DefaultParameterValueType > >::RegisterTransform();
+    TransformFactory< CenteredSimilarity2DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
-    TransformFactory< CompositeTransform<double, 2> >::RegisterTransform();
-    TransformFactory< CompositeTransform<double, 3> >::RegisterTransform();
-    TransformFactory< CompositeTransform<double, 4> >::RegisterTransform();
-    TransformFactory< CompositeTransform<double, 5> >::RegisterTransform();
-    TransformFactory< CompositeTransform<double, 6> >::RegisterTransform();
-    TransformFactory< CompositeTransform<double, 7> >::RegisterTransform();
-    TransformFactory< CompositeTransform<double, 8> >::RegisterTransform();
-    TransformFactory< CompositeTransform<double, 9> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 2> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 3> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 4> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 5> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 6> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 7> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 8> >::RegisterTransform();
+    TransformFactory< CompositeTransform< itk::DefaultParameterValueType, 9> >::RegisterTransform();
 
-    TransformFactory< Euler2DTransform< double > >::RegisterTransform ();
-    TransformFactory< Euler3DTransform< double > >::RegisterTransform ();
+    TransformFactory< Euler2DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
+    TransformFactory< Euler3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
-    TransformFactory< FixedCenterOfRotationAffineTransform< double > >::RegisterTransform ();
+    TransformFactory< FixedCenterOfRotationAffineTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
-    TransformFactory< IdentityTransform< double, 2 > >::RegisterTransform ();
-    TransformFactory< IdentityTransform< double, 3 > >::RegisterTransform ();
-    TransformFactory< IdentityTransform< double, 4 > >::RegisterTransform ();
-    TransformFactory< IdentityTransform< double, 5 > >::RegisterTransform ();
-    TransformFactory< IdentityTransform< double, 6 > >::RegisterTransform ();
-    TransformFactory< IdentityTransform< double, 7 > >::RegisterTransform ();
-    TransformFactory< IdentityTransform< double, 8 > >::RegisterTransform ();
-    TransformFactory< IdentityTransform< double, 9 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 2 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 3 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 4 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 5 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 6 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 7 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 8 > >::RegisterTransform ();
+    TransformFactory< IdentityTransform< itk::DefaultParameterValueType, 9 > >::RegisterTransform ();
 
-    TransformFactory< QuaternionRigidTransform< double > >::RegisterTransform ();
+    TransformFactory< QuaternionRigidTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
-    TransformFactory< Rigid2DTransform< double > >::RegisterTransform ();
+    TransformFactory< Rigid2DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
     // We cannot register both Rigid3DTransform and
     // itkv3::Rigid3DTransform because they both have the same name
 #ifdef ITKV3_COMPATIBILITY
-    TransformFactory< Rigid3DTransform< double > >::RegisterTransform ();
+    TransformFactory< Rigid3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 #else
-    TransformFactory< itkv3::Rigid3DTransform< double > >::RegisterTransform ();
+    TransformFactory< itkv3::Rigid3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 #endif
-    TransformFactory< Rigid3DPerspectiveTransform< double > >::RegisterTransform ();
+    TransformFactory< Rigid3DPerspectiveTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
-    TransformFactory< ScalableAffineTransform< double > >::RegisterTransform ();
-    TransformFactory< ScaleLogarithmicTransform< double > >::RegisterTransform ();
-    TransformFactory< ScaleSkewVersor3DTransform< double > >::RegisterTransform ();
-    TransformFactory< ScaleTransform< double, 2 > >::RegisterTransform ();
-    TransformFactory< ScaleTransform< double, 3 > >::RegisterTransform ();
-    TransformFactory< ScaleTransform< double, 4 > >::RegisterTransform ();
-    TransformFactory< ScaleVersor3DTransform< double > >::RegisterTransform ();
+    TransformFactory< ScalableAffineTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
+    TransformFactory< ScaleLogarithmicTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
+    TransformFactory< ScaleSkewVersor3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
+    TransformFactory< ScaleTransform< itk::DefaultParameterValueType, 2 > >::RegisterTransform ();
+    TransformFactory< ScaleTransform< itk::DefaultParameterValueType, 3 > >::RegisterTransform ();
+    TransformFactory< ScaleTransform< itk::DefaultParameterValueType, 4 > >::RegisterTransform ();
+    TransformFactory< ScaleVersor3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
-    TransformFactory< Similarity2DTransform< double > >::RegisterTransform ();
-    TransformFactory< Similarity3DTransform< double > >::RegisterTransform ();
+    TransformFactory< Similarity2DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
+    TransformFactory< Similarity3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
-    TransformFactory< TranslationTransform< double, 2 > >::RegisterTransform ();
-    TransformFactory< TranslationTransform< double, 3 > >::RegisterTransform ();
-    TransformFactory< TranslationTransform< double, 4 > >::RegisterTransform ();
-    TransformFactory< TranslationTransform< double, 5 > >::RegisterTransform ();
-    TransformFactory< TranslationTransform< double, 6 > >::RegisterTransform ();
-    TransformFactory< TranslationTransform< double, 7 > >::RegisterTransform ();
-    TransformFactory< TranslationTransform< double, 8 > >::RegisterTransform ();
-    TransformFactory< TranslationTransform< double, 9 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 2 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 3 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 4 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 5 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 6 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 7 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 8 > >::RegisterTransform ();
+    TransformFactory< TranslationTransform< itk::DefaultParameterValueType, 9 > >::RegisterTransform ();
 
-    TransformFactory< VersorRigid3DTransform< double > >::RegisterTransform ();
-    TransformFactory< VersorTransform< double > >::RegisterTransform ();
+    TransformFactory< VersorRigid3DTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
+    TransformFactory< VersorTransform< itk::DefaultParameterValueType > >::RegisterTransform ();
 
     //
     // float instances (in alphabetical order)
@@ -237,8 +237,8 @@ void TransformFactoryBase::RegisterDefaultTransforms()
     // Float type not yet supported due to parameter matching in parent classes
     //TransformFactory< DisplacementFieldTransform<float, 2> >::RegisterTransform ();
     //TransformFactory< DisplacementFieldTransform<float, 3> >::RegisterTransform ();
-    TransformFactory< DisplacementFieldTransform<double, 2> >::RegisterTransform ();
-    TransformFactory< DisplacementFieldTransform<double, 3> >::RegisterTransform ();
+    TransformFactory< DisplacementFieldTransform< itk::DefaultParameterValueType, 2> >::RegisterTransform ();
+    TransformFactory< DisplacementFieldTransform< itk::DefaultParameterValueType, 3> >::RegisterTransform ();
     }
   TransformFactoryBasePrivate::DefaultTransformsRegistered = true;
 }

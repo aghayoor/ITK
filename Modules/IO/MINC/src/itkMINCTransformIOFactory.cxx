@@ -62,7 +62,7 @@ namespace itk
       MINCTransformIOFactoryHasBeenRegistered = true;
       MINCTransformIOFactory::RegisterOneFactory();
 
-      //TransformFactory< DisplacementFieldTransform<double,3> >::RegisterTransform ();
+      //TransformFactory< DisplacementFieldTransform< itk::DefaultParameterValueType,3> >::RegisterTransform ();
       // register additional transform type
     }
   }

@@ -83,8 +83,7 @@ WarpImageFilter< TInputImage, TOutputImage, TDisplacementField >
 ::SetOutputSpacing(
   const double *spacing)
 {
-  SpacingType s(spacing);
-
+  const SpacingType s(spacing);
   this->SetOutputSpacing(s);
 }
 
@@ -98,8 +97,11 @@ WarpImageFilter< TInputImage, TOutputImage, TDisplacementField >
 ::SetOutputOrigin(
   const double *origin)
 {
-  PointType p(origin);
-
+  PointType p;
+  for(unsigned int i = 0; i < ImageDimension; ++i )
+    {
+    p[i]=origin[i];
+    }
   this->SetOutputOrigin(p);
 }
 
@@ -201,7 +203,7 @@ WarpImageFilter< TInputImage, TOutputImage, TDisplacementField >
 {
   DisplacementFieldPointer fieldPtr = this->GetDisplacementField();
 
-  ContinuousIndex< double, ImageDimension > index;
+  ContinuousIndex< itk::DefaultParameterValueType, ImageDimension > index;
   fieldPtr->TransformPhysicalPointToContinuousIndex(point, index);
   unsigned int dim;  // index over dimension
   /**
@@ -210,7 +212,7 @@ WarpImageFilter< TInputImage, TOutputImage, TDisplacementField >
    */
   IndexType baseIndex;
   IndexType neighIndex;
-  double    distance[ImageDimension];
+  itk::DefaultParameterValueType distance[ImageDimension];
 
   for ( dim = 0; dim < ImageDimension; dim++ )
     {
@@ -220,7 +222,8 @@ WarpImageFilter< TInputImage, TOutputImage, TDisplacementField >
       {
       if ( baseIndex[dim] <  m_EndIndex[dim] )
         {
-        distance[dim] = index[dim] - static_cast< double >( baseIndex[dim] );
+        distance[dim] = index[dim] - static_cast<itk::DefaultParameterValueType>( baseIndex[dim] );
+
         }
       else
         {
@@ -243,12 +246,12 @@ WarpImageFilter< TInputImage, TOutputImage, TDisplacementField >
   DisplacementType output;
   output.Fill(0);
 
-  double       totalOverlap = 0.0;
+  itk::DefaultParameterValueType       totalOverlap = 0.0;
   unsigned int numNeighbors(1 << TInputImage::ImageDimension);
 
   for ( unsigned int counter = 0; counter < numNeighbors; counter++ )
     {
-    double       overlap = 1.0;    // fraction overlap
+    itk::DefaultParameterValueType       overlap = 1.0;    // fraction overlap
     unsigned int upper = counter;  // each bit indicates upper/lower neighbour
 
     // get neighbor index and overlap fraction
@@ -275,7 +278,7 @@ WarpImageFilter< TInputImage, TOutputImage, TDisplacementField >
         fieldPtr->GetPixel(neighIndex);
       for ( unsigned int k = 0; k < DisplacementType::Dimension; k++ )
         {
-        output[k] += overlap * static_cast< double >( input[k] );
+        output[k] += overlap * static_cast< itk::DefaultParameterValueType >( input[k] );
         }
       totalOverlap += overlap;
       }

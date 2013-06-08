@@ -100,7 +100,7 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   const unsigned int SpaceDimension = ImageDimension;
   const unsigned int SplineOrder = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
 
   typedef itk::BSplineTransform<
                             CoordinateRepType,
@@ -291,7 +291,7 @@ int main( int argc, char *argv[] )
     typedef itk::BSplineResampleImageFunction<ParametersImageType,double> FunctionType;
     FunctionType::Pointer function = FunctionType::New();
 
-    typedef itk::IdentityTransform<double,SpaceDimension> IdentityTransformType;
+    typedef itk::IdentityTransform< itk::DefaultParameterValueType,SpaceDimension> IdentityTransformType;
     IdentityTransformType::Pointer identity = IdentityTransformType::New();
 
     upsampler->SetInput( transformLow->GetCoefficientImages()[k] );

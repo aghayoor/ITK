@@ -54,8 +54,8 @@ bool testVector( const TVector & v1, const TVector & v2 )
 
 int itkTransformCloneTest(int, char *[])
 {
-  typedef itk::AffineTransform<double, 3> AffineTransformType;
-  typedef itk::Transform<double,3,3>      Transform3DType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, 3> AffineTransformType;
+  typedef itk::Transform< itk::DefaultParameterValueType,3,3>      Transform3DType;
   AffineTransformType::Pointer affineXfrm =
     AffineTransformType::New();
   AffineTransformType::OutputVectorType axis,offset;
@@ -101,7 +101,7 @@ int itkTransformCloneTest(int, char *[])
               << std::endl;
     return EXIT_FAILURE;
     }
-  typedef itk::CompositeTransform<double,3> CompositeTransformType;
+  typedef itk::CompositeTransform< itk::DefaultParameterValueType,3> CompositeTransformType;
   CompositeTransformType::Pointer compositeXfrm =
     CompositeTransformType::New();
   compositeXfrm->AddTransform(clonePtr.GetPointer());

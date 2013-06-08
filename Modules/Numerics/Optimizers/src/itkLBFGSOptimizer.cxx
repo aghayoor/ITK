@@ -122,7 +122,7 @@ LBFGSOptimizer
  */
 void
 LBFGSOptimizer
-::SetGradientConvergenceTolerance(double f)
+::SetGradientConvergenceTolerance(InternalComputationType f)
 {
   if ( f == m_GradientConvergenceTolerance )
     {
@@ -143,7 +143,7 @@ LBFGSOptimizer
  */
 void
 LBFGSOptimizer
-::SetLineSearchAccuracy(double f)
+::SetLineSearchAccuracy(InternalComputationType f)
 {
   if ( f == m_LineSearchAccuracy )
     {
@@ -164,7 +164,7 @@ LBFGSOptimizer
  */
 void
 LBFGSOptimizer
-::SetDefaultStepLength(double f)
+::SetDefaultStepLength(InternalComputationType f)
 {
   if ( f == m_DefaultStepLength )
     {

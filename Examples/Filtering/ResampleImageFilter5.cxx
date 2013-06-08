@@ -90,7 +90,7 @@ int main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::Similarity2DTransform< double >  TransformType;
+  typedef itk::Similarity2DTransform< itk::DefaultParameterValueType >  TransformType;
   // Software Guide : EndCodeSnippet
 
 

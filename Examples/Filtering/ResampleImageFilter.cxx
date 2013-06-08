@@ -164,7 +164,7 @@ int main( int argc, char * argv[] )
 
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::AffineTransform< double, Dimension >  TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension >  TransformType;
   // Software Guide : EndCodeSnippet
 
 

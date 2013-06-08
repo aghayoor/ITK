@@ -112,7 +112,7 @@ public:
   typedef FixedArray< ExpandFactorsType, ImageDimension > ExpandFactorsArrayType;
 
   /** Typedef support for the interpolation function */
-  typedef double                                                               CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
   typedef VectorInterpolateImageFunction< InputImageType, CoordRepType >       InterpolatorType;
   typedef typename InterpolatorType::Pointer                                   InterpolatorPointer;
   typedef VectorLinearInterpolateImageFunction< InputImageType, CoordRepType > DefaultInterpolatorType;

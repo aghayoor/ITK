@@ -43,7 +43,7 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
 
   typedef double                   PixelType;
 
-  typedef double                   CoordinateRepresentationType;
+  typedef itk::DefaultParameterValueType CoordinateRepresentationType;
 
   //Allocate Images
   typedef itk::Image<PixelType,ImageDimension>         MovingImageType;

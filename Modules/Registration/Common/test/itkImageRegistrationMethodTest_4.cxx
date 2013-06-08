@@ -53,7 +53,7 @@ int itkImageRegistrationMethodTest_4(int argc, char* argv[] )
                                   MovingImageType::PixelType,
                                   dimension >         ImageSourceType;
   // Transform Type
-  typedef itk::TranslationTransform< double, dimension > TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, dimension > TransformType;
   typedef TransformType::ParametersType                  ParametersType;
 
   // Optimizer Type

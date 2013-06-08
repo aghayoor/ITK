@@ -39,7 +39,7 @@ int itkResampleImageTest6(int argc, char * argv [] )
   typedef ImageType::RegionType        ImageRegionType;
   typedef ImageType::SizeType          ImageSizeType;
 
-  typedef double                       CoordRepType;
+  typedef itk::DefaultParameterValueType CoordRepType;
 
   typedef itk::AffineTransform<CoordRepType,NDimensions>
                                        AffineTransformType;

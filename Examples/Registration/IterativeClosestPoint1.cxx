@@ -170,7 +170,7 @@ int main(int argc, char * argv[] )
 // Set up a Transform
 //-----------------------------------------------------------
 
-  typedef itk::TranslationTransform< double, Dimension >      TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension >      TransformType;
 
   TransformType::Pointer transform = TransformType::New();
 

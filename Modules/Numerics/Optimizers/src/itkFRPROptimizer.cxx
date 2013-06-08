@@ -22,7 +22,7 @@
 
 namespace itk
 {
-const double FRPR_TINY = 1e-20;
+const itk::DefaultParameterValueType FRPR_TINY = 1e-20;
 
 FRPROptimizer
 ::FRPROptimizer()
@@ -37,7 +37,7 @@ FRPROptimizer
 
 void
 FRPROptimizer
-::GetValueAndDerivative(ParametersType & p, double *val,
+::GetValueAndDerivative(ParametersType & p, itk::DefaultParameterValueType *val,
                         ParametersType *xi)
 {
   this->m_CostFunction->GetValueAndDerivative(p, *val, *xi);
@@ -51,7 +51,7 @@ FRPROptimizer
     }
   if ( this->GetUseUnitLengthGradient() )
     {
-    double len = ( *xi )[0] * ( *xi )[0];
+    itk::DefaultParameterValueType len = ( *xi )[0] * ( *xi )[0];
     for ( unsigned int i = 1; i < this->GetSpaceDimension(); i++ )
       {
       len += ( *xi )[i] * ( *xi )[i];
@@ -66,7 +66,7 @@ FRPROptimizer
 
 void
 FRPROptimizer
-::LineOptimize(ParametersType *p, ParametersType & xi, double *val)
+::LineOptimize(ParametersType *p, ParametersType & xi, itk::DefaultParameterValueType *val)
 {
   ParametersType tempCoord( this->GetSpaceDimension() );
 
@@ -75,23 +75,23 @@ FRPROptimizer
 
 void
 FRPROptimizer
-::LineOptimize(ParametersType *p, ParametersType & xi, double *val,
+::LineOptimize(ParametersType *p, ParametersType & xi, itk::DefaultParameterValueType *val,
                ParametersType & tempCoord)
 {
   this->SetLine(*p, xi);
 
-  double ax = 0.0;
-  double fa = ( *val );
-  double xx = this->GetStepLength();
-  double fx;
-  double bx;
-  double fb;
+  InternalComputationType ax = 0.0;
+  InternalComputationType fa = ( *val );
+  InternalComputationType xx = this->GetStepLength();
+  InternalComputationType fx;
+  InternalComputationType bx;
+  InternalComputationType fb;
 
   this->LineBracket(&ax, &xx, &bx, &fa, &fx, &fb, tempCoord);
   this->SetCurrentLinePoint(xx, fx);
 
-  double extX = 0;
-  double extVal = 0;
+  itk::DefaultParameterValueType extX = 0;
+  itk::DefaultParameterValueType extVal = 0;
 
   this->BracketedLineOptimize(ax, xx, bx, fa, fx, fb, &extX, &extVal,
                               tempCoord);
@@ -119,7 +119,7 @@ FRPROptimizer
 
   FRPROptimizer::ParametersType tempCoord( this->GetSpaceDimension() );
 
-  double                        gg, gam, dgg;
+  itk::DefaultParameterValueType                        gg, gam, dgg;
   FRPROptimizer::ParametersType g( this->GetSpaceDimension() );
   FRPROptimizer::ParametersType h( this->GetSpaceDimension() );
   FRPROptimizer::ParametersType xi( this->GetSpaceDimension() );
@@ -128,7 +128,7 @@ FRPROptimizer
   p = this->GetInitialPosition();
   this->SetCurrentPosition(p);
 
-  double fp;
+  itk::DefaultParameterValueType fp;
   this->GetValueAndDerivative(p, &fp, &xi);
 
   for ( i = 0; i < this->GetSpaceDimension(); i++ )
@@ -146,7 +146,7 @@ FRPROptimizer
     {
     this->SetCurrentIteration(currentIteration);
 
-    double fret;
+    itk::DefaultParameterValueType fret;
     fret = fp;
     this->LineOptimize(&p, xi, &fret, tempCoord);
 

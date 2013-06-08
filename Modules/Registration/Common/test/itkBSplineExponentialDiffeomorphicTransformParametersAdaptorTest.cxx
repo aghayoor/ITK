@@ -22,7 +22,7 @@
 int itkBSplineExponentialDiffeomorphicTransformParametersAdaptorTest(int, char * [] )
 {
   const unsigned int SpaceDimension = 3;
-  typedef double CoordinateRepType;
+  typedef itk::DefaultParameterValueType CoordinateRepType;
   typedef itk::BSplineExponentialDiffeomorphicTransform<CoordinateRepType, SpaceDimension> TransformType;
 
   /**

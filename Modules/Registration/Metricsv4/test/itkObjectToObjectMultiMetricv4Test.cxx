@@ -188,7 +188,7 @@ int itkObjectToObjectMultiMetricv4TestRun(bool useDisplacementTransform )
   // Create two simple images
   const unsigned int Dimension = ObjectToObjectMultiMetricv4TestDimension;
   typedef double PixelType;
-  typedef double CoordinateRepresentationType;
+  typedef itk::DefaultParameterValueType CoordinateRepresentationType;
 
   // Allocate Images
   typedef itk::Image<PixelType,Dimension> FixedImageType;
@@ -241,7 +241,7 @@ int itkObjectToObjectMultiMetricv4TestRun(bool useDisplacementTransform )
 
   // Set up a transform
   typedef itk::Transform<CoordinateRepresentationType, Dimension, Dimension>  TransformType;
-  typedef itk::DisplacementFieldTransform<double, Dimension>                  DisplacementTransformType;
+  typedef itk::DisplacementFieldTransform< itk::DefaultParameterValueType, Dimension>                  DisplacementTransformType;
   typedef itk::TranslationTransform<CoordinateRepresentationType,Dimension>   TranslationTransformType;
   TransformType::Pointer transform;
 

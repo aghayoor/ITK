@@ -165,7 +165,7 @@ namespace itk
  * \ingroup ITKMetricsv4
  */
 template<class TFixedImage,class TMovingImage,class TVirtualImage = TFixedImage,
-         class TInternalComputationValueType = double,
+         class TInternalComputationValueType = DefaultParameterValueType,
          typename TMetricTraits = DefaultImageToImageMetricTraitsv4< TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType >
          >
 class ITK_EXPORT ImageToImageMetricv4

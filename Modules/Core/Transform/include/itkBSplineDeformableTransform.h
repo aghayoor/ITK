@@ -57,7 +57,7 @@ namespace itk
  *
  * The following illustrates the typical usage of this class:
  * \verbatim
- * typedef BSplineDeformableTransform<double,2,3> TransformType;
+ * typedef BSplineDeformableTransform< itk::DefaultParameterValueType,2,3> TransformType;
  * TransformType::Pointer transform = TransformType::New();
  *
  * transform->SetGridRegion( region );

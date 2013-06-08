@@ -273,7 +273,7 @@ int itkGeodesicActiveContourShapePriorLevelSetImageFilterTest_2( int, char *[])
   //
   // Set up a translation transform
   //
-  typedef itk::TranslationTransform<double,ImageDimension> TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType,ImageDimension> TransformType;
   TransformType::Pointer transform = TransformType::New();
 
   //

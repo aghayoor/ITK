@@ -41,7 +41,7 @@ int itkMIRegistrationFunctionTest(int, char* [] )
   typedef double                                PixelType;
   typedef itk::Vector<double,ImageDimension>    DeformationPixelType;
 
-  typedef double                   CoordinateRepresentationType;
+  typedef itk::DefaultParameterValueType CoordinateRepresentationType;
 
   //Allocate Images
   typedef itk::Image<PixelType,ImageDimension>         MovingImageType;

@@ -116,7 +116,7 @@ int main( int argc, char *argv[] )
   //  below.
   // Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
-  typedef itk::TranslationTransform< double, Dimension > TransformType;
+  typedef itk::TranslationTransform< itk::DefaultParameterValueType, Dimension > TransformType;
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex

@@ -181,7 +181,7 @@ int TestMattesMetricWithAffineTransform(
 //-----------------------------------------------------------
 // Set up a transformer
 //-----------------------------------------------------------
-  typedef itk::AffineTransform< double, ImageDimension > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, ImageDimension > TransformType;
   typedef typename TransformType::ParametersType         ParametersType;
 
   typename TransformType::Pointer transformer = TransformType::New();

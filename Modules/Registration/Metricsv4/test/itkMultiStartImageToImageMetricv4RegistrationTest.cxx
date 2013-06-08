@@ -99,7 +99,7 @@ int itkMultiStartImageToImageMetricv4RegistrationTest(int argc, char *argv[])
 
   /** Now set up a rotation about the center of the image */
   //create an affine transform
-  typedef itk::AffineTransform<double, Dimension>
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension>
                                                     AffineTransformType;
   InternalImageType::IndexType centerindex;
   InternalImageType::PointType mpoint;
@@ -142,7 +142,7 @@ int itkMultiStartImageToImageMetricv4RegistrationTest(int argc, char *argv[])
   std::cout <<" affineTransform params prior to optimization " << affineTransform->GetParameters() << std::endl;
 
   //identity transform for fixed image
-  typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension> IdentityTransformType;
   IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
   identityTransform->SetIdentity();
 

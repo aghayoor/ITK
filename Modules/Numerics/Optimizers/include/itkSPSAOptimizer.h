@@ -100,7 +100,7 @@ public:
    */
   virtual void GuessParameters(
     SizeValueType numberOfGradientEstimates,
-    double initialStepSize);
+    itk::DefaultParameterValueType initialStepSize);
 
   /** Get the current iteration number. */
   itkGetConstMacro(CurrentIteration, SizeValueType);
@@ -109,39 +109,39 @@ public:
   itkGetConstMacro(StopCondition, StopConditionType);
 
   /** Get the current LearningRate (a_k) */
-  itkGetConstMacro(LearningRate, double);
+  itkGetConstMacro(LearningRate, itk::DefaultParameterValueType);
 
   /** Get the GradientMagnitude of the latest computed gradient */
-  itkGetConstMacro(GradientMagnitude, double);
+  itkGetConstMacro(GradientMagnitude, itk::DefaultParameterValueType);
 
   /** Get the latest computed gradient */
   itkGetConstReferenceMacro(Gradient, DerivativeType);
 
   /** Set/Get a. */
-  itkSetMacro(Sa, double);
-  itkGetConstMacro(Sa, double);
+  itkSetMacro(Sa, itk::DefaultParameterValueType);
+  itkGetConstMacro(Sa, itk::DefaultParameterValueType);
   // For backward compatibility
-  void Seta(double a) { SetSa(a); }
-  double Geta() { return GetSa(); }
+  void Seta(itk::DefaultParameterValueType a) { SetSa(a); }
+  itk::DefaultParameterValueType Geta() { return GetSa(); }
 
   /** Set/Get c. */
-  itkSetMacro(Sc, double);
-  itkGetConstMacro(Sc, double);
+  itkSetMacro(Sc, itk::DefaultParameterValueType);
+  itkGetConstMacro(Sc, itk::DefaultParameterValueType);
   // For backward compatibility
-  void Setc(double c) { SetSc(c); }
-  double Getc() { return GetSc(); }
+  void Setc(itk::DefaultParameterValueType c) { SetSc(c); }
+  itk::DefaultParameterValueType Getc() { return GetSc(); }
 
   /** Set/Get A. */
-  itkSetMacro(A, double);
-  itkGetConstMacro(A, double);
+  itkSetMacro(A, itk::DefaultParameterValueType);
+  itkGetConstMacro(A, itk::DefaultParameterValueType);
 
   /** Set/Get alpha. */
-  itkSetMacro(Alpha, double);
-  itkGetConstMacro(Alpha, double);
+  itkSetMacro(Alpha, itk::DefaultParameterValueType);
+  itkGetConstMacro(Alpha, itk::DefaultParameterValueType);
 
   /** Set/Get gamma. */
-  itkSetMacro(Gamma, double);
-  itkGetConstMacro(Gamma, double);
+  itkSetMacro(Gamma, itk::DefaultParameterValueType);
+  itkGetConstMacro(Gamma, itk::DefaultParameterValueType);
 
   /** Methods to configure the cost function. */
   itkGetConstMacro(Maximize, bool);
@@ -175,11 +175,11 @@ public:
    *   SOC *= SOCDecayRate
    *   SOC += a_k * GradientMagnitude
    */
-  itkGetConstMacro(StateOfConvergence, double);
+  itkGetConstMacro(StateOfConvergence, itk::DefaultParameterValueType);
 
   /** Set/Get StateOfConvergenceDecayRate (number between 0 and 1). */
-  itkSetMacro(StateOfConvergenceDecayRate, double);
-  itkGetConstMacro(StateOfConvergenceDecayRate, double);
+  itkSetMacro(StateOfConvergenceDecayRate, itk::DefaultParameterValueType);
+  itkGetConstMacro(StateOfConvergenceDecayRate, itk::DefaultParameterValueType);
 
   /** Set/Get the minimum number of iterations */
   itkSetMacro(MinimumNumberOfIterations, SizeValueType);
@@ -190,8 +190,8 @@ public:
   itkGetConstMacro(MaximumNumberOfIterations, SizeValueType);
 
   /** Set/Get Tolerance */
-  itkSetMacro(Tolerance, double);
-  itkGetConstMacro(Tolerance, double);
+  itkSetMacro(Tolerance, itk::DefaultParameterValueType);
+  itkGetConstMacro(Tolerance, itk::DefaultParameterValueType);
 
   /** Get the reason for termination */
   const std::string GetStopConditionDescription() const;
@@ -207,7 +207,7 @@ protected:
   /** Variables updated during optimization */
   DerivativeType m_Gradient;
 
-  double m_LearningRate;
+  itk::DefaultParameterValueType m_LearningRate;
 
   DerivativeType m_Delta;
 
@@ -215,7 +215,7 @@ protected:
 
   StopConditionType m_StopCondition;
 
-  double m_StateOfConvergence;
+  itk::DefaultParameterValueType m_StateOfConvergence;
 
   SizeValueType m_CurrentIteration;
 
@@ -223,13 +223,13 @@ protected:
   Statistics::MersenneTwisterRandomVariateGenerator::Pointer m_Generator;
 
   /** Method to compute the learning rate at iteration k (a_k). */
-  virtual double Compute_a(SizeValueType k) const;
+  virtual itk::DefaultParameterValueType Compute_a(SizeValueType k) const;
 
   /**
    * Method to compute the gain factor for the perturbation
    * at iteration k (c_k).
    */
-  virtual double Compute_c(SizeValueType k) const;
+  virtual itk::DefaultParameterValueType Compute_c(SizeValueType k) const;
 
   /** Method to generate a perturbation vector. Takes scales into account. */
   virtual void GenerateDelta(const unsigned int spaceDimension);
@@ -250,18 +250,18 @@ private:
   /** Settings.*/
   SizeValueType m_MinimumNumberOfIterations;
   SizeValueType m_MaximumNumberOfIterations;
-  double        m_StateOfConvergenceDecayRate;
-  double        m_Tolerance;
+  itk::DefaultParameterValueType        m_StateOfConvergenceDecayRate;
+  itk::DefaultParameterValueType        m_Tolerance;
   bool          m_Maximize;
-  double        m_GradientMagnitude;
+  itk::DefaultParameterValueType        m_GradientMagnitude;
   SizeValueType m_NumberOfPerturbations;
 
   /** Parameters, as described by Spall.*/
-  double m_Sa;
-  double m_Sc;
-  double m_A;
-  double m_Alpha;
-  double m_Gamma;
+  itk::DefaultParameterValueType m_Sa;
+  itk::DefaultParameterValueType m_Sc;
+  itk::DefaultParameterValueType m_A;
+  itk::DefaultParameterValueType m_Alpha;
+  itk::DefaultParameterValueType m_Gamma;
 }; // end class SPSAOptimizer
 } // end namespace itk
 

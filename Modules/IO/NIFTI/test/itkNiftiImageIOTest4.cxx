@@ -75,7 +75,7 @@ int itkNiftiImageIOTest4(int ac, char* av[])
   // cosines;
   vnl_random randgen(8775070);
 
-  typedef itk::AffineTransform<double,3>  TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType,3>  TransformType;
   typedef itk::Vector<double,3>           AxisType;
 
   TransformType::Pointer transform = TransformType::New();

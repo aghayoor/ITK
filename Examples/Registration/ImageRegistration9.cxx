@@ -160,7 +160,7 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::AffineTransform< double, Dimension  > TransformType;
+  typedef itk::AffineTransform< itk::DefaultParameterValueType, Dimension  > TransformType;
   // Software Guide : EndCodeSnippet
 
 
@@ -597,7 +597,7 @@ int main( int argc, char *argv[] )
     }
 
 
-  typedef itk::IdentityTransform< double, Dimension > IdentityTransformType;
+  typedef itk::IdentityTransform< itk::DefaultParameterValueType, Dimension > IdentityTransformType;
   IdentityTransformType::Pointer identity = IdentityTransformType::New();
 
   // Compute the difference image between the
