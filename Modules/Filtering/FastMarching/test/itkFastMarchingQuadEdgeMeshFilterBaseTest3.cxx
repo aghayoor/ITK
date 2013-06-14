@@ -24,7 +24,7 @@
 int itkFastMarchingQuadEdgeMeshFilterBaseTest3( int , char * [] )
 {
   typedef float  PixelType;
-  typedef itk::DefaultParameterValueType CoordType;
+  typedef double CoordType;
   const unsigned int Dimension = 3;
 
   typedef itk::QuadEdgeMeshExtendedTraits <

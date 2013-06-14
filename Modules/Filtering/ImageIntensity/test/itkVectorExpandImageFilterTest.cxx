@@ -126,7 +126,7 @@ int itkVectorExpandImageFilterTest(int, char* [] )
 
   expander->SetInput( input );
 
-  typedef itk::VectorNearestNeighborInterpolateImageFunction<ImageType,double> InterpolatorType;
+  typedef itk::VectorNearestNeighborInterpolateImageFunction<ImageType,itk::DefaultParameterValueType> InterpolatorType;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   expander->SetInterpolator( interpolator );

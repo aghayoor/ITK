@@ -93,8 +93,8 @@ int itkResampleImageTest5(int argc, char * argv [] )
   interp->SetInputImage(image);
 
   // Create and configure a resampling filter
-  itk::ResampleImageFilter< ImageType, ImageType >::Pointer resample;
-  resample = itk::ResampleImageFilter< ImageType, ImageType >::New();
+  itk::ResampleImageFilter< ImageType, ImageType, itk::DefaultParameterValueType, itk::DefaultParameterValueType >::Pointer resample;
+  resample = itk::ResampleImageFilter< ImageType, ImageType, itk::DefaultParameterValueType, itk::DefaultParameterValueType >::New();
   resample->SetInput(image);
   resample->SetSize(osize);
   resample->SetTransform(aff);

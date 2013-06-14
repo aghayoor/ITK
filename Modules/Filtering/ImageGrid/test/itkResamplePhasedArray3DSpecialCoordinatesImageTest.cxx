@@ -33,7 +33,7 @@ typedef ImageType::Pointer                  ImagePointerType;
 typedef ImageType::RegionType               ImageRegionType;
 typedef ImageType::SizeType                 ImageSizeType;
 typedef ImageType::IndexType                ImageIndexType;
-typedef itk::DefaultParameterValueType CoordRepType;
+typedef itk::DefaultParameterValueType      CoordRepType;
 
 
 int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
@@ -72,8 +72,8 @@ int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
   }
 
   // Create and configure a resampling filter
-  itk::ResampleImageFilter< InputImageType, ImageType >::Pointer resample;
-  resample = itk::ResampleImageFilter< InputImageType, ImageType >::New();
+  itk::ResampleImageFilter< InputImageType, ImageType, itk::DefaultParameterValueType, itk::DefaultParameterValueType >::Pointer resample;
+  resample = itk::ResampleImageFilter< InputImageType, ImageType, itk::DefaultParameterValueType, itk::DefaultParameterValueType >::New();
   resample->SetInput(image);
 
   ImageSizeType cubeSize;
@@ -132,8 +132,8 @@ int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
   // Create and configure an image to be a restored "copy" of the input
   InputImagePointerType image2;
   // Create and configure a back-resampling filter
-  itk::ResampleImageFilter< ImageType, InputImageType >::Pointer backResample;
-  backResample = itk::ResampleImageFilter< ImageType, InputImageType >::New();
+  itk::ResampleImageFilter< ImageType, InputImageType, itk::DefaultParameterValueType, itk::DefaultParameterValueType >::Pointer backResample;
+  backResample = itk::ResampleImageFilter< ImageType, InputImageType, itk::DefaultParameterValueType, itk::DefaultParameterValueType >::New();
   backResample->SetInput(resample->GetOutput());
   backResample->SetSize(size);
   // ResampleImageFilter was not designed for special-coordinates images, so we

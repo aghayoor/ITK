@@ -73,12 +73,14 @@ int itkBSplineTransformInitializerTest1( int argc, char * argv[] )
   FixedImageType::ConstPointer fixedImage = fixedReader->GetOutput();
 
   typedef itk::ResampleImageFilter<MovingImageType,
-                                   FixedImageType>  FilterType;
+                                   FixedImageType,
+                                   itk::DefaultParameterValueType,
+                                   itk::DefaultParameterValueType >  FilterType;
 
   FilterType::Pointer resampler = FilterType::New();
 
   typedef itk::LinearInterpolateImageFunction<
-    MovingImageType, double>  InterpolatorType;
+    MovingImageType, itk::DefaultParameterValueType>  InterpolatorType;
 
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 

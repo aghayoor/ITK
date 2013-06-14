@@ -198,7 +198,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
       if ( level > 0 )
         {
         m_Schedule[level][dim] = vnl_math_min(
-          m_Schedule[level][dim], m_Schedule[level - 1][dim]);
+            m_Schedule[level][dim], m_Schedule[level - 1][dim]);
         }
 
       if ( m_Schedule[level][dim] < 1 )
@@ -252,9 +252,12 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
   typedef CastImageFilter< TInputImage, TOutputImage >              CasterType;
   typedef DiscreteGaussianImageFilter< TOutputImage, TOutputImage > SmootherType;
 
-  typedef ImageToImageFilter< TOutputImage, TOutputImage >  ImageToImageType;
-  typedef ResampleImageFilter< TOutputImage, TOutputImage > ResampleShrinkerType;
-  typedef ShrinkImageFilter< TOutputImage, TOutputImage >   ShrinkerType;
+  typedef ImageToImageFilter< TOutputImage,
+                              TOutputImage >                    ImageToImageType;
+  typedef ResampleImageFilter< TOutputImage, TOutputImage, itk::DefaultParameterValueType,
+                               itk::DefaultParameterValueType > ResampleShrinkerType;
+  typedef ShrinkImageFilter< TOutputImage,
+                             TOutputImage >                     ShrinkerType;
 
   typename CasterType::Pointer caster = CasterType::New();
   typename SmootherType::Pointer smoother = SmootherType::New();
@@ -274,8 +277,8 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
   else
     {
     resampleShrinker = ResampleShrinkerType::New();
-    typedef itk::LinearInterpolateImageFunction< OutputImageType, double >
-    LinearInterpolatorType;
+    typedef itk::LinearInterpolateImageFunction< OutputImageType, itk::DefaultParameterValueType >
+      LinearInterpolatorType;
     typename LinearInterpolatorType::Pointer interpolator =
       LinearInterpolatorType::New();
     resampleShrinker->SetInterpolator(interpolator);
@@ -316,7 +319,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
     if ( !this->GetUseShrinkImageFilter() )
       {
       typedef itk::IdentityTransform< itk::DefaultParameterValueType, OutputImageType::ImageDimension >
-      IdentityTransformType;
+        IdentityTransformType;
       typename IdentityTransformType::Pointer identityTransform =
         IdentityTransformType::New();
       resampleShrinker->SetOutputParametersFromImage(outputPtr);
@@ -407,11 +410,11 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
       outputSpacing[idim] = inputSpacing[idim] * shrinkFactor;
 
       outputSize[idim] = static_cast< SizeValueType >(
-        vcl_floor(static_cast< double >( inputSize[idim] ) / shrinkFactor) );
+          vcl_floor(static_cast< double >( inputSize[idim] ) / shrinkFactor) );
       if ( outputSize[idim] < 1 ) { outputSize[idim] = 1; }
 
       outputStartIndex[idim] = static_cast< IndexValueType >(
-        vcl_ceil(static_cast< double >( inputStartIndex[idim] ) / shrinkFactor) );
+          vcl_ceil(static_cast< double >( inputStartIndex[idim] ) / shrinkFactor) );
       }
     //Now compute the new shifted origin for the updated levels;
     const typename OutputImageType::PointType::VectorType outputOriginOffset =
@@ -499,11 +502,11 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
         double factor = static_cast< double >( m_Schedule[ilevel][idim] );
 
         outputSize[idim] = static_cast< SizeValueType >(
-          vcl_floor(static_cast< double >( baseSize[idim] ) / factor) );
+            vcl_floor(static_cast< double >( baseSize[idim] ) / factor) );
         if ( outputSize[idim] < 1 ) { outputSize[idim] = 1; }
 
         outputIndex[idim] = static_cast< IndexValueType >(
-          vcl_ceil(static_cast< double >( baseIndex[idim] ) / factor) );
+            vcl_ceil(static_cast< double >( baseIndex[idim] ) / factor) );
         }
 
       outputRegion.SetIndex(outputIndex);
@@ -532,6 +535,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
   // get pointers to the input and output
   InputImagePointer inputPtr =
     const_cast< InputImageType * >( this->GetInput() );
+
   if ( !inputPtr )
     {
     itkExceptionMacro(<< "Input has not been set.");
@@ -587,6 +591,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
   // set the input requested region
   inputPtr->SetRequestedRegion(inputRequestedRegion);
 }
+
 } // namespace itk
 
 #endif

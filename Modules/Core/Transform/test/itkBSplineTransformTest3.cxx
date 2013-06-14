@@ -101,12 +101,14 @@ static int RunTest(int argc, char * argv [] )
 
 
   typedef itk::ResampleImageFilter< MovingImageType,
-                                    FixedImageType  >  FilterType;
+                                    FixedImageType,
+                                    itk::DefaultParameterValueType,
+                                    itk::DefaultParameterValueType  >  FilterType;
 
   typename FilterType::Pointer resampler = FilterType::New();
 
   typedef itk::LinearInterpolateImageFunction<
-                       MovingImageType, double >  InterpolatorType;
+                       MovingImageType, itk::DefaultParameterValueType >  InterpolatorType;
 
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
