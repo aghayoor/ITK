@@ -32,7 +32,7 @@
 // \index{itk::Multi\-Resolution\-Image\-Registration\-Method}
 //
 // This example illustrates the use of the
-// \doxygen{MultiResolutionImageRegistrationMethod} to solve a simple
+// \doxygen{ImageToImageRegistrationMethodv4} to solve a simple
 // multi-modality registration problem. In addition to the two input images,
 // a transform, a metric, an interpolator and an optimizer, the
 // multi-resolution framework also requires two image pyramids for creating
@@ -42,10 +42,10 @@
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
-#include "itkMultiResolutionImageRegistrationMethod.h"
+#include "itkImageRegistrationMethodv4.h"
 #include "itkTranslationTransform.h"
-#include "itkMattesMutualInformationImageToImageMetric.h"
-#include "itkRegularStepGradientDescentOptimizer.h"
+#include "itkMattesMutualInformationImageToImageMetricv4.h"
+#include "itkRegularStepGradientDescentOptimizerv4.h"
 #include "itkImage.h"
 // Software Guide : EndCodeSnippet
 
@@ -153,10 +153,10 @@ protected:
   // Software Guide : BeginCodeSnippet
 
 public:
-  typedef   TRegistration                              RegistrationType;
-  typedef   RegistrationType *                         RegistrationPointer;
-  typedef   itk::RegularStepGradientDescentOptimizer   OptimizerType;
-  typedef   OptimizerType *                            OptimizerPointer;
+  typedef   TRegistration                                        RegistrationType;
+  typedef   RegistrationType *                                   RegistrationPointer;
+  typedef   itk::RegularStepGradientDescentOptimizerv4<double>   OptimizerType;
+  typedef   OptimizerType *                                      OptimizerPointer;
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -212,14 +212,21 @@ public:
     //
     // Software Guide : EndLatex
     // Software Guide : BeginCodeSnippet
-    OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >(
-                       registration->GetModifiableOptimizer() );
+//    OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >(
+//                       registration->GetModifiableOptimizer() );
+
+    unsigned int currentLevel = registration->GetCurrentLevel();
+    typename TRegistration::ShrinkFactorsPerDimensionContainerType shrinkFactors =
+                                      registration->GetShrinkFactorsPerDimension( currentLevel );
+    typename TRegistration::SmoothingSigmasArrayType smoothingSigmas =
+                                      registration->GetSmoothingSigmasPerLevel();
 
     std::cout << "-------------------------------------" << std::endl;
-    std::cout << "MultiResolution Level : "
-              << registration->GetCurrentLevel()  << std::endl;
+    std::cout << " Current level = " << currentLevel << std::endl;
+    std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
+    std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
     std::cout << std::endl;
-
+/*
     if ( registration->GetCurrentLevel() == 0 )
       {
       optimizer->SetMaximumStepLength( 16.00 );
@@ -232,6 +239,7 @@ public:
       optimizer->SetMinimumStepLength(
                                     optimizer->GetMinimumStepLength() * 0.1 );
       }
+*/
   }
   // Software Guide : EndCodeSnippet
 
@@ -261,11 +269,11 @@ public:
   itkNewMacro( Self );
 
 protected:
-  CommandIterationUpdate() {};
+  CommandIterationUpdate(): m_CumulativeIterationIndex(0) {};
 
 public:
-  typedef   itk::RegularStepGradientDescentOptimizer  OptimizerType;
-  typedef   const OptimizerType *                     OptimizerPointer;
+  typedef   itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
+  typedef   const OptimizerType *                               OptimizerPointer;
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
@@ -282,8 +290,11 @@ public:
         }
       std::cout << optimizer->GetCurrentIteration() << "   ";
       std::cout << optimizer->GetValue() << "   ";
-      std::cout << optimizer->GetCurrentPosition() << std::endl;
+      std::cout << optimizer->GetCurrentPosition() << "   ";
+      std::cout << m_CumulativeIterationIndex++ << std::endl;
     }
+private:
+  unsigned int m_CumulativeIterationIndex;
 };
 
 
@@ -310,9 +321,9 @@ int main( int argc, const char *argv[] )
   const PixelType backgroundGrayLevel  = (argc >4 )? atoi(argv[4]): 100;
   const std::string checkerBoardBefore = (argc >5 )?      argv[5]: "";
   const std::string checkerBoardAfter  = (argc >6 )?      argv[6]: "";
-  const bool useExplicitPDFderivatives = (argc >7 )? static_cast<bool>(atoi(argv[7])): false;
-  const int numberOfBins               = (argc >8 )? atoi(argv[8]): 0;
-  const int numberOfSamples            = (argc >9 )? atoi(argv[9]): 0;
+//  const bool useExplicitPDFderivatives = (argc >7 )? static_cast<bool>(atoi(argv[7])): false;
+//  const int numberOfBins               = (argc >8 )? atoi(argv[8]): 0;
+//  const int numberOfSamples            = (argc >9 )? atoi(argv[9]): 0;
 
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
@@ -338,17 +349,17 @@ int main( int argc, const char *argv[] )
   //
   //  Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
-  typedef itk::TranslationTransform< double, Dimension > TransformType;
-  typedef itk::RegularStepGradientDescentOptimizer       OptimizerType;
-  typedef itk::LinearInterpolateImageFunction<
+  typedef itk::TranslationTransform< double, Dimension >      TransformType;
+
+  typedef itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
+
+  typedef itk::MattesMutualInformationImageToImageMetricv4<
+                                      InternalImageType,
+                                      InternalImageType >     MetricType;
+  typedef itk::ImageRegistrationMethodv4<
                                     InternalImageType,
-                                    double             > InterpolatorType;
-  typedef itk::MattesMutualInformationImageToImageMetric<
                                     InternalImageType,
-                                    InternalImageType >   MetricType;
-  typedef itk::MultiResolutionImageRegistrationMethod<
-                                    InternalImageType,
-                                    InternalImageType >   RegistrationType;
+                                    TransformType >           RegistrationType;
   // Software Guide: EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -363,33 +374,25 @@ int main( int argc, const char *argv[] )
   //
   //  Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
+/*
   typedef itk::MultiResolutionPyramidImageFilter<
             InternalImageType, InternalImageType >   FixedImagePyramidType;
   typedef itk::MultiResolutionPyramidImageFilter<
             InternalImageType, InternalImageType >   MovingImagePyramidType;
-  // Software Guide: EndCodeSnippet
+*/
+ // Software Guide: EndCodeSnippet
 
 
   //  All the components are instantiated using their \code{New()} method
   //  and connected to the registration object as in previous example.
   //
-  TransformType::Pointer      transform     = TransformType::New();
+//  TransformType::Pointer      transform     = TransformType::New();
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
-  InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
-  RegistrationType::Pointer   registration  = RegistrationType::New();
   MetricType::Pointer         metric        = MetricType::New();
-
-  FixedImagePyramidType::Pointer fixedImagePyramid =
-      FixedImagePyramidType::New();
-  MovingImagePyramidType::Pointer movingImagePyramid =
-      MovingImagePyramidType::New();
+  RegistrationType::Pointer   registration  = RegistrationType::New();
 
   registration->SetOptimizer(     optimizer     );
-  registration->SetTransform(     transform     );
-  registration->SetInterpolator(  interpolator  );
   registration->SetMetric( metric  );
-  registration->SetFixedImagePyramid( fixedImagePyramid );
-  registration->SetMovingImagePyramid( movingImagePyramid );
 
 
   typedef itk::ImageFileReader< FixedImageType  > FixedImageReaderType;
@@ -434,13 +437,7 @@ int main( int argc, const char *argv[] )
   registration->SetMovingImage(   movingCaster->GetOutput()   );
   // Software Guide : EndCodeSnippet
 
-
-  fixedCaster->Update();
-
-  registration->SetFixedImageRegion(
-       fixedCaster->GetOutput()->GetBufferedRegion() );
-
-
+/*
   typedef RegistrationType::ParametersType ParametersType;
   ParametersType initialParameters( transform->GetNumberOfParameters() );
 
@@ -448,10 +445,9 @@ int main( int argc, const char *argv[] )
   initialParameters[1] = 0.0;  // Initial offset in mm along Y
 
   registration->SetInitialTransformParameters( initialParameters );
-
-  metric->SetNumberOfHistogramBins( 128 );
-  metric->SetNumberOfSpatialSamples( 50000 );
-
+*/
+  metric->SetNumberOfHistogramBins( 24 );
+/*
   if( argc > 8 )
     {
     // optionally, override the values with numbers taken from the command line arguments.
@@ -463,7 +459,7 @@ int main( int argc, const char *argv[] )
     // optionally, override the values with numbers taken from the command line arguments.
     metric->SetNumberOfSpatialSamples( numberOfSamples );
     }
-
+*/
 
  //  Software Guide : BeginLatex
   //
@@ -476,10 +472,10 @@ int main( int argc, const char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  metric->ReinitializeSeed( 76926294 );
+//  metric->ReinitializeSeed( 76926294 );
   // Software Guide : EndCodeSnippet
 
-
+/*
   if( argc > 7 )
     {
     // Define whether to calculate the metric derivative by explicitly
@@ -488,10 +484,13 @@ int main( int argc, const char *argv[] )
     // each bin in the joint PDF.
     metric->SetUseExplicitPDFDerivatives( useExplicitPDFderivatives );
     }
+*/
 
-
+  optimizer->SetLearningRate( 8.00 );
+  optimizer->SetRelaxationFactor( 0.3 );
+  optimizer->SetMinimumStepLength( 0.001 );
   optimizer->SetNumberOfIterations( 200 );
-  optimizer->SetRelaxationFactor( 0.9 );
+  optimizer->ReturnBestParametersAndValueOn();
 
 
   // Create the Command observer and register it with the optimizer.
@@ -525,13 +524,34 @@ int main( int argc, const char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  registration->SetNumberOfLevels( 3 );
+
+  // Three level registration process
+  //
+  const unsigned int numberOfLevels = 3;
+
+  RegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
+  shrinkFactorsPerLevel.SetSize( 3 );
+  shrinkFactorsPerLevel[0] = 4;
+  shrinkFactorsPerLevel[1] = 2;
+  shrinkFactorsPerLevel[2] = 1;
+
+  RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
+  smoothingSigmasPerLevel.SetSize( 3 );
+  smoothingSigmasPerLevel[0] = 3;
+  smoothingSigmasPerLevel[1] = 1;
+  smoothingSigmasPerLevel[2] = 0;
+
+  registration->SetNumberOfLevels ( numberOfLevels );
+  registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
+  registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
 
   try
     {
     registration->Update();
+    const OptimizerType::ConstPointer outputOptimizer =
+                                              dynamic_cast<const OptimizerType *>( registration->GetOptimizer() );
     std::cout << "Optimizer stop condition: "
-              << registration->GetOptimizer()->GetStopConditionDescription()
+              << outputOptimizer->GetStopConditionDescription()
               << std::endl;
     }
   catch( itk::ExceptionObject & err )
@@ -542,7 +562,8 @@ int main( int argc, const char *argv[] )
     }
   // Software Guide : EndCodeSnippet
 
-  ParametersType finalParameters = registration->GetLastTransformParameters();
+  TransformType::ParametersType finalParameters =
+                            registration->GetOutput()->Get()->GetParameters();
 
   double TranslationAlongX = finalParameters[0];
   double TranslationAlongY = finalParameters[1];
@@ -612,7 +633,7 @@ int main( int argc, const char *argv[] )
   TransformType::Pointer finalTransform = TransformType::New();
 
   finalTransform->SetParameters( finalParameters );
-  finalTransform->SetFixedParameters( transform->GetFixedParameters() );
+  finalTransform->SetFixedParameters( registration->GetOutput()->Get()->GetFixedParameters() );
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
