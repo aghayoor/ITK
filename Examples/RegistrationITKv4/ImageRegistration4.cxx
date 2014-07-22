@@ -28,7 +28,7 @@
 
 // Software Guide : BeginLatex
 //
-// In this example, we will solve a simple multi-modality problem using another
+// In this example, we will solve a simple multi-modality problem using an
 // implementation of mutual information. This implementation was published by
 // Mattes~\emph{et. al}~\cite{Mattes2003}.
 //
@@ -43,9 +43,6 @@
 // process. The use of a single sample set results in a smooth cost function
 // and hence allows the use of intelligent optimizers. In this example, we will
 // use the \doxygen{RegularStepGradientDescentOptimizerv4}.
-//
-// Also, notice that pre-normalization of the images is not necessary in this example
-// as the metric rescales internally when building up the discrete density functions.
 //
 // First, we include the header files of the components used in this example.
 //
