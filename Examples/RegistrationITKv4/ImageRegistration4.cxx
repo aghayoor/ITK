@@ -32,18 +32,6 @@
 // implementation of mutual information. This implementation was published by
 // Mattes~\emph{et. al}~\cite{Mattes2003}.
 //
-// Instead of using the whole virtual domain (usually fixed image domain) for the registration,
-// we can use a spatial sample set by supplying an arbitrary point list over which to
-// evaluate the metric. The point list is expected to be in the fixed image domain, and
-// the points are transformed into the virtual domain internally as needed. User can
-// define the point set via "SetFixedSampledPointSet", and the point set is enabled to use
-// by calling "SetUsedFixedSampledPointSet".
-//
-// A single virtual domain or spatial sample set is used for the whole registration
-// process. The use of a single sample set results in a smooth cost function
-// and hence allows the use of intelligent optimizers. In this example, we will
-// use the \doxygen{RegularStepGradientDescentOptimizerv4}.
-//
 // First, we include the header files of the components used in this example.
 //
 // \index{itk::ImageRegistrationMethodv4!Multi-Modality}
@@ -135,10 +123,8 @@ int main( int argc, char *argv[] )
   //  Software Guide : BeginLatex
   //
   //  In this example the image types and all registration components,
-  //  except the metric, are declared as in Section
-  //  \ref{sec:IntroductionImageRegistration}.
-  //  The Mattes mutual information metric type is
-  //  instantiated using the image types.
+  //  except the metric, are declared as in Section \ref{sec:IntroductionImageRegistration}.
+  //  The Mattes mutual information metric type is instantiated using the image types.
   //
   //  Software Guide : EndLatex
 
@@ -169,15 +155,10 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  The metric requires one parameter to be selected: the number of bins
+  //  The metric requires one parameter to be selected; the number of bins
   //  used to compute the entropy. In typical application 50 histogram bins
   //  are sufficient. Note however, that the number of bins may have dramatic
   //  effects on the optimizer's behavior.
-  //  In this example the whole virtual image domain is used rather than just a
-  //  a sampled point set.
-  //  To calculate the image gradients, an image gradient calculator based on
-  //  ImageFunction is used instead of image gradient filters. Image gradient
-  //  methods are defined in the super class \index{ImageToImageMetricv4}.
   //
   //  \index{itk::Mattes\-Mutual\-Information\-Image\-To\-Image\-Metricv4!SetNumberOfHistogramBins()}
   //
@@ -195,7 +176,17 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   metric->SetNumberOfHistogramBins( numberOfBins );
-  metric->SetUseFixedSampledPointSet( false );
+  // Software Guide : EndCodeSnippet
+
+  //  Software Guide : BeginLatex
+  //
+  //  To calculate the image gradients, an image gradient calculator based on
+  //  ImageFunction is used instead of image gradient filters. Image gradient
+  //  methods are defined in the super class \index{ImageToImageMetricv4}.
+  //
+  //  Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
   metric->SetUseMovingImageGradientFilter( false );
   metric->SetUseFixedImageGradientFilter( false );
   // Software Guide : EndCodeSnippet
@@ -275,6 +266,56 @@ int main( int argc, char *argv[] )
   registration->SetNumberOfLevels ( numberOfLevels );
   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
   registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
+
+  // Software Guide : BeginLatex
+  //
+  // Instead of using the whole virtual domain (usually fixed image domain) for the registration,
+  // we can use a spatial sampled point set by supplying an arbitrary point list over which to
+  // evaluate the metric. The point list is expected to be in the \emph{fixed} image domain, and
+  // the points are transformed into the \emph{virtual} domain internally as needed. User can
+  // define the point set via \code{SetFixedSampledPointSet()}, and the point set is enabled to use
+  // by calling \code{SetUsedFixedSampledPointSet()}.
+  //
+  // Also, instead of dealing with metric directly, user can define
+  // the sampling percentage and sampling strategy for the registration framework at each level.
+  // In this case registration filter manages the sampling operation over the fixed image space
+  // based on the input strategy (REGULAR, RANDOM) and passes the sampled points to the metric
+  // internally.
+  //
+  // Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
+  typedef RegistrationType::MetricSamplingStrategyType   SamplingStrategyType;
+  SamplingStrategyType samplingStrategy = RegistrationType::RANDOM;
+  // Software Guide : EndCodeSnippet
+
+  // Software Guide : BeginLatex
+  //
+  // The number of spatial samples to be
+  // used depends on the content of the image. If the images are smooth and do
+  // not contain much details, then using approximately $1$ percent of the
+  // pixels will do. On the other hand, if the images are detailed, it may be
+  // necessary to use a much higher proportion, such as $20$ percent.
+  //
+  // Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
+  double samplingPercentage = 0.1;
+  // Software Guide : EndCodeSnippet
+
+  // Software Guide : BeginLatex
+  //
+  // In ITKv4, a single virtual domain or spatial sample point set is used for the
+  // whole registration iterations of the registration
+  // process. The use of a single sample set results in a smooth cost function
+  // that can imporve the functionality of the optimizer.
+  //
+  // Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
+  registration->SetMetricSamplingStrategy( samplingStrategy );
+  registration->SetMetricSamplingPercentage( samplingPercentage );
+  // Software Guide : EndCodeSnippet
 
   try
     {
