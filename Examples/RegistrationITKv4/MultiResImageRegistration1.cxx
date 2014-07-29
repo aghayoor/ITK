@@ -162,7 +162,7 @@ public:
   //
   // Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  void Execute( itk::Object * object, const itk::EventObject & event)
     {
     // Software Guide : EndCodeSnippet
 
@@ -175,8 +175,8 @@ public:
       //
       // Software Guide : EndLatex
       // Software Guide : BeginCodeSnippet
-    RegistrationType const * const registration =
-                                dynamic_cast<const RegistrationType *>( object );
+    RegistrationPointer registration =
+                                dynamic_cast<RegistrationPointer>( object );
 
 //    OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >(
 //                                                                  const_cast<RegistrationType *>(registration)->GetModifiableOptimizer() );
@@ -189,7 +189,8 @@ public:
     //
     // Software Guide : EndLatex
     // Software Guide : BeginCodeSnippet
-    if( itk::InitializeEvent().CheckEvent( &event ) )
+    if( itk::MultiResolutionIterationEvent().CheckEvent( &event ) )
+//    if( typeid( event ) == typeid( itk::MultiResolutionIterationEvent ) )
       {
       unsigned int currentLevel = registration->GetCurrentLevel();
       typename RegistrationType::ShrinkFactorsPerDimensionContainerType shrinkFactors =
@@ -199,7 +200,7 @@ public:
 
       std::cout << "-------------------------------------" << std::endl;
       std::cout << " Current level = " << currentLevel << std::endl;
-      std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
+      std::cout << "    shrink factor = " << shrinkFactors << std::endl;
       std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
       std::cout << std::endl;
       }
@@ -229,7 +230,8 @@ public:
 */
     else
       {
-      //std::cout << "WrongEvent" << std::endl;
+      //std::cout << "Event: " << std::endl;
+      //event.Print(std::cout);
       return;
       }
 
@@ -244,9 +246,9 @@ public:
   //
   // Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
-  void Execute(itk::Object * object, const itk::EventObject & event)
+  void Execute(const itk::Object * , const itk::EventObject & )
     {
-    Execute( (const itk::Object *) object , event );
+    return;
     }
 
 //private:
@@ -452,22 +454,6 @@ int main( int argc, const char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  Once all the registration components are in place we can create
-  //  an instance of our interface command and connect it to the
-  //  registration object using the \code{AddObserver()} method.
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
-  typedef RegistrationInterfaceCommand<RegistrationType> CommandType;
-  CommandType::Pointer command = CommandType::New();
-
-  registration->AddObserver( itk::IterationEvent(), command );
-  registration->AddObserver( itk::InitializeEvent(), command );
-  // Software Guide : EndCodeSnippet
-
-  //  Software Guide : BeginLatex
-  //
   //  We set the number of multi-resolution levels to three and trigger the
   //  registration process by calling \code{Update()}.
   //
@@ -487,13 +473,29 @@ int main( int argc, const char *argv[] )
 
   RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
   smoothingSigmasPerLevel.SetSize( 3 );
-  smoothingSigmasPerLevel[0] = 0;
-  smoothingSigmasPerLevel[1] = 0;
+  smoothingSigmasPerLevel[0] = 3;
+  smoothingSigmasPerLevel[1] = 2;
   smoothingSigmasPerLevel[2] = 0;
 
   registration->SetNumberOfLevels ( numberOfLevels );
   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
   registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
+
+  //  Software Guide : BeginLatex
+  //
+  //  Once all the registration components are in place we can create
+  //  an instance of our interface command and connect it to the
+  //  registration object using the \code{AddObserver()} method.
+  //
+  //  Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
+  typedef RegistrationInterfaceCommand<RegistrationType> CommandType;
+  CommandType::Pointer command = CommandType::New();
+
+//  registration->AddObserver( itk::MultiResolutionIterationEvent(), command );
+  registration->AddObserver( itk::IterationEvent(), command );
+    // Software Guide : EndCodeSnippet
 
   try
     {
