@@ -178,8 +178,7 @@ public:
     RegistrationPointer registration =
                                 dynamic_cast<RegistrationPointer>( object );
 
-//    OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >(
-//                                                                  const_cast<RegistrationType *>(registration)->GetModifiableOptimizer() );
+    OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >( registration->GetModifiableOptimizer() );
       // Software Guide : EndCodeSnippet
 
     // Software Guide : BeginLatex
@@ -203,6 +202,21 @@ public:
       std::cout << "    shrink factor = " << shrinkFactors << std::endl;
       std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
       std::cout << std::endl;
+
+      if ( registration->GetCurrentLevel() == 0 )
+        {
+        optimizer->SetLearningRate( 16.00 );
+        optimizer->SetMinimumStepLength( 2.5 );
+        }
+      else
+        {
+        std::cout << " LearningRate: " << optimizer->GetLearningRate() << std::endl;
+        std::cout << " Min Step Length: " << optimizer->GetMinimumStepLength() * 0.1 << std::endl;
+        optimizer->SetLearningRate(
+                                        optimizer->GetLearningRate() * 0.25 );
+        optimizer->SetMinimumStepLength(
+                                        optimizer->GetMinimumStepLength() * 0.1 );
+        }
       }
     // Software Guide : EndCodeSnippet
 
@@ -442,8 +456,8 @@ int main( int argc, const char *argv[] )
 
   optimizer->SetNumberOfIterations( 200 );
   optimizer->SetRelaxationFactor( 0.5 );
-  optimizer->SetLearningRate( 16.00 );
-  optimizer->SetMinimumStepLength( 0.1 );
+//  optimizer->SetLearningRate( 16.00 );
+//  optimizer->SetMinimumStepLength( 0.1 );
 
 
   // Create the Command observer and register it with the optimizer.
@@ -473,8 +487,8 @@ int main( int argc, const char *argv[] )
 
   RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
   smoothingSigmasPerLevel.SetSize( 3 );
-  smoothingSigmasPerLevel[0] = 3;
-  smoothingSigmasPerLevel[1] = 2;
+  smoothingSigmasPerLevel[0] = 0;
+  smoothingSigmasPerLevel[1] = 0;
   smoothingSigmasPerLevel[2] = 0;
 
   registration->SetNumberOfLevels ( numberOfLevels );
