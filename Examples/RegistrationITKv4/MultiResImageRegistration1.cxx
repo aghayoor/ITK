@@ -33,17 +33,20 @@
 // This example illustrates the use of the
 // \doxygen{ImageRegistrationMethodv4} to solve a simple
 // multi-modality registration problem by a multi-resolution approach.
-// Since ITKv4 registration method is designed based on a multi-resolution
-// structure, there is no more component needed to run the registration
-// process of this example.
+// No more is component needed to run the registration
+// process of this example since ITKv4 registration method is designed
+// based on a multi-resolution structure.
 //
-// Note that this a great advantage over the previous versions of ITK, since
-// in ITKv3 we had to use a different filter (\doxygen{MultiResolutionImageRegistrationMethod})
+// This a great advantage over the previous versions of ITK, as
+// in ITKv3 we had to use a different filter
+// (\doxygen{MultiResolutionImageRegistrationMethod})
 // to run a multi-resolution process. Also, we had to use image pyramids filters
-// (\doxygen{MultiResolutionPyramidImageFilter}) for creating the sequence of downsampled images.
-// Hence, you can see how ITKv4 framework has made to be more user-friendly in more complex situations.
+// (\doxygen{MultiResolutionPyramidImageFilter}) for creating the sequence of
+// downsampled images. Hence, you can see how ITKv4 framework is
+// more user-friendly in more complex situations.
 //
-// To begin the example, we include the headers of the registration components we will use.
+// To begin the example, we include the headers of the registration
+// components we will use.
 //
 // Software Guide : EndLatex
 
@@ -52,7 +55,6 @@
 #include "itkTranslationTransform.h"
 #include "itkMattesMutualInformationImageToImageMetricv4.h"
 #include "itkRegularStepGradientDescentOptimizerv4.h"
-#include "itkImage.h"
 // Software Guide : EndCodeSnippet
 
 
@@ -66,7 +68,7 @@
 
 // Software Guide : BeginLatex
 //
-// The MultiResolutionImageRegistrationMethod solves a registration
+// The ImageRegistrationMethodv4 solves a registration
 // problem in a coarse to fine manner as illustrated in Figure
 // \ref{fig:MultiResRegistrationConcept}. The registration is first performed
 // at the coarsest level using the images at the first level of the fixed and
@@ -92,9 +94,19 @@
 // or even swap out components between multi-resolution levels. For example,
 // when optimizing at a coarse resolution, it may be possible to take more
 // aggressive step sizes and have a more relaxed convergence criterion.
-// Another possible scheme is to use a simple translation transform for the
-// initial coarse registration and upgrade to an affine transform at the
-// finer levels.
+//
+// Tweaking the components between resolution levels can be done using ITK's
+// implementation of the \emph{Command/Observer} design pattern. Before
+// beginning registration at each resolution level,
+// where ImageRegistrationMethodv4 invokes an
+// \code{MultiResolutionIterationEvent()}. The registration components can
+// be changed by implementing a \doxygen{Command} which responds to the
+// event. A brief description the interaction between events and commands was
+// previously presented in Section \ref{sec:MonitoringImageRegistration}.
+//
+// We will illustrate this mechanism by changing the parameters of the
+// optimizer between each resolution level by way of a simple interface
+// command. First, we include the header file of the Command class.
 //
 // Software Guide : EndLatex
 
@@ -125,8 +137,8 @@ class RegistrationInterfaceCommand : public itk::Command
   // \ref{sec:MonitoringImageRegistration}.
   //
   // Software Guide : EndLatex
-  // Software Guide : BeginCodeSnippet
 
+  // Software Guide : BeginCodeSnippet
 public:
   typedef  RegistrationInterfaceCommand   Self;
   typedef  itk::Command                   Superclass;
@@ -134,9 +146,7 @@ public:
   itkNewMacro( Self );
 
 protected:
-  RegistrationInterfaceCommand()//: m_CumulativeIterationIndex(0)
-  {
-  };
+  RegistrationInterfaceCommand() {};
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -145,13 +155,13 @@ protected:
   // in the \code{Execute()} method.
   //
   // Software Guide : EndLatex
-  // Software Guide : BeginCodeSnippet
 
+  // Software Guide : BeginCodeSnippet
 public:
-  typedef   TRegistration                              RegistrationType;
-  typedef   RegistrationType *                         RegistrationPointer;
-  typedef   itk::RegularStepGradientDescentOptimizerv4<double>   OptimizerType;
-  typedef   OptimizerType *                            OptimizerPointer;
+  typedef   TRegistration                                       RegistrationType;
+  typedef   RegistrationType *                                  RegistrationPointer;
+  typedef   itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
+  typedef   OptimizerType *                                     OptimizerPointer;
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -166,91 +176,76 @@ public:
     {
     // Software Guide : EndCodeSnippet
 
-      // Software Guide : BeginLatex
-      //
-      // We then convert the input object pointer to a RegistrationPointer.
-      // Note that no error checking is done here to verify if the
-      // \code{dynamic\_cast} was successful since we know the actual object
-      // is a multi-resolution registration method.
-      //
-      // Software Guide : EndLatex
-      // Software Guide : BeginCodeSnippet
-    RegistrationPointer registration =
-                                dynamic_cast<RegistrationPointer>( object );
-
-    OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >( registration->GetModifiableOptimizer() );
-      // Software Guide : EndCodeSnippet
-
     // Software Guide : BeginLatex
     //
-    // First we verify if that the event invoked is of the right type.
+    // First we verify if that the event invoked is of the right type that is
+    // \code{itk::MultiResolutionIterationEvent()}.
     // If not, we return without any further action.
     //
     // Software Guide : EndLatex
     // Software Guide : BeginCodeSnippet
-    if( itk::MultiResolutionIterationEvent().CheckEvent( &event ) )
-//    if( typeid( event ) == typeid( itk::MultiResolutionIterationEvent ) )
+    if( !(itk::MultiResolutionIterationEvent().CheckEvent( &event ) ) )
       {
-      unsigned int currentLevel = registration->GetCurrentLevel();
-      typename RegistrationType::ShrinkFactorsPerDimensionContainerType shrinkFactors =
-                                                      registration->GetShrinkFactorsPerDimension( currentLevel );
-      typename RegistrationType::SmoothingSigmasArrayType smoothingSigmas =
-                                                      registration->GetSmoothingSigmasPerLevel();
-
-      std::cout << "-------------------------------------" << std::endl;
-      std::cout << " Current level = " << currentLevel << std::endl;
-      std::cout << "    shrink factor = " << shrinkFactors << std::endl;
-      std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
-      std::cout << std::endl;
-
-      if ( registration->GetCurrentLevel() == 0 )
-        {
-        optimizer->SetLearningRate( 16.00 );
-        optimizer->SetMinimumStepLength( 2.5 );
-        }
-      else
-        {
-        std::cout << " LearningRate: " << optimizer->GetLearningRate() << std::endl;
-        std::cout << " Min Step Length: " << optimizer->GetMinimumStepLength() * 0.1 << std::endl;
-        optimizer->SetLearningRate(
-                                        optimizer->GetLearningRate() * 0.25 );
-        optimizer->SetMinimumStepLength(
-                                        optimizer->GetMinimumStepLength() * 0.1 );
-        }
+      return;
       }
     // Software Guide : EndCodeSnippet
 
     // Software Guide : BeginLatex
     //
-    // If this is the first resolution level we set the maximum step length
+    // We then convert the input object pointer to a RegistrationPointer.
+    // Note that no error checking is done here to verify if the
+    // \code{dynamic\_cast} was successful since we know the actual object
+    // is a registration method. Then we ask for the optimizer object
+    // from the registration method.
+    //
+    // Software Guide : EndLatex
+    // Software Guide : BeginCodeSnippet
+    RegistrationPointer registration =
+                            dynamic_cast<RegistrationPointer>( object );
+    OptimizerPointer optimizer =
+                            dynamic_cast< OptimizerPointer >(
+                                                          registration->GetModifiableOptimizer() );
+    // Software Guide : EndCodeSnippet
+
+    unsigned int currentLevel = registration->GetCurrentLevel();
+    typename RegistrationType::ShrinkFactorsPerDimensionContainerType shrinkFactors =
+                                          registration->GetShrinkFactorsPerDimension( currentLevel );
+    typename RegistrationType::SmoothingSigmasArrayType smoothingSigmas =
+                                                    registration->GetSmoothingSigmasPerLevel();
+
+    std::cout << "-------------------------------------" << std::endl;
+    std::cout << " Current level = " << currentLevel << std::endl;
+    std::cout << "    shrink factor = " << shrinkFactors << std::endl;
+    std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
+    std::cout << std::endl;
+
+    // Software Guide : BeginLatex
+    //
+    // If this is the first resolution level we set the learning rate
     // (representing the first step size) and the minimum step length (representing
     // the convergence criterion) to large values.  At each subsequent resolution
-    // level, we will reduce the minimum step length by a factor of 10 in order to
-    // allow the optimizer to focus on progressively smaller regions. The maximum
-    // step length is set up to the current step length. In this way, when the
+    // level, we will reduce the minimum step length by a factor of 5 in order to
+    // allow the optimizer to focus on progressively smaller regions. The learning
+    // rate is set up to the current step length. In this way, when the
     // optimizer is reinitialized at the beginning of the registration process for
     // the next level, the step length will simply start with the last value used
     // for the previous level. This will guarantee the continuity of the path
     // taken by the optimizer through the parameter space.
     //
-/*
-    else if( itk::IterationEvent().CheckEvent( &event ) )
+    // Software Guide : EndLatex
+    // Software Guide : BeginCodeSnippet
+    if ( registration->GetCurrentLevel() == 0 )
       {
-      std::cout << optimizer->GetCurrentIteration() << "   ";
-      std::cout << optimizer->GetValue() << "   ";
-      std::cout << optimizer->GetCurrentPosition() << "   ";
-      std::cout << m_CumulativeIterationIndex++ << std::endl;
+      optimizer->SetLearningRate( 16.00 );
+      optimizer->SetMinimumStepLength( 2.5 );
       }
-*/
     else
       {
-      //std::cout << "Event: " << std::endl;
-      //event.Print(std::cout);
-      return;
+      optimizer->SetLearningRate( optimizer->GetCurrentStepLength() );
+      optimizer->SetMinimumStepLength( optimizer->GetMinimumStepLength() * 0.2 );
       }
-
-  }
-  // Software Guide : EndCodeSnippet
+    // Software Guide : EndCodeSnippet
+    }
 
   // Software Guide : BeginLatex
   //
@@ -264,13 +259,12 @@ public:
     {
     return;
     }
-
-//private:
-//  unsigned int m_CumulativeIterationIndex;
 };
 // Software Guide : EndCodeSnippet
 
-
+//  The following section of code implements an observer
+//  that will monitor the evolution of the registration process.
+//
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -318,8 +312,7 @@ int main( int argc, const char *argv[] )
     std::cerr << " fixedImageFile  movingImageFile ";
     std::cerr << " outputImagefile [backgroundGrayLevel]";
     std::cerr << " [checkerBoardBefore] [checkerBoardAfter]";
-    std::cerr << " [useExplicitPDFderivatives ] " << std::endl;
-    std::cerr << " [numberOfBins] [numberOfSamples ] " << std::endl;
+    std::cerr << " [numberOfBins] " << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -332,9 +325,7 @@ int main( int argc, const char *argv[] )
   const PixelType backgroundGrayLevel  = (argc >4 )? atoi(argv[4]): 100;
   const std::string checkerBoardBefore = (argc >5 )?      argv[5]: "";
   const std::string checkerBoardAfter  = (argc >6 )?      argv[6]: "";
-//  const bool useExplicitPDFderivatives = (argc >7 )? static_cast<bool>(atoi(argv[7])): false;
-//  const int numberOfBins               = (argc >8 )? atoi(argv[8]): 0;
-//  const int numberOfSamples            = (argc >9 )? atoi(argv[9]): 0;
+  const int numberOfBins               = (argc >7 )? atoi(argv[8]): 0;
 
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
@@ -342,73 +333,46 @@ int main( int argc, const char *argv[] )
   //  Software Guide : BeginLatex
   //
   //  The fixed and moving image types are defined as in previous
-  //  examples.  Due to the recursive nature of the process by which the
-  //  downsampled images are computed by the image pyramids, the output
-  //  images are required to have real pixel types. We declare this internal
-  //  image type to be \code{InternalPixelType}:
-  //
-  //  Software Guide : EndLatex
-  // Software Guide : BeginCodeSnippet
-//  typedef   float                                    InternalPixelType;
-//  typedef itk::Image< InternalPixelType, Dimension > InternalImageType;
-  // Software Guide : EndCodeSnippet
-
-  //  Software Guide : BeginLatex
+  //  examples. The downsampled images for different resolution levels
+  //  are created internally by the registration method based on the
+  //  values provided for \emph{ShrinkFactor} and \emph{SmoothingSigma}
+  //  vectors.
   //
   //  The types for the registration components are then derived using
-  //  the internal image type.
+  //  the fixed and moving image type as previous examples.
   //
   //  Software Guide : EndLatex
-  // Software Guide : BeginCodeSnippet
-  typedef itk::TranslationTransform< double, Dimension >      TransformType;
 
-  typedef itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
+  typedef itk::TranslationTransform< double, Dimension >              TransformType;
+
+  typedef itk::RegularStepGradientDescentOptimizerv4<double>          OptimizerType;
 
   typedef itk::MattesMutualInformationImageToImageMetricv4<
-                                                        FixedImageType,
-                                                        MovingImageType >     MetricType;
+                                                    FixedImageType,
+                                                    MovingImageType > MetricType;
   typedef itk::ImageRegistrationMethodv4<
                                       FixedImageType,
                                       MovingImageType,
-                                      TransformType >           RegistrationType;
-  // Software Guide: EndCodeSnippet
-
-  //  Software Guide : BeginLatex
-  //
-  // In the multi-resolution framework, a
-  // \doxygen{MultiResolutionPyramidImageFilter} is used to create a pyramid
-  // of downsampled images. The size of each downsampled image is specified
-  // by the user in the form of a schedule of shrink factors. A description
-  // of the filter and the format of the schedules are found in
-  // Section \ref{sec:ImagePyramids}. For this example, we will simply use
-  // the default schedules.
-  //
-  //  Software Guide : EndLatex
-/*
-  // Software Guide : BeginCodeSnippet
-  typedef itk::MultiResolutionPyramidImageFilter<
-            InternalImageType, InternalImageType >   FixedImagePyramidType;
-  typedef itk::MultiResolutionPyramidImageFilter<
-            InternalImageType, InternalImageType >   MovingImagePyramidType;
-  // Software Guide: EndCodeSnippet
-*/
+                                      TransformType >                 RegistrationType;
 
   //  All the components are instantiated using their \code{New()} method
   //  and connected to the registration object as in previous example.
   //
   TransformType::Pointer      transform     = TransformType::New();
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
-  RegistrationType::Pointer   registration  = RegistrationType::New();
   MetricType::Pointer         metric        = MetricType::New();
+  RegistrationType::Pointer   registration  = RegistrationType::New();
 
-  registration->SetOptimizer(     optimizer     );
+  registration->SetOptimizer( optimizer );
   registration->SetMetric( metric  );
 
   typedef itk::ImageFileReader< FixedImageType  > FixedImageReaderType;
   typedef itk::ImageFileReader< MovingImageType > MovingImageReaderType;
 
-  FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
-  MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
+  FixedImageReaderType::Pointer  fixedImageReader  =
+                                            FixedImageReaderType::New();
+  MovingImageReaderType::Pointer movingImageReader =
+                                            MovingImageReaderType::New();
 
   fixedImageReader->SetFileName(  fixedImageFile );
   movingImageReader->SetFileName( movingImageFile );
@@ -430,35 +394,23 @@ int main( int argc, const char *argv[] )
 
   metric->SetNumberOfHistogramBins( 24 );
 
-/*
-  if( argc > 8 )
+  if( argc > 7 )
     {
     // optionally, override the values with numbers taken from the command line arguments.
     metric->SetNumberOfHistogramBins( numberOfBins );
     }
-*/
 
-
- //  Software Guide : BeginLatex
+  //  Software Guide : BeginLatex
   //
-  //  Given that the Mattes Mutual Information metric uses a random iterator in
-  //  order to collect the samples from the images, it is usually convenient to
-  //  initialize the seed of the random number generator.
-  //
-  //  \index{itk::Mattes\-Mutual\-Information\-Image\-To\-Image\-Metric!ReinitializeSeed()}
+  //  Some parameters of optimizer are set as follows. Not that
+  //  the \emph{LearningRate} and \emph{MinimumStepLength}
+  //  are set in the obsever at the begining of each resolution level.
   //
   //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
-//  metric->ReinitializeSeed( 76926294 );
-  // Software Guide : EndCodeSnippet
-
-
+  //  Software Guide : BeginCodeSnippet
   optimizer->SetNumberOfIterations( 200 );
   optimizer->SetRelaxationFactor( 0.5 );
-//  optimizer->SetLearningRate( 16.00 );
-//  optimizer->SetMinimumStepLength( 0.1 );
-
+  // Software Guide : EndCodeSnippet
 
   // Create the Command observer and register it with the optimizer.
   //
@@ -468,11 +420,17 @@ int main( int argc, const char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  We set the number of multi-resolution levels to three and trigger the
-  //  registration process by calling \code{Update()}.
+  //  We set the number of multi-resolution levels to three and set
+  //  the corresponding shrink factor and smoothing sigma values for each
+  //  resolution level. Using smoothing in the subsampled images in
+  //  low resolution levels can prevent probable big fluctuations in the
+  //  metric function that helps optimizer not to be trapped in local minima.
+  //  In this simple example we have no smoothing, and we have used small
+  //  shrinkings for the first two resolution levels.
   //
-  //  \index{itk::Multi\-Resolution\-Image\-Registration\-Method!SetNumberOfLevels()}
-  //  \index{itk::Multi\-Resolution\-Image\-Registration\-Method!Update()}
+  //  \index{itk::Image\-Registration\-Methodv4!SetNumberOfLevels()}
+  //  \index{itk::Image\-Registration\-Methodv4!SetShrinkFactorsPerLevel()}
+  //  \index{itk::Image\-Registration\-Methodv4!SetSmoothingSigmasPerLevel()}
   //
   //  Software Guide : EndLatex
 
@@ -492,8 +450,9 @@ int main( int argc, const char *argv[] )
   smoothingSigmasPerLevel[2] = 0;
 
   registration->SetNumberOfLevels ( numberOfLevels );
-  registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
   registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
+  registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
+  // Software Guide : BeginCodeSnippet
 
   //  Software Guide : BeginLatex
   //
@@ -507,9 +466,14 @@ int main( int argc, const char *argv[] )
   typedef RegistrationInterfaceCommand<RegistrationType> CommandType;
   CommandType::Pointer command = CommandType::New();
 
-//  registration->AddObserver( itk::MultiResolutionIterationEvent(), command );
-  registration->AddObserver( itk::IterationEvent(), command );
-    // Software Guide : EndCodeSnippet
+  registration->AddObserver( itk::MultiResolutionIterationEvent(), command );
+  // Software Guide : EndCodeSnippet
+
+  //  Software Guide : BeginLatex
+  //
+  //  Then we triger the registration process by calling \code{Update()}.
+  //
+  //  Software Guide : EndLatex
 
   try
     {
@@ -524,7 +488,6 @@ int main( int argc, const char *argv[] )
     std::cout << err << std::endl;
     return EXIT_FAILURE;
     }
-  // Software Guide : EndCodeSnippet
 
   ParametersType finalParameters = transform->GetParameters();
 
@@ -557,31 +520,29 @@ int main( int argc, const char *argv[] )
   //  The output produced by the execution of the method is
   //
   //  \begin{verbatim}
-  //  0   -0.419408   [11.0796, 11.5431]
-  //  1   -0.775143   [18.0515, 25.9442]
-  //  2   -0.621443   [15.2813, 18.4392]
-  //  3   -1.00688    [7.81465, 15.567]
-  //  4   -0.733843   [11.7844, 16.0582]
-  //  5   -1.17593    [15.2929, 17.9792]
+  //  0   -0.316956   [11.4200, 11.2063]
+  //  1   -0.562048   [18.2938, 25.6545]
+  //  2   -0.407696   [11.3643, 21.6569]
+  //  3   -0.5702     [13.7244, 18.4274]
+  //  4   -0.803252   [11.1634, 15.3547]
   //
-  //  0   -0.902265   [13.4257, 17.2627]
-  //  1   -1.21519    [11.6959, 16.2588]
-  //  2   -1.04207    [12.6029, 16.68]
-  //  3   -1.21741    [13.4286, 17.2439]
-  //  4   -1.21605    [12.9899, 17.0041]
-  //  5   -1.26825    [13.163,  16.8237]
+  //  0   -0.697586   [12.8778, 16.3846]
+  //  1   -0.901984   [13.1794, 18.3617]
+  //  2   -0.827423   [13.0545, 17.3695]
+  //  3   -0.92754    [12.8528, 16.3901]
+  //  4   -0.902671   [12.9426, 16.8819]
+  //  5   -0.941212   [13.1402, 17.3413]
   //
-  //  0   -1.25692    [13.0716, 16.909]
-  //  1   -1.29465    [12.9896, 17.0033]
-  //  2   -1.30922    [13.0513, 16.9934]
-  //  3   -1.30722    [13.0205, 16.9987]
-  //  4   -1.30978    [12.9897, 17.0039]
+  //  0   -0.922239   [13.0364, 17.1138]
+  //  1   -0.930203   [12.9463, 16.8806]
+  //  2   -0.930959   [13.0191, 16.9822]
+  //
   //
   //  Result =
-  //   Translation X = 12.9897
-  //   Translation Y = 17.0039
-  //   Iterations    = 6
-  //   Metric value  = -1.30921
+  //   Translation X = 13.0192
+  //   Translation Y = 16.9823
+  //   Iterations    = 4
+  //   Metric value  = -0.929237
   //  \end{verbatim}
   //
   //  These values are a close match to the true misalignment of $(13,17)$
@@ -706,10 +667,10 @@ int main( int argc, const char *argv[] )
   //  sequence of metric values computed as the optimizer searched the
   //  parameter space.  From the trace, we can see that with the more
   //  aggressive optimization parameters we get quite close to the optimal
-  //  value within 4 iterations with the remaining iterations just doing fine
+  //  value within 5 iterations with the remaining iterations just doing fine
   //  adjustments. It is interesting to compare these results with the ones
   //  of the single resolution example in Section
-  //  \ref{sec:MultiModalityRegistrationMattes}, where 24 iterations were
+  //  \ref{sec:MultiModalityRegistrationMattes}, where 46 iterations were
   //  required as more conservative optimization parameters had to be used.
   //
   //  Software Guide : EndLatex
