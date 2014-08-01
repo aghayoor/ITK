@@ -486,17 +486,6 @@ int main( int argc, char *argv[] )
     affineMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
     }
 
-  // Set optimizer paramters
-  //
-  affineOptimizer->SetLowerLimit( 0 );
-  affineOptimizer->SetUpperLimit( 2 );
-  affineOptimizer->SetEpsilon( 0.2 );
-  affineOptimizer->SetLearningRate( 4.0 );
-  affineOptimizer->SetMaximumStepSizeInPhysicalUnits( 4.0 );
-  affineOptimizer->SetNumberOfIterations( 200 );
-  affineOptimizer->SetMinimumConvergenceValue( 0.01 );
-  affineOptimizer->SetConvergenceWindowSize( 10 );
-
   affineRegistration->SetFixedImage( fixedImageReader->GetOutput() );
   affineRegistration->SetMovingImage( movingImageReader->GetOutput() );
   affineRegistration->SetObjectName("AffineRegistration");
@@ -588,7 +577,7 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   typedef itk::RegistrationParameterScalesFromPhysicalShift<
-                                                            AffineMetricType>   ScalesEstimatorType;
+                                                  AffineMetricType>   ScalesEstimatorType;
   ScalesEstimatorType::Pointer scalesEstimator =
                                         ScalesEstimatorType::New();
   scalesEstimator->SetMetric( affineMetric );
@@ -608,7 +597,7 @@ int main( int argc, char *argv[] )
   //  expected rotation measured in radians. For example, a rotation of $1.0$
   //  degree is about $0.017$ radians.
   //
-  //  However, we do not need to be much woried about the above considerations
+  //  However, we do not need to be much woried about the above considerations.
   //  Thanks to the \emph{ScalesEstimator}, the initial step size can also be
   //  estimated automatically, either at each iteration or only at the first
   //  iteration. Here, in this example we choose to estimate learning rate
@@ -620,6 +609,15 @@ int main( int argc, char *argv[] )
   affineOptimizer->SetDoEstimateLearningRateOnce( true );
   affineOptimizer->SetDoEstimateLearningRateAtEachIteration( false );
   // Software Guide : EndCodeSnippet
+
+  // Set the other parameters of optimizer
+  //
+  affineOptimizer->SetLowerLimit( 0 );
+  affineOptimizer->SetUpperLimit( 2 );
+  affineOptimizer->SetEpsilon( 0.2 );
+  affineOptimizer->SetNumberOfIterations( 200 );
+  affineOptimizer->SetMinimumConvergenceValue( 0.01 );
+  affineOptimizer->SetConvergenceWindowSize( 10 );
 
   // Create the Command observer and register it with the optimizer.
   //
@@ -656,7 +654,7 @@ int main( int argc, char *argv[] )
   //
   typedef RegistrationInterfaceCommand<AffineRegistrationType> AffineCommandType;
   AffineCommandType::Pointer command2 = AffineCommandType::New();
-  affineRegistration->AddObserver( itk::IterationEvent(), command2 );
+  affineRegistration->AddObserver( itk::MultiResolutionIterationEvent(), command2 );
 
   //  Software Guide : BeginLatex
   //
