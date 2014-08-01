@@ -318,6 +318,7 @@ int main( int argc, char *argv[] )
 
   transRegistration->SetFixedImage(    fixedImageReader->GetOutput()    );
   transRegistration->SetMovingImage(   movingImageReader->GetOutput()   );
+  transRegistration->SetObjectName("TranslationRegistration");
 
   //  Software Guide : BeginLatex
   //
@@ -496,6 +497,7 @@ int main( int argc, char *argv[] )
 
   affineRegistration->SetFixedImage( fixedImageReader->GetOutput() );
   affineRegistration->SetMovingImage( movingImageReader->GetOutput() );
+  affineRegistration->SetObjectName("AffineRegistration");
 
   //  Software Guide : BeginLatex
   //
