@@ -81,6 +81,9 @@ target_link_libraries(MultiResImageRegistration2 ${ITK_LIBRARIES})
 add_executable(MultiResImageRegistration3 MultiResImageRegistration3.cxx )
 target_link_libraries(MultiResImageRegistration3 ${ITK_LIBRARIES})
 
+add_executable(MultiStageImageRegistration1 MultiStageImageRegistration1.cxx )
+target_link_libraries(MultiStageImageRegistration1 ${ITK_LIBRARIES})
+
 add_executable(DeformableRegistration1 DeformableRegistration1.cxx )
 target_link_libraries(DeformableRegistration1 ${ITK_LIBRARIES})
 
