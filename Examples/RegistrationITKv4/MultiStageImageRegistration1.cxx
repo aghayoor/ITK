@@ -477,10 +477,10 @@ int main( int argc, char *argv[] )
   affineMetric->SetVirtualDomainFromImage( fixedImageReader->GetOutput() );
   // Software Guide : EndCodeSnippet
 
-  if( argc > 8 )
+  if( argc > 7 )
     {
     // optionally, override the values with numbers taken from the command line arguments.
-    affineMetric->SetNumberOfHistogramBins( atoi( argv[8] ) );
+    affineMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
     }
 
   // Set optimizer paramters
