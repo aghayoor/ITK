@@ -55,6 +55,7 @@
 #include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
 
 #include "itkRegularStepGradientDescentOptimizerv4.h"
+#include "itkConjugateGradientLineSearchOptimizerv4.h"
 
 #include "itkTranslationTransform.h"
 #include "itkAffineTransform.h"
@@ -88,7 +89,7 @@ protected:
 
 public:
   typedef   TRegistration                          RegistrationType;
-  typedef   RegistrationType *                     RegistrationPointer;
+//  typedef   RegistrationType *                     RegistrationPointer;
 //  typedef   itk::ObjectToObjectOptimizerBase       OptimizerType;
 //  typedef   OptimizerType *                        OptimizerPointer;
 
@@ -99,7 +100,7 @@ public:
     Execute( (const itk::Object *) object , event );
     }
 
-  void Execute(const itk::Object * , const itk::EventObject & )
+  void Execute(const itk::Object * object, const itk::EventObject & event)
     {
     if( !(itk::MultiResolutionIterationEvent().CheckEvent( &event ) ) )
       {
@@ -108,8 +109,8 @@ public:
 
     std::cout << "Observing from class " << object->GetNameOfClass();
 
-    const RegistrationPointer registration =
-                                dynamic_cast<const RegistrationPointer>( object );
+    const RegistrationType * registration =
+                                dynamic_cast<const RegistrationType *>( object );
 /*
     const OptimizerPointer optimizer =
                             dynamic_cast<const OptimizerPointer>( registration->GetOptimizer() );
@@ -275,7 +276,7 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
 
-  typedef OptimizerType::ParametersType ParametersType;
+  typedef TranslationOptimizerType::ParametersType ParametersType;
   ParametersType initialParameters( movingInitTransform->GetNumberOfParameters() );
 
   initialParameters[0] = 0.0;  // Initial offset in mm along X
@@ -328,11 +329,11 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   const unsigned int numberOfLevels1 = 1;
 
-  TranslationCommandType::ShrinkFactorsArrayType shrinkFactorsPerLevel1;
+  TranslationRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel1;
   shrinkFactorsPerLevel1.SetSize( numberOfLevels1 );
   shrinkFactorsPerLevel1[0] = 3;
 
-  TranslationCommandType::SmoothingSigmasArrayType smoothingSigmasPerLevel1;
+  TranslationRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel1;
   smoothingSigmasPerLevel1.SetSize( numberOfLevels1 );
   smoothingSigmasPerLevel1[0] = 2;
 
@@ -632,12 +633,12 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   const unsigned int numberOfLevels2 = 2;
 
-  TranslationCommandType::ShrinkFactorsArrayType shrinkFactorsPerLevel2;
+  AffineRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel2;
   shrinkFactorsPerLevel2.SetSize( numberOfLevels2 );
   shrinkFactorsPerLevel2[0] = 2;
   shrinkFactorsPerLevel2[1] = 1;
 
-  TranslationCommandType::SmoothingSigmasArrayType smoothingSigmasPerLevel2;
+  AffineRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel2;
   smoothingSigmasPerLevel2.SetSize( numberOfLevels2 );
   smoothingSigmasPerLevel2[0] = 1;
   smoothingSigmasPerLevel2[0] = 0;
@@ -685,11 +686,11 @@ int main( int argc, char *argv[] )
 
   std::cout << " Translation parameters after registration: " << std::endl
             << transOptimizer->GetCurrentPosition() << std::endl
-            << " Last LearningRate: " << transOptimizer->GetCurrentStepLength() << std::endl
+            << " Last LearningRate: " << transOptimizer->GetCurrentStepLength() << std::endl;
 
   std::cout << " Affine parameters after registration: " << std::endl
             << affineOptimizer->GetCurrentPosition() << std::endl
-            << " Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl
+            << " Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl;
 
 ///////////////////////////////
 /*
