@@ -108,6 +108,10 @@ public:
       }
 
     std::cout << "Observing from class " << object->GetNameOfClass();
+    if (!object->GetObjectName().empty())
+      {
+      std::cout << " \"" << object->GetObjectName() << "\"" << std::endl;
+      }
 
     const RegistrationType * registration =
                                 dynamic_cast<const RegistrationType *>( object );
@@ -380,7 +384,6 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
 
-/*
   try
     {
     transRegistration->Update();
@@ -394,7 +397,6 @@ int main( int argc, char *argv[] )
     std::cout << err << std::endl;
     return EXIT_FAILURE;
     }
-*/
 
   // Software Guide : BeginCodeSnippet
   outputCompTransform->AddTransform( transRegistration->GetModifiableTransform() );
