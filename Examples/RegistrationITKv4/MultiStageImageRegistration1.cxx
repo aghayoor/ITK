@@ -372,8 +372,9 @@ int main( int argc, char *argv[] )
   //  Software Guide : BeginLatex
   //
   //  Once all the registration components are in place, we triger the registration
-  //  process by calling \code{Update()} and add its output transform to the output
-  //  composite transform.
+  //  process by calling \code{Update()} and add the result transform to the output
+  //  composite transform. This composite transform can be used to initialize the next
+  //  registration stage.
   //
   //  Software Guide : EndLatex
 
@@ -451,6 +452,18 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
+  //  The current stage can be initialized using the initial moving transform
+  //  and the result transform of the previous stage that both are concatenated
+  //  into a composite transform.
+  //
+  //  Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
+  affineRegistration->SetMovingInitialTransform( outputCompTransform );
+  // Software Guide : EndCodeSnippet
+
+  //  Software Guide : BeginLatex
+  //
   //  Metric parameters are set as follows.
   //
   //  Software Guide : EndLatex
@@ -476,9 +489,12 @@ int main( int argc, char *argv[] )
   affineOptimizer->SetEpsilon( 0.2 );
   affineOptimizer->SetLearningRate( 4.0 );
   affineOptimizer->SetMaximumStepSizeInPhysicalUnits( 4.0 );
-  optimizer->SetNumberOfIterations( 200 );
-  optimizer->SetMinimumConvergenceValue( 0.01 );
-  optimizer->SetConvergenceWindowSize( 10 );
+  affineOptimizer->SetNumberOfIterations( 200 );
+  affineOptimizer->SetMinimumConvergenceValue( 0.01 );
+  affineOptimizer->SetConvergenceWindowSize( 10 );
+
+  affineRegistration->SetFixedImage( fixedImageReader->GetOutput() );
+  affineRegistration->SetMovingImage( movingImageReader->GetOutput() );
 
   //  Software Guide : BeginLatex
   //
@@ -597,6 +613,7 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   affineOptimizer->SetDoEstimateLearningRateOnce( true );
+  affineOptimizer->SetDoEstimateLearningRateAtEachIteration( false );
   // Software Guide : EndCodeSnippet
 
   // Create the Command observer and register it with the optimizer.
@@ -606,6 +623,9 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
+  //  At the second stage, we run two levels of registration, where the second
+  //  level is run in full resolution in which we do the final adjustments
+  //  of the output parameters.
   //
   //  Software Guide : EndLatex
 
@@ -625,15 +645,27 @@ int main( int argc, char *argv[] )
   affineRegistration->SetNumberOfLevels ( numberOfLevels2 );
   affineRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel2 );
   affineRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel2 );
-  // Software Guide : BeginCodeSnippet
+  // Software Guide : EndCodeSnippet
 
   // Create the Command interface observer and register it with the optimizer.
   //
   typedef RegistrationInterfaceCommand<AffineRegistrationType> AffineCommandType;
   AffineCommandType::Pointer command2 = AffineCommandType::New();
   affineRegistration->AddObserver( itk::IterationEvent(), command2 );
-  affineRegistration->SetNumberOfLevels( 3 );
 
+  //  Software Guide : BeginLatex
+  //
+  //  Finally we triger the registration process by calling \code{Update()} once
+  //  all the registration components are in place.
+  //  Then, the result transform of the last stage is also added to the output
+  //  composite transform that will be considered as the final transform of
+  //  this multistage registration process and will be used by the resampler
+  //  to resample the moving image in to the virtual domain space (fixed image space
+  //  if there is no fixed initial transform).
+  //
+  //  Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
   try
     {
     affineRegistration->Update();
@@ -648,9 +680,19 @@ int main( int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
+  outputCompTransform->AddTransform( affineRegistration->GetModifiableTransform() );
+  // Software Guide : EndCodeSnippet
+
+  std::cout << " Translation parameters after registration: " << std::endl
+            << transOptimizer->GetCurrentPosition() << std::endl
+            << " Last LearningRate: " << transOptimizer->GetCurrentStepLength() << std::endl
+
+  std::cout << " Affine parameters after registration: " << std::endl
+            << affineOptimizer->GetCurrentPosition() << std::endl
+            << " Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl
 
 ///////////////////////////////
-
+/*
   std::cout << "Optimizer Stopping Condition = "
             << optimizer->GetStopCondition() << std::endl;
 
@@ -671,6 +713,9 @@ int main( int argc, char *argv[] )
   std::cout << " Translation Y = " << TranslationAlongY  << std::endl;
   std::cout << " Iterations    = " << numberOfIterations << std::endl;
   std::cout << " Metric value  = " << bestValue          << std::endl;
+
+*/
+////////////////////////////
 
   //  Software Guide : BeginLatex
   //
@@ -718,15 +763,9 @@ int main( int argc, char *argv[] )
   typedef itk::ResampleImageFilter<
                             MovingImageType,
                             FixedImageType >    ResampleFilterType;
-
-  TransformType::Pointer finalTransform = TransformType::New();
-
-  finalTransform->SetParameters( finalParameters );
-  finalTransform->SetFixedParameters( transform->GetFixedParameters() );
-
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
-  resample->SetTransform( finalTransform );
+  resample->SetTransform( outputCompTransform );
   resample->SetInput( movingImageReader->GetOutput() );
 
   FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
@@ -826,7 +865,7 @@ int main( int argc, char *argv[] )
     }
 
   // After registration
-  resample->SetTransform( finalTransform );
+  resample->SetTransform( outputCompTransform );
   if( argc > 6 )
     {
     writer->SetFileName( argv[6] );
