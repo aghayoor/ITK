@@ -89,9 +89,6 @@ protected:
 
 public:
   typedef   TRegistration                          RegistrationType;
-//  typedef   RegistrationType *                     RegistrationPointer;
-//  typedef   itk::ObjectToObjectOptimizerBase       OptimizerType;
-//  typedef   OptimizerType *                        OptimizerPointer;
 
   // The Execute function simply calls another version of the \code{Execute()}
   // method accepting a \code{const} input object
@@ -107,7 +104,7 @@ public:
       return;
       }
 
-    std::cout << "Observing from class " << object->GetNameOfClass();
+    std::cout << "\nObserving from class " << object->GetNameOfClass();
     if (!object->GetObjectName().empty())
       {
       std::cout << " \"" << object->GetObjectName() << "\"" << std::endl;
@@ -115,10 +112,7 @@ public:
 
     const RegistrationType * registration =
                                 dynamic_cast<const RegistrationType *>( object );
-/*
-    const OptimizerPointer optimizer =
-                            dynamic_cast<const OptimizerPointer>( registration->GetOptimizer() );
-*/
+
     unsigned int currentLevel = registration->GetCurrentLevel();
     typename RegistrationType::ShrinkFactorsPerDimensionContainerType shrinkFactors =
                                               registration->GetShrinkFactorsPerDimension( currentLevel );
@@ -148,8 +142,8 @@ protected:
   CommandIterationUpdate(): m_CumulativeIterationIndex(0) {};
 
 public:
-  typedef   itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
-  typedef   const OptimizerType *                               OptimizerPointer;
+  typedef   itk::GradientDescentOptimizerv4Template<double>  OptimizerType;
+  typedef   const OptimizerType *                            OptimizerPointer;
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
@@ -158,8 +152,7 @@ public:
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
     {
-    OptimizerPointer optimizer =
-      dynamic_cast< OptimizerPointer >( object );
+    OptimizerPointer optimizer =  dynamic_cast< OptimizerPointer >( object );
     if( !(itk::IterationEvent().CheckEvent( &event )) )
       {
       return;
@@ -360,7 +353,7 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  transOptimizer->SetLearningRate( 10 );
+  transOptimizer->SetLearningRate( 16 );
   transOptimizer->SetMinimumStepLength( 1.5 );
   // Software Guide : BeginCodeSnippet
 
@@ -617,7 +610,7 @@ int main( int argc, char *argv[] )
   affineOptimizer->SetEpsilon( 0.2 );
   affineOptimizer->SetNumberOfIterations( 200 );
   affineOptimizer->SetMinimumConvergenceValue( 0.01 );
-  affineOptimizer->SetConvergenceWindowSize( 10 );
+  affineOptimizer->SetConvergenceWindowSize( 5 );
 
   // Create the Command observer and register it with the optimizer.
   //
@@ -643,7 +636,7 @@ int main( int argc, char *argv[] )
   AffineRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel2;
   smoothingSigmasPerLevel2.SetSize( numberOfLevels2 );
   smoothingSigmasPerLevel2[0] = 1;
-  smoothingSigmasPerLevel2[0] = 0;
+  smoothingSigmasPerLevel2[1] = 0;
 
   affineRegistration->SetNumberOfLevels ( numberOfLevels2 );
   affineRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel2 );
