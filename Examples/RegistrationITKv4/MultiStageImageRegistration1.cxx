@@ -50,7 +50,10 @@
 
 // Software Guide : BeginCodeSnippet
 #include "itkImageRegistrationMethodv4.h"
+
 #include "itkMattesMutualInformationImageToImageMetricv4.h"
+#include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
+
 #include "itkRegularStepGradientDescentOptimizerv4.h"
 
 #include "itkTranslationTransform.h"
@@ -84,10 +87,10 @@ protected:
   RegistrationInterfaceCommand() {};
 
 public:
-  typedef   TRegistration                                       RegistrationType;
-  typedef   RegistrationType *                                  RegistrationPointer;
-  typedef   itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
-  typedef   OptimizerType *                                     OptimizerPointer;
+  typedef   TRegistration                          RegistrationType;
+  typedef   RegistrationType *                     RegistrationPointer;
+//  typedef   itk::ObjectToObjectOptimizerBase       OptimizerType;
+//  typedef   OptimizerType *                        OptimizerPointer;
 
   // The Execute function simply calls another version of the \code{Execute()}
   // method accepting a \code{const} input object
@@ -107,9 +110,10 @@ public:
 
     const RegistrationPointer registration =
                                 dynamic_cast<const RegistrationPointer>( object );
+/*
     const OptimizerPointer optimizer =
                             dynamic_cast<const OptimizerPointer>( registration->GetOptimizer() );
-
+*/
     unsigned int currentLevel = registration->GetCurrentLevel();
     typename RegistrationType::ShrinkFactorsPerDimensionContainerType shrinkFactors =
                                               registration->GetShrinkFactorsPerDimension( currentLevel );
@@ -359,23 +363,17 @@ int main( int argc, char *argv[] )
   CommandIterationUpdate::Pointer observer1 = CommandIterationUpdate::New();
   transOptimizer->AddObserver( itk::IterationEvent(), observer1 );
 
-  //  Software Guide : BeginLatex
+  // Create the Command interface observer and register it with the optimizer.
   //
-  //  Finally we create the observer instance and set that to the registration
-  //  filter once all other registration components are in place.
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
   typedef RegistrationInterfaceCommand<TranslationRegistrationType> TranslationCommandType;
   TranslationCommandType::Pointer command1 = TranslationCommandType::New();
   transRegistration->AddObserver( itk::MultiResolutionIterationEvent(), command1 );
-  // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
   //
-  //  Then we triger the registration process by calling \code{Update()}
-  //  and add its output transform to the output composite transform.
+  //  Once all the registration components are in place, we triger the registration
+  //  process by calling \code{Update()} and add its output transform to the output
+  //  composite transform.
   //
   //  Software Guide : EndLatex
 
@@ -606,6 +604,29 @@ int main( int argc, char *argv[] )
   CommandIterationUpdate::Pointer observer2 = CommandIterationUpdate::New();
   affineOptimizer->AddObserver( itk::IterationEvent(), observer2 );
 
+  //  Software Guide : BeginLatex
+  //
+  //
+  //  Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
+  const unsigned int numberOfLevels2 = 2;
+
+  TranslationCommandType::ShrinkFactorsArrayType shrinkFactorsPerLevel2;
+  shrinkFactorsPerLevel2.SetSize( numberOfLevels2 );
+  shrinkFactorsPerLevel2[0] = 2;
+  shrinkFactorsPerLevel2[1] = 1;
+
+  TranslationCommandType::SmoothingSigmasArrayType smoothingSigmasPerLevel2;
+  smoothingSigmasPerLevel2.SetSize( numberOfLevels2 );
+  smoothingSigmasPerLevel2[0] = 1;
+  smoothingSigmasPerLevel2[0] = 0;
+
+  affineRegistration->SetNumberOfLevels ( numberOfLevels2 );
+  affineRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel2 );
+  affineRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel2 );
+  // Software Guide : BeginCodeSnippet
+
   // Create the Command interface observer and register it with the optimizer.
   //
   typedef RegistrationInterfaceCommand<AffineRegistrationType> AffineCommandType;
@@ -615,9 +636,9 @@ int main( int argc, char *argv[] )
 
   try
     {
-    registration->Update();
+    affineRegistration->Update();
     std::cout << "Optimizer stop condition: "
-              << registration->GetOptimizer()->GetStopConditionDescription()
+              << affineRegistration->GetOptimizer()->GetStopConditionDescription()
               << std::endl;
     }
   catch( itk::ExceptionObject & err )
@@ -626,6 +647,9 @@ int main( int argc, char *argv[] )
     std::cout << err << std::endl;
     return EXIT_FAILURE;
     }
+
+
+///////////////////////////////
 
   std::cout << "Optimizer Stopping Condition = "
             << optimizer->GetStopCondition() << std::endl;
