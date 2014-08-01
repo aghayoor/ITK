@@ -369,7 +369,7 @@ set_property(TEST MultiResImageRegistration2Test2 APPEND PROPERTY LABELS RUNS_LO
 
 
 itk_add_test(NAME MultiStageImageRegistration1Test COMMAND ${ITK_TEST_DRIVER}
-  --compare DATA{${BASELINE}/MultiStageImageRegistration1Test.png,:}
+  --compare DATA{${BASELINE}/MultiResImageRegistration2Test.png,:}
             ${TEMP}/MultiStageImageRegistration1Test.png
   --compareNumberOfPixelsTolerance 10000
   $<TARGET_FILE:MultiStageImageRegistration1>
