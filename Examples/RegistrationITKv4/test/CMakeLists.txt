@@ -374,6 +374,7 @@ itk_add_test(NAME MultiStageImageRegistration1Test COMMAND ${ITK_TEST_DRIVER}
             ${TEMP}/MultiStageImageRegistration1Test.png
   --compareNumberOfPixelsTolerance 10000
   $<TARGET_FILE:MultiStageImageRegistration1>
+  #${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySliceBorder20.png
         ${ITK_SOURCE_DIR}/Examples/Data/BrainT1SliceBorder20.png
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySliceR10X13Y17.png
         ${TEMP}/MultiStageImageRegistration1Test.png  0

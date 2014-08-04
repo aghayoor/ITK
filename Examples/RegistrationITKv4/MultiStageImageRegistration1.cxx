@@ -65,6 +65,8 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "itkImageMomentsCalculator.h"
+
 #include "itkResampleImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkCheckerBoardImageFilter.h"
@@ -229,7 +231,7 @@ int main( int argc, char *argv[] )
 
   typedef itk::MattesMutualInformationImageToImageMetricv4<
                                           FixedImageType,
-                                          MovingImageType >    TranslationMetricType;
+                                          MovingImageType >    MetricType;
 
   typedef itk::ImageRegistrationMethodv4<
                                     FixedImageType,
@@ -241,7 +243,7 @@ int main( int argc, char *argv[] )
   //  and connected to the registration object as in previous example.
   //
   TranslationOptimizerType::Pointer      transOptimizer     = TranslationOptimizerType::New();
-  TranslationMetricType::Pointer         transMetric        = TranslationMetricType::New();
+  MetricType::Pointer         transMetric        = MetricType::New();
   TranslationRegistrationType::Pointer   transRegistration  = TranslationRegistrationType::New();
 
   transRegistration->SetOptimizer(     transOptimizer     );
@@ -342,6 +344,12 @@ int main( int argc, char *argv[] )
 
   transMetric->SetNumberOfHistogramBins( 24 );
 
+  if( argc > 7 )
+    {
+    // optionally, override the values with numbers taken from the command line arguments.
+    transMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
+    }
+
   transOptimizer->SetNumberOfIterations( 200 );
   transOptimizer->SetRelaxationFactor( 0.5 );
 
@@ -423,10 +431,6 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double>    AffineOptimizerType;
 
-  typedef itk::JointHistogramMutualInformationImageToImageMetricv4<
-                                                    FixedImageType,
-                                                    MovingImageType >    AffineMetricType;
-
   typedef itk::ImageRegistrationMethodv4<
                                         FixedImageType,
                                         MovingImageType,
@@ -441,7 +445,7 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   AffineOptimizerType::Pointer      affineOptimizer     = AffineOptimizerType::New();
-  AffineMetricType::Pointer         affineMetric        = AffineMetricType::New();
+  MetricType::Pointer         affineMetric        = MetricType::New();
   AffineRegistrationType::Pointer   affineRegistration  = AffineRegistrationType::New();
 
   affineRegistration->SetOptimizer(     affineOptimizer     );
@@ -465,13 +469,11 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
 
-  // Software Guide : BeginCodeSnippet
-  affineMetric->SetNumberOfHistogramBins( 20 );
-  affineMetric->SetUseMovingImageGradientFilter( false );
-  affineMetric->SetUseFixedImageGradientFilter( false );
-  affineMetric->SetUseFixedSampledPointSet( false );
-  affineMetric->SetVirtualDomainFromImage( fixedImageReader->GetOutput() );
-  // Software Guide : EndCodeSnippet
+  affineRegistration->SetFixedImage( fixedImageReader->GetOutput() );
+  affineRegistration->SetMovingImage( movingImageReader->GetOutput() );
+  affineRegistration->SetObjectName("AffineRegistration");
+
+  affineMetric->SetNumberOfHistogramBins( 24 );
 
   if( argc > 7 )
     {
@@ -479,9 +481,26 @@ int main( int argc, char *argv[] )
     affineMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
     }
 
-  affineRegistration->SetFixedImage( fixedImageReader->GetOutput() );
-  affineRegistration->SetMovingImage( movingImageReader->GetOutput() );
-  affineRegistration->SetObjectName("AffineRegistration");
+  AffineTransformType::Pointer affineTrans = AffineTransformType::New();
+
+  fixedImageReader->Update();
+  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
+
+  typedef itk::ImageMomentsCalculator< FixedImageType >  FixedImageCalculatorType;
+  FixedImageCalculatorType::Pointer fixedCalculator = FixedImageCalculatorType::New();
+  fixedCalculator->SetImage( fixedImage );
+  fixedCalculator->Compute();
+  FixedImageCalculatorType::VectorType fixedCenter = fixedCalculator->GetCenterOfGravity();
+
+  const unsigned int numberOfFixedParameters = affineTrans->GetFixedParameters().Size(); // =3
+  AffineTransformType::ParametersType fixedParameters( numberOfFixedParameters );
+  for (unsigned int i = 0; i < numberOfFixedParameters; ++i)
+    {
+    fixedParameters[i] = fixedCenter[i];
+    }
+  affineTrans->SetFixedParameters( fixedParameters );
+
+  affineRegistration->SetInitialTransform(affineTrans);
 
   //  Software Guide : BeginLatex
   //
@@ -570,7 +589,7 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   typedef itk::RegistrationParameterScalesFromPhysicalShift<
-                                                  AffineMetricType>   ScalesEstimatorType;
+                                                      MetricType>   ScalesEstimatorType;
   ScalesEstimatorType::Pointer scalesEstimator =
                                         ScalesEstimatorType::New();
   scalesEstimator->SetMetric( affineMetric );
@@ -609,8 +628,8 @@ int main( int argc, char *argv[] )
   affineOptimizer->SetUpperLimit( 2 );
   affineOptimizer->SetEpsilon( 0.2 );
   affineOptimizer->SetNumberOfIterations( 200 );
-  affineOptimizer->SetMinimumConvergenceValue( 0.01 );
-  affineOptimizer->SetConvergenceWindowSize( 5 );
+  affineOptimizer->SetMinimumConvergenceValue( 1e-6 );
+  affineOptimizer->SetConvergenceWindowSize( 10 );
 
   // Create the Command observer and register it with the optimizer.
   //
@@ -678,6 +697,8 @@ int main( int argc, char *argv[] )
 
   outputCompTransform->AddTransform( affineRegistration->GetModifiableTransform() );
   // Software Guide : EndCodeSnippet
+
+  outputCompTransform->Print(std::cout);
 
   std::cout << " Translation parameters after registration: " << std::endl
             << transOptimizer->GetCurrentPosition() << std::endl
@@ -764,7 +785,7 @@ int main( int argc, char *argv[] )
   resample->SetTransform( outputCompTransform );
   resample->SetInput( movingImageReader->GetOutput() );
 
-  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
+//  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
 
   PixelType backgroundGrayLevel = 100;
   if( argc > 4 )
