@@ -377,7 +377,7 @@ itk_add_test(NAME MultiStageImageRegistration1Test COMMAND ${ITK_TEST_DRIVER}
   #${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySliceBorder20.png
         ${ITK_SOURCE_DIR}/Examples/Data/BrainT1SliceBorder20.png
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySliceR10X13Y17.png
-        ${TEMP}/MultiStageImageRegistration1Test.png  0
+        ${TEMP}/MultiStageImageRegistration1Test.png  100
         ${TEMP}/MultiStageImageRegistration1CheckerBoardBeforeTest.png
         ${TEMP}/MultiStageImageRegistration1CheckerBoardAfterTest.png
 )
