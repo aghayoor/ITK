@@ -52,7 +52,6 @@
 #include "itkImageRegistrationMethodv4.h"
 
 #include "itkMattesMutualInformationImageToImageMetricv4.h"
-#include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
 
 #include "itkRegularStepGradientDescentOptimizerv4.h"
 #include "itkConjugateGradientLineSearchOptimizerv4.h"
@@ -66,7 +65,6 @@
 #include "itkImageFileWriter.h"
 
 #include "itkImageMomentsCalculator.h"
-
 #include "itkResampleImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkCheckerBoardImageFilter.h"
@@ -481,11 +479,15 @@ int main( int argc, char *argv[] )
     affineMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
     }
 
+  // Initialize the fixed parameters (center of rotation) in Affine transform
+  //
   AffineTransformType::Pointer affineTrans = AffineTransformType::New();
 
   fixedImageReader->Update();
   FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
-
+/*
+  // Compute center of mass of the fixed image and set that as the center of AffineTransform
+  //
   typedef itk::ImageMomentsCalculator< FixedImageType >  FixedImageCalculatorType;
   FixedImageCalculatorType::Pointer fixedCalculator = FixedImageCalculatorType::New();
   fixedCalculator->SetImage( fixedImage );
@@ -497,6 +499,31 @@ int main( int argc, char *argv[] )
   for (unsigned int i = 0; i < numberOfFixedParameters; ++i)
     {
     fixedParameters[i] = fixedCenter[i];
+    }
+  affineTrans->SetFixedParameters( fixedParameters );
+*/
+
+  // Compute center of the fixed image and set that as the center of AffineTransform
+  //
+  typedef FixedImageType::SpacingType    SpacingType;
+  typedef FixedImageType::PointType      OriginType;
+  typedef FixedImageType::RegionType     RegionType;
+  typedef FixedImageType::SizeType       SizeType;
+
+  const SpacingType fixedSpacing = fixedImage->GetSpacing();
+  const OriginType  fixedOrigin  = fixedImage->GetOrigin();
+  const RegionType  fixedRegion  = fixedImage->GetLargestPossibleRegion();
+  const SizeType    fixedSize    = fixedRegion.GetSize();
+
+  TransformType::InputPointType centerFixed;
+  centerFixed[0] = fixedOrigin[0] + fixedSpacing[0] * fixedSize[0] / 2.0;
+  centerFixed[1] = fixedOrigin[1] + fixedSpacing[1] * fixedSize[1] / 2.0;
+
+  const unsigned int numberOfFixedParameters = affineTrans->GetFixedParameters().Size();
+  AffineTransformType::ParametersType fixedParameters( numberOfFixedParameters );
+  for (unsigned int i = 0; i < numberOfFixedParameters; ++i)
+    {
+    fixedParameters[i] = centerFixed[i];
     }
   affineTrans->SetFixedParameters( fixedParameters );
 
