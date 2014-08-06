@@ -36,8 +36,8 @@
 //  transform is used. The \doxygen{RegistrationParameterScalesFromPhysicalShift}
 //  filter is used for automatic estimation of the parameters scales.
 //
-// \index{itk::ImageRegistrationMethod!AffineTransform}
-// \index{itk::ImageRegistrationMethod!Scaling parameter space}
+// \index{itk::ImageRegistrationMethodv4!AffineTransform}
+// \index{itk::ImageRegistrationMethodv4!Scaling parameter space}
 // \index{itk::AffineTransform!Image Registration}
 // \index{itk::ImageRegistrationMethodv4!Multi-Stage}
 // \index{itk::ImageRegistrationMethodv4!Multi-Resolution}
@@ -900,8 +900,8 @@ int main( int argc, char *argv[] )
   // \begin{figure}
   // \center
   // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1Output}
-  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1DifferenceBefore}
-  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1DifferenceAfter}
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1CheckerboardBefore}
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1CheckerboardAfter}
   // \itkcaption[Multistage registration input images]{Mapped moving image
   // (left) and composition of fixed and moving images before (center) and
   // after (right) registration.}
