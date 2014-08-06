@@ -18,37 +18,29 @@
 
 //  Software Guide : BeginCommandLineArgs
 //    INPUTS:  {BrainT1SliceBorder20.png}
-//    INPUTS:  {BrainProtonDensitySliceShifted13x17y.png}
-//    OUTPUTS: {MultiResImageRegistration2Output.png}
+//    INPUTS:  {BrainProtonDensitySliceR10X13Y17.png}
+//    OUTPUTS: {MultiStageImageRegistration2Output.png}
 //    ARGUMENTS:    100
-//    OUTPUTS: {MultiResImageRegistration2CheckerboardBefore.png}
-//    OUTPUTS: {MultiResImageRegistration2CheckerboardAfter.png}
+//    OUTPUTS: {MultiStageImageRegistration2CheckerboardBefore.png}
+//    OUTPUTS: {MultiStageImageRegistration2CheckerboardAfter.png}
 //  Software Guide : EndCommandLineArgs
 
 // Software Guide : BeginLatex
 //
-//  This example illustrates the use of more complex components of the
-//  registration framework. In particular, it introduces a multistage,
-//  multi-resolutionary approach to run a registration process using two
-//  linear \doxygen{TranslationTransform} and \doxygen{AffineTransform}.
-//  Also, it shows the use of emph{Scale Estimators}
-//  for fine-tuning the scale parameters of the optimizer when an Affine
-//  transform is used. The \doxygen{RegistrationParameterScalesFromPhysicalShift}
-//  filter is used for automatic estimation of parameters scales.
+//  This examples shows how different stages can be cascaded together directly
+//  in a multistage registration process. The example code is, for the most
+//  part, identical to the previous multistage example. The main difference
+//  is that no initial transform is used, and the output of the first stage
+//  is directly linked to the second stage, and the whole registration process
+//  is trigered only once by calling \code{Update()} after the last stage stage.
 //
-// \index{itk::ImageRegistrationMethod!AffineTransform}
-// \index{itk::ImageRegistrationMethod!Scaling parameter space}
-// \index{itk::AffineTransform!Image Registration}
+// We will focus on the most relevent changes in current code and skip all the
+// similar parts that are already explained in the previous example.
+//
 // \index{itk::ImageRegistrationMethodv4!Multi-Stage}
-// \index{itk::ImageRegistrationMethodv4!Multi-Resolution}
-// \index{itk::ImageRegistrationMethodv4!Multi-Modality}
-//
-// To begin the example, we include the headers of the registration
-// components we will use.
 //
 // Software Guide : EndLatex
 
-// Software Guide : BeginCodeSnippet
 #include "itkImageRegistrationMethodv4.h"
 
 #include "itkMattesMutualInformationImageToImageMetricv4.h"
@@ -59,12 +51,10 @@
 #include "itkTranslationTransform.h"
 #include "itkAffineTransform.h"
 #include "itkCompositeTransform.h"
-// Software Guide : EndCodeSnippet
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkImageMomentsCalculator.h"
 #include "itkResampleImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkCheckerBoardImageFilter.h"
@@ -188,125 +178,62 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  In a multistage scenario, each stage needs an individual instantiation
-  //  of the \doxygen{ImageRegistrationMethodv4}, so each stage can possibly
-  //  have a different transform, a different optimizer, and a different image
-  //  metric and can be performed in multiple levels.
-  //  The configuration of the registration method at each stage closely
-  //  follows the procedure in the previous section.
-  //
-  //  In early stages we can use simpler transforms with more aggressive parameters
-  //  set to take big steps toward the optimal value. Then, at the final stage
-  //  we can have a more complex transform to do fine adjustments of the final
-  //  parameters.
-  //
-  //  A possible scheme is to use a simple translation transform for initial
-  //  coarse registration levels and upgrade to an affine transform at the
-  //  finer level.
-  //  Since we have two different types of transforms, we can use a multistage
-  //  registration approach as shown in the current example.
-  //
-  //  First we need to configure the registration components of the initial stage.
-  //  The instantiation of the transform type requires only the
-  //  dimension of the space and the type used for representing space coordinates.
-  //
-  //  \index{itk::TranslationTransform!Instantiation}
+  //  Let's start by defining different types of the first stage.
   //
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::TranslationTransform< double, Dimension >            TranslationTransformType;
+  typedef itk::TranslationTransform< double, Dimension >                  TTransformType;
+  typedef itk::RegularStepGradientDescentOptimizerv4<double>              TOptimizerType;
+  typedef itk::MattesMutualInformationImageToImageMetricv4<
+                                                      FixedImageType,
+                                                      MovingImageType >    MetricType;
+  typedef itk::ImageRegistrationMethodv4<
+                                    FixedImageType,
+                                    MovingImageType >                      TRegistrationType;
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
   //
-  //  The types of other registration components are as previous examples.
+  //  Type definitions are the same as previous example with an important subtle change.
+  //  If you notice the transform type is not passed to the registration method as a
+  //  template parameter anymore. In this case, the registration filter will consider
+  //  the transform base class \doxygen{Transform} as the type of its output transform.
   //
   //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
-  typedef itk::RegularStepGradientDescentOptimizerv4<double>   TranslationOptimizerType;
-
-  typedef itk::MattesMutualInformationImageToImageMetricv4<
-                                          FixedImageType,
-                                          MovingImageType >    MetricType;
-
-  typedef itk::ImageRegistrationMethodv4<
-                                    FixedImageType,
-                                    MovingImageType >         TranslationRegistrationType;
-  // Software Guide : EndCodeSnippet
 
   //  All the components are instantiated using their \code{New()} method
   //  and connected to the registration object as in previous example.
   //
-  TranslationOptimizerType::Pointer      transOptimizer     = TranslationOptimizerType::New();
-  MetricType::Pointer         transMetric        = MetricType::New();
-  TranslationRegistrationType::Pointer   transRegistration  = TranslationRegistrationType::New();
+  TOptimizerType::Pointer      transOptimizer     = TOptimizerType::New();
+  MetricType::Pointer         transMetric         = MetricType::New();
+  TRegistrationType::Pointer   transRegistration  = TRegistrationType::New();
 
   transRegistration->SetOptimizer(     transOptimizer     );
   transRegistration->SetMetric( transMetric  );
 
-  TranslationTransformType::Pointer translationTrans = TranslationTransformType::New();
+  //  Software Guide : BeginLatex
+  //
+  //  Instead of passing the transform type, we create an explicit instantiation of
+  //  the transform object outside of the registration filter, and connect that to
+  //  the registration object using \code{SetInitialTransform()} method.
+  //  Also, by calling \code{InPlaceOn()} method, this transform object will be
+  //  output transform of the registration filter or will be grafted to the output.
+  //
+  //  Software Guide : EndLatex
 
-  transRegistration->SetInitialTransform( translationTrans );
+  // Software Guide : BeginCodeSnippet
+  TTransformType::Pointer translationTx = TTransformType::New();
+
+  transRegistration->SetInitialTransform( translationTx );
   transRegistration->InPlaceOn();
-
-  //  Software Guide : BeginLatex
-  //
-  //  The output transform will be constructed internally in the
-  //  registration method since the \emph{TransformType} is passed
-  //  to the registration filter as a template parameter.
-  //  However, we should provide an initial moving transform for the
-  //  registration method if needed.
-  //
-  //  \index{itk::TranslationTransform!New()}
-  //  \index{itk::TranslationTransform!Pointer}
-  //
-  //  Software Guide : EndLatex
-/*
-  // Software Guide : BeginCodeSnippet
-  TransformType::Pointer   movingInitTransform  = TransformType::New();
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
   //
-  //  Then, initial transform can be passed to the registration
-  //  filter by \code{SetMovingInitialTransform()} method.
-  //
-  //  \index{itk::Image\-Registration\-Methodv4!SetMovingInitialTransform()}
+  //  Also, there is no initial transform defined for this example.
   //
   //  Software Guide : EndLatex
-
-  typedef TranslationOptimizerType::ParametersType ParametersType;
-  ParametersType initialParameters( movingInitTransform->GetNumberOfParameters() );
-
-  initialParameters[0] = 0.0;  // Initial offset in mm along X
-  initialParameters[1] = 0.0;  // Initial offset in mm along Y
-
-  movingInitTransform->SetParameters( initialParameters );
-
-  // Software Guide : BeginCodeSnippet
-  transRegistration->SetMovingInitialTransform( movingInitTransform );
-  // Software Guide : EndCodeSnippet
-*/
-  //  Software Guide : BeginLatex
-  //
-  //  We can use a \doxygen{CompositeTransform} to hold the final transform
-  //  of the registration process resulted from multiple stages. This composite
-  //  transform should also hold the moving initial transform (if it exists)
-  //  because as explained in section \ref{sec:RigidRegistrationIn2D},
-  //  the initial transform is not updated during the registration process
-  //  while it is used for evaluation of the metric values.
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
-  typedef itk::CompositeTransform< double,
-                                   Dimension >  CompositeTransformType;
-  CompositeTransformType::Pointer   outputCompTransform  =
-                                                CompositeTransformType::New();
-//  outputCompTransform->AddTransform( movingInitTransform );
-  // Software Guide : EndCodeSnippet
 
   typedef itk::ImageFileReader< FixedImageType  > FixedImageReaderType;
   typedef itk::ImageFileReader< MovingImageType > MovingImageReaderType;
@@ -323,12 +250,16 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  In the case of this simple example, we run only one level of registraion
-  //  at a coarse resolution level for the first stage.
+  //  As previous example the first stage is run using only one level of
+  //  registration at a coarse resolution level. However, notice that we
+  //  do not need to update the translation registration filter at this
+  //  step since the output of this stage will be directly connect to the
+  //  initial input of the next stage. Considering the pipeline structure,
+  //  when we call the \code{Update()} at the last stage, the first stage
+  //  will be updated as well.
   //
   //  Software Guide : EndLatex
 
-  // Software Guide : BeginCodeSnippet
   const unsigned int numberOfLevels1 = 1;
 
   TranslationRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel1;
@@ -342,7 +273,6 @@ int main( int argc, char *argv[] )
   transRegistration->SetNumberOfLevels ( numberOfLevels1 );
   transRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel1 );
   transRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel1 );
-  // Software Guide : BeginCodeSnippet
 
   transMetric->SetNumberOfHistogramBins( 24 );
 
@@ -354,18 +284,8 @@ int main( int argc, char *argv[] )
 
   transOptimizer->SetNumberOfIterations( 200 );
   transOptimizer->SetRelaxationFactor( 0.5 );
-
-  //  Software Guide : BeginLatex
-  //
-  //  Also, we can use a more agressive paramter for the optimizer step size
-  //  and more relaxed stop criteria.
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
   transOptimizer->SetLearningRate( 16 );
   transOptimizer->SetMinimumStepLength( 1.5 );
-  // Software Guide : BeginCodeSnippet
 
   // Create the Command observer and register it with the optimizer.
   //
@@ -725,11 +645,12 @@ int main( int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  outputCompTransform->AddTransform( transRegistration->GetModifiableTransform() );
-  outputCompTransform->AddTransform( affineRegistration->GetModifiableTransform() );
+  typedef itk::CompositeTransform< double,
+                                   Dimension >  CompositeTransformType;
+  CompositeTransformType::Pointer   compositeTransform  = CompositeTransformType::New();
+  compositeTransform->AddTransform( transRegistration->GetModifiableTransform() );
+  compositeTransform->AddTransform( affineRegistration->GetModifiableTransform() );
   // Software Guide : EndCodeSnippet
-
-  outputCompTransform->Print(std::cout);
 
   std::cout << " Translation parameters after registration: " << std::endl
             << transOptimizer->GetCurrentPosition() << std::endl
@@ -813,7 +734,7 @@ int main( int argc, char *argv[] )
                             FixedImageType >    ResampleFilterType;
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
-  resample->SetTransform( outputCompTransform );
+  resample->SetTransform( compositeTransform );
   resample->SetInput( movingImageReader->GetOutput() );
 
 //  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
@@ -914,7 +835,7 @@ int main( int argc, char *argv[] )
     }
 
   // After registration
-  resample->SetTransform( outputCompTransform );
+  resample->SetTransform( compositeTransform );
   if( argc > 6 )
     {
     writer->SetFileName( argv[6] );
