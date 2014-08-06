@@ -18,11 +18,11 @@
 
 //  Software Guide : BeginCommandLineArgs
 //    INPUTS:  {BrainT1SliceBorder20.png}
-//    INPUTS:  {BrainProtonDensitySliceShifted13x17y.png}
-//    OUTPUTS: {MultiResImageRegistration2Output.png}
+//    INPUTS:  {BrainProtonDensitySliceR10X13Y17.png}
+//    OUTPUTS: {MultiStageImageRegistration1Output.png}
 //    ARGUMENTS:    100
-//    OUTPUTS: {MultiResImageRegistration2CheckerboardBefore.png}
-//    OUTPUTS: {MultiResImageRegistration2CheckerboardAfter.png}
+//    OUTPUTS: {MultiStageImageRegistration1CheckerboardBefore.png}
+//    OUTPUTS: {MultiStageImageRegistration1CheckerboardAfter.png}
 //  Software Guide : EndCommandLineArgs
 
 // Software Guide : BeginLatex
@@ -768,36 +768,76 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  Let's execute this example using the same multi-modality images as
-  //  before.  The registration converges after $5$ iterations in the first
-  //  level, $7$ in the second level and $4$ in the third level. The final
-  //  results when printed as an array of parameters are
+  //  Let's execute this example using the following multi-modality images:
+  //
+  //  \begin{itemize}
+  //  \item BrainT1SliceBorder20.png
+  //  \item BrainProtonDensitySliceR10X13Y17.png
+  //  \end{itemize}
+  //
+  //  The second image is the result of intentionally rotating the first
+  //  image by $10$ degrees and then translating by $(-13,-17)$.  Both images
+  //  have unit-spacing and are shown in Figure
+  //  \ref{fig:FixedMovingImageRegistration9}.
+  //
+  //  The registration converges after $5$ iterations in the translation stage.
+  //  Also, in the second stage, the registration converges after $46$ iterations
+  //  in the first level, and $6$ iterations in the second level.
+  //  The final results when printed as an array of parameters are:
   //
   //  \begin{verbatim}
-  // [1.00164, 0.00147688, 0.00168372, 1.0027, 12.6296, 16.4768]
+  //  Initial parameters of the registration process:
+  //  [3, 5]
+  //
+  //  Translation parameters after first registration stage:
+  //  [9.0346, 10.8303]
+  //
+  //  Affine parameters after second registration stage:
+  //  [0.9864, -0.1733, 0.1738, 0.9863, 0.9693, 0.1482]
   //  \end{verbatim}
   //
-  //  By reordering them as coefficient of matrix $\bf{M}$ and vector $\bf{T}$
-  //  they can now be seen as
+  //  As it can be seen, the translation parameters after the first stage
+  //  compensate most of the off distance between fixed and moving images.
+  //  When the images are close to each other, the affine registration is
+  //  run for the rotation and the final match.
+  //  By reordering the Affine array of parameters as coefficients of matrix
+  //  $\bf{M}$ and vector $\bf{T}$ they can now be seen as
   //
   //  \begin{equation}
   //  M =
   //  \left[
   //  \begin{array}{cc}
-  //  1.00164 & 0.0014 \\ 0.00168 & 1.0027 \\  \end{array}
+  //  0.9864 & -0.1733 \\ 0.1738 & 0.9863 \\  \end{array}
   //  \right]
   //  \mbox{ and }
   //  T =
   //  \left[
   //  \begin{array}{c}
-  //  12.6296  \\  16.4768  \\  \end{array}
+  //  0.9693  \\  0.1482  \\  \end{array}
   //  \right]
   //  \end{equation}
   //
   //  In this form, it is easier to interpret the effect of the
   //  transform. The matrix $\bf{M}$ is responsible for scaling, rotation and
-  //  shearing while $\bf{T}$ is responsible for translations.  It can be seen
-  //  that the translation values in this case closely match the true
+  //  shearing while $\bf{T}$ is responsible for translations.
+  //
+  //  The second component of the matrix values is usually associated with
+  //  $\sin{\theta}$. We obtain the rotation through SVD of the affine
+  //  matrix. The value is $9.975$ degrees, which is approximately the
+  //  intentional misalignment of $10.0$ degrees.
+  //
+  //  Also, let's compute the totall translation values resulted from initial transform,
+  //  translation transform, and the Affine transform together.
+  //  In $X$ direction:
+  //  \begin{equation}
+  //  3 + 9.0346 + 0.9693 = 13.0036
+  //  \end{equation}
+  //  In $Y$ direction:
+  //  \begin{equation}
+  //  5 + 10.8303 + 0.1482 = 15.9785
+  //  \end{equation}
+  //
+  //  It can be seen that the translation values closely match the true
   //  misalignment introduced in the moving image.
   //
   //  It is important to note that once the images are registered at a
@@ -805,7 +845,17 @@ int main( int argc, char *argv[] )
   //  heavily on the quality of the interpolator. It may then be reasonable to
   //  use a coarse and fast interpolator in the lower resolution levels and
   //  switch to a high-quality but slow interpolator in the final resolution
-  //  level.
+  //  level. However, in this example we used a linear interpolator for all
+  //  stages and different registration levels since it is so fast.
+  //
+  // \begin{figure}
+  // \center
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceBorder20}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceR10X13Y17}
+  // \itkcaption[AffineTransform registration]{Fixed and moving images
+  // provided as input to the registration method using the AffineTransform.}
+  // \label{fig:FixedMovingImageRegistration9}
+  // \end{figure}
   //
   //  Software Guide : EndLatex
 
