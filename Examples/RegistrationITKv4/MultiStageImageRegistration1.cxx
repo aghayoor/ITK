@@ -778,7 +778,7 @@ int main( int argc, char *argv[] )
   //  The second image is the result of intentionally rotating the first
   //  image by $10$ degrees and then translating by $(-13,-17)$.  Both images
   //  have unit-spacing and are shown in Figure
-  //  \ref{fig:FixedMovingImageRegistration9}.
+  //  \ref{fig:FixedMovingMultiStageImageRegistration1}.
   //
   //  The registration converges after $5$ iterations in the translation stage.
   //  Also, in the second stage, the registration converges after $46$ iterations
@@ -854,7 +854,7 @@ int main( int argc, char *argv[] )
   // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceR10X13Y17}
   // \itkcaption[AffineTransform registration]{Fixed and moving images
   // provided as input to the registration method using the AffineTransform.}
-  // \label{fig:FixedMovingImageRegistration9}
+  // \label{fig:FixedMovingMultiStageImageRegistration1}
   // \end{figure}
   //
   //  Software Guide : EndLatex
@@ -899,38 +899,19 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration2Output}
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration2CheckerboardBefore}
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration2CheckerboardAfter}
-  // \itkcaption[Multi-Resolution Registration Input Images]{Mapped moving image
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1Output}
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1DifferenceBefore}
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration1DifferenceAfter}
+  // \itkcaption[Multistage registration input images]{Mapped moving image
   // (left) and composition of fixed and moving images before (center) and
-  // after (right) multi-resolution registration with the AffineTransform class.}
-  // \label{fig:MultiResImageRegistration2Output}
+  // after (right) registration.}
+  // \label{MultiStageImageRegistration1Outputs}
   // \end{figure}
   //
-  //  The result of resampling the moving image is shown in the left image
-  //  of Figure \ref{fig:MultiResImageRegistration2Output}. The center and
-  //  right images of the figure present a checkerboard composite of the fixed
+  //  The result of resampling the moving image is presented in the left image
+  //  of Figure \ref{fig:MultiStageImageRegistration1Outputs}. The center and
+  //  right images of the figure depict a checkerboard composite of the fixed
   //  and moving images before and after registration.
-  //
-  //  Software Guide : EndLatex
-
-  //  Software Guide : BeginLatex
-  //
-  // \begin{figure}
-  // \center
-  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration2TraceTranslations}
-  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration2TraceMetric}
-  // \itkcaption[Multi-Resolution Registration output plots]{Sequence of
-  // translations and metric values at each iteration of the optimizer for
-  // multi-resolution with the AffineTransform class.}
-  // \label{fig:MultiResImageRegistration2Trace}
-  // \end{figure}
-  //
-  //  Figure \ref{fig:MultiResImageRegistration2Trace} (left) presents the
-  //  sequence of translations followed by the optimizer as it searched the
-  //  parameter space. The right side of the same figure shows the sequence of
-  //  metric values computed as the optimizer explored the parameter space.
   //
   //  Software Guide : EndLatex
 
