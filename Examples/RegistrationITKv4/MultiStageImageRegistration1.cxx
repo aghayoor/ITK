@@ -228,20 +228,20 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::RegularStepGradientDescentOptimizerv4<double>          TOptimizerType;
+  typedef itk::RegularStepGradientDescentOptimizerv4< double >          TOptimizerType;
   typedef itk::MattesMutualInformationImageToImageMetricv4<
-                                                  FixedImageType,
-                                                  MovingImageType >   MetricType;
+                                                    FixedImageType,
+                                                    MovingImageType >   MetricType;
   typedef itk::ImageRegistrationMethodv4<
                                     FixedImageType,
                                     MovingImageType,
-                                    TTransformType >                  TRegistrationType;
+                                    TTransformType >                    TRegistrationType;
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
   //
   //  Then, all the components are instantiated using their \code{New()} method
-  //  and connected to the registration object as in previous example.
+  //  and connected to the registration object as in previous examples.
   //
   //  Software Guide : EndLatex
 
@@ -255,7 +255,7 @@ int main( int argc, char *argv[] )
   //  Software Guide : BeginLatex
   //
   //  The output transform of the registration process will be constructed
-  //  internally in the registration filter since the \emph{TransformType}
+  //  internally in the registration filter since the related \emph{TransformType}
   //  is already passed to the registration method as a template parameter.
   //  However, we should provide an initial moving transform for the
   //  registration method if needed.
@@ -343,7 +343,7 @@ int main( int argc, char *argv[] )
   transRegistration->SetNumberOfLevels ( numberOfLevels1 );
   transRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel1 );
   transRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel1 );
-  // Software Guide : BeginCodeSnippet
+  // Software Guide : EndCodeSnippet
 
   transMetric->SetNumberOfHistogramBins( 24 );
 
@@ -358,16 +358,16 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  Also, we can use a more agressive paramter set for the optimizer
-  //  of the first stage by taking a big step size and more relaxed stop
-  //  criteria.
+  //  Also, for this initial stage we can use a more agressive paramter
+  //  set for the optimizer by taking a big step size and more relaxed
+  //  stop criteria.
   //
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
   transOptimizer->SetLearningRate( 16 );
   transOptimizer->SetMinimumStepLength( 1.5 );
-  // Software Guide : BeginCodeSnippet
+  // Software Guide : EndCodeSnippet
 
   // Create the Command observer and register it with the optimizer.
   //
@@ -406,6 +406,7 @@ int main( int argc, char *argv[] )
     }
 
   compositeTransform->AddTransform( transRegistration->GetModifiableTransform() );
+
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -435,19 +436,18 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double>   AOptimizerType;
-
+  typedef itk::ConjugateGradientLineSearchOptimizerv4Template< double >  AOptimizerType;
   typedef itk::ImageRegistrationMethodv4< FixedImageType,
                                           MovingImageType,
-                                          ATransformType >              ARegistrationType;
+                                          ATransformType >               ARegistrationType;
   // Software Guide : EndCodeSnippet
 
-  //  Software Guide : BeginLatex
+  // Software Guide : BeginLatex
   //
   //  Again all the components are instantiated using their \code{New()} method
   //  and connected to the registration object like in previous stage.
   //
-  //  Software Guide : EndLatex
+  // Software Guide : EndLatex
 
   AOptimizerType::Pointer      affineOptimizer     = AOptimizerType::New();
   MetricType::Pointer          affineMetric        = MetricType::New();
@@ -456,16 +456,16 @@ int main( int argc, char *argv[] )
   affineRegistration->SetOptimizer(     affineOptimizer     );
   affineRegistration->SetMetric( affineMetric  );
 
-  //  Software Guide : BeginLatex
+  // Software Guide : BeginLatex
   //
   //  The current stage can be initialized using the initial transform of the
   //  registration and the result transform of the previous stage that both
   //  are concatenated into the composite transform.
   //
-  //  Software Guide : EndLatex
+  // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  affineRegistration->SetMovingInitialTransform( compositeTransform );
+  affineRegistration->SetMovingInitialTransform(  compositeTransform  );
   // Software Guide : EndCodeSnippet
 
   affineRegistration->SetFixedImage( fixedImageReader->GetOutput() );
@@ -481,7 +481,7 @@ int main( int argc, char *argv[] )
     }
 
 
-  // Software Guide : EndCodeSnippet
+  // Software Guide : BeginLatex
   //
   //  In Section \ref{sec:InitializingRegistrationWithMoments} we showed how
   //  center of rotation is so important in the registration process.
@@ -509,7 +509,7 @@ int main( int argc, char *argv[] )
   ATransformType::Pointer affineTx = ATransformType::New();
   // Software Guide : EndCodeSnippet
 
-  // Software Guide : EndCodeSnippet
+  // Software Guide : BeginLatex
   //
   //  Then, we compute the physical center of the fixed image and set
   //  that as the center of the output Affine transform.
@@ -542,7 +542,7 @@ int main( int argc, char *argv[] )
   affineTx->SetFixedParameters( fixedParameters );
   // Software Guide : EndCodeSnippet
 
-  // Software Guide : EndCodeSnippet
+  // Software Guide : BeginLatex
   //
   //  Then, the initialized output transform should be connected to
   //  the registration object by using \code{SetInitialTransform()} method.
@@ -556,7 +556,7 @@ int main( int argc, char *argv[] )
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  affineRegistration->SetInitialTransform( affineTx );
+  affineRegistration->SetInitialTransform(  affineTx  );
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -753,6 +753,7 @@ int main( int argc, char *argv[] )
     }
 
   compositeTransform->AddTransform( affineRegistration->GetModifiableTransform() );
+
   // Software Guide : EndCodeSnippet
 
   std::cout << "\nInitial parameters of the registration process: " << std::endl
@@ -828,6 +829,7 @@ int main( int argc, char *argv[] )
   //
   //  Also, let's compute the totall translation values resulted from initial transform,
   //  translation transform, and the Affine transform together.
+  //
   //  In $X$ direction:
   //  \begin{equation}
   //  3 + 9.0346 + 0.9693 = 13.0036
@@ -905,7 +907,7 @@ int main( int argc, char *argv[] )
   // \itkcaption[Multistage registration input images]{Mapped moving image
   // (left) and composition of fixed and moving images before (center) and
   // after (right) registration.}
-  // \label{MultiStageImageRegistration1Outputs}
+  // \label{fig:MultiStageImageRegistration1Outputs}
   // \end{figure}
   //
   //  The result of resampling the moving image is presented in the left image
