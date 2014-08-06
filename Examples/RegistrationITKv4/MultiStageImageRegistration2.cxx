@@ -263,11 +263,11 @@ int main( int argc, char *argv[] )
 
   const unsigned int numberOfLevels1 = 1;
 
-  TranslationRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel1;
+  TRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel1;
   shrinkFactorsPerLevel1.SetSize( numberOfLevels1 );
   shrinkFactorsPerLevel1[0] = 3;
 
-  TranslationRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel1;
+  TRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel1;
   smoothingSigmasPerLevel1.SetSize( numberOfLevels1 );
   smoothingSigmasPerLevel1[0] = 2;
 
@@ -295,7 +295,7 @@ int main( int argc, char *argv[] )
 
   // Create the Command interface observer and register it with the optimizer.
   //
-  typedef RegistrationInterfaceCommand<TranslationRegistrationType> TranslationCommandType;
+  typedef RegistrationInterfaceCommand<TRegistrationType> TranslationCommandType;
   TranslationCommandType::Pointer command1 = TranslationCommandType::New();
   transRegistration->AddObserver( itk::MultiResolutionIterationEvent(), command1 );
 
@@ -347,12 +347,15 @@ int main( int argc, char *argv[] )
     affineMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
     }
 
+  fixedImageReader->Update();
+  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
+
   // Software Guide : BeginCodeSnippet
   typedef itk::ImageMomentsCalculator< FixedImageType >  FixedImageCalculatorType;
 
   FixedImageCalculatorType::Pointer fixedCalculator =
                                                   FixedImageCalculatorType::New();
-  fixedCalculator->SetImage( fixedImageReader->GetOutput() );
+  fixedCalculator->SetImage( fixedImage );
   fixedCalculator->Compute();
 
   FixedImageCalculatorType::VectorType fixedCenter = fixedCalculator->GetCenterOfGravity();
@@ -434,12 +437,12 @@ int main( int argc, char *argv[] )
 
   const unsigned int numberOfLevels2 = 2;
 
-  AffineRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel2;
+  ARegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel2;
   shrinkFactorsPerLevel2.SetSize( numberOfLevels2 );
   shrinkFactorsPerLevel2[0] = 2;
   shrinkFactorsPerLevel2[1] = 1;
 
-  AffineRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel2;
+  ARegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel2;
   smoothingSigmasPerLevel2.SetSize( numberOfLevels2 );
   smoothingSigmasPerLevel2[0] = 1;
   smoothingSigmasPerLevel2[1] = 0;
@@ -450,7 +453,7 @@ int main( int argc, char *argv[] )
 
   // Create the Command interface observer and register it with the optimizer.
   //
-  typedef RegistrationInterfaceCommand<AffineRegistrationType> AffineCommandType;
+  typedef RegistrationInterfaceCommand<ARegistrationType> AffineCommandType;
   AffineCommandType::Pointer command2 = AffineCommandType::New();
   affineRegistration->AddObserver( itk::MultiResolutionIterationEvent(), command2 );
 
@@ -509,17 +512,17 @@ int main( int argc, char *argv[] )
   //  Software Guide : BeginLatex
   //
   //  Let's execute this example using the same multi-modality images as
-  //  before. The registration converges after $5$ iterations in the first
-  //  stage, also in $46$ and $6$ iterations corresponding to the first level
+  //  before. The registration converges after $6$ iterations in the first
+  //  stage, also in $45$ and $11$ iterations corresponding to the first level
   //  and second level of the Affine stage.
   //  The final results when printed as an array of parameters are:
   //
   //  \begin{verbatim}
   //  Translation parameters after first registration stage:
-  //  [9.0346, 10.8303]
+  //  [11.600, 15.1814]
   //
   //  Affine parameters after second registration stage:
-  //  [0.9864, -0.1733, 0.1738, 0.9863, 0.9693, 0.1482]
+  //  [0.9860, -0.1742, 0.1751, 0.9862, 0.9219, 0.8023]
   //  \end{verbatim}
   //
   //  Let's reorder the Affine array of parameters agian as coefficients of matrix
@@ -529,28 +532,28 @@ int main( int argc, char *argv[] )
   //  M =
   //  \left[
   //  \begin{array}{cc}
-  //  0.9864 & -0.1733 \\ 0.1738 & 0.9863 \\  \end{array}
+  //  0.9860 & -0.1742 \\ 0.1751 & 0.9862 \\  \end{array}
   //  \right]
   //  \mbox{ and }
   //  T =
   //  \left[
   //  \begin{array}{c}
-  //  0.9693  \\  0.1482  \\  \end{array}
+  //  0.9219  \\  0.8023  \\  \end{array}
   //  \right]
   //  \end{equation}
   //
-  //  $9.975$ degrees is the rotation value computed from the affine matrix
-  //  paramters, which is approximately the intentional misalignment of $10.0$ degrees.
+  //  $10.02$ degrees is the rotation value computed from the affine matrix
+  //  paramters, which approximately equals to the intentional misalignment.
   //
   //  Also for the totall translation value resulted from both transforms, we have:
   //
   //  In $X$ direction:
   //  \begin{equation}
-  //  3 + 9.0346 + 0.9693 = 13.0036
+  //  11.6004 + 0.9219 = 12.5223
   //  \end{equation}
   //  In $Y$ direction:
   //  \begin{equation}
-  //  5 + 10.8303 + 0.1482 = 15.9785
+  //  15.1814 + 0.8023 = 15.9837
   //  \end{equation}
   //
   //  That is closely match the true misalignment introduced in the moving image.
