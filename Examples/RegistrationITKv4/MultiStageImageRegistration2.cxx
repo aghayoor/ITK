@@ -55,6 +55,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "itkImageMomentsCalculator.h"
 #include "itkResampleImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkCheckerBoardImageFilter.h"
@@ -254,7 +255,7 @@ int main( int argc, char *argv[] )
   //  registration at a coarse resolution level. However, notice that we
   //  do not need to update the translation registration filter at this
   //  step since the output of this stage will be directly connect to the
-  //  initial input of the next stage. Considering the pipeline structure,
+  //  initial input of the next stage, so considering the pipeline structure,
   //  when we call the \code{Update()} at the last stage, the first stage
   //  will be updated as well.
   //
@@ -300,244 +301,108 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  Once all the registration components are in place, we triger the registration
-  //  process by calling \code{Update()} and add the result transform to the output
-  //  composite transform. This composite transform can be used to initialize the next
-  //  registration stage.
-  //
-  //  Software Guide : EndLatex
-/*
-  try
-    {
-    transRegistration->Update();
-    std::cout << "Optimizer stop condition: "
-              << transRegistration->GetOptimizer()->GetStopConditionDescription()
-              << std::endl;
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "ExceptionObject caught !" << std::endl;
-    std::cout << err << std::endl;
-    return EXIT_FAILURE;
-    }
-*/
-  // Software Guide : BeginCodeSnippet
-//  outputCompTransform->AddTransform( transRegistration->GetModifiableTransform() );
-  // Software Guide : EndCodeSnippet
-
-  //  Software Guide : BeginLatex
-  //
-  //  Now we can upgrade to an Affine transform as the second stage of registration
-  //  process.
-  //  The AffineTransform is a linear transformation that maps lines into
-  //  lines. It can be used to represent translations, rotations, anisotropic
-  //  scaling, shearing or any combination of them. Details about the affine
-  //  transform can be seen in Section~\ref{sec:AffineTransform}.
-  //  The instantiation of the transform type requires only the dimension of the
-  //  space and the type used for representing space coordinates.
-  //
-  //  \index{itk::AffineTransform!Instantiation}
+  //  Now we upgrade to an Affine transform as the second stage of registration
+  //  process,
+  //  and as before, first we define and instantiate different components of the current
+  //  registration stage. We have used a new optimizer but the same metric in new
+  //  configurations.
   //
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::AffineTransform< double, Dimension > AffineTransformType;
-  // Software Guide : EndCodeSnippet
-
-  //  Software Guide : BeginLatex
-  //
-  //  We also use a different metric and optimizer in configuration of the second stage.
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
-  typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double>    AffineOptimizerType;
-
+  typedef itk::AffineTransform< double, Dimension >                       ATransformType;
+  typedef itk::ConjugateGradientLineSearchOptimizerv4Template< double >   AOptimizerType;
   typedef itk::ImageRegistrationMethodv4<
                                         FixedImageType,
-                                        MovingImageType >            AffineRegistrationType;
+                                        MovingImageType >                 ARegistrationType;
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
   //
-  //  All the components are instantiated using their \code{New()} method
-  //  and connected to the registration object as in previous examples.
+  //  Again notice that \emph{TransformType} is not passed to the type definition
+  //  of the registration filter. It is important because
+  //  when the registration filter considers transform base class \doxygen{Transform}
+  //  as the type of its output transform, it prevents the types mismatch when the
+  //  two stages are cascaded to each other.
+  //
+  //  Then, all components are instantiated using their \code{New()} method
+  //  and connected to the registration object among the transform type.
+  //  Despite the previous example, here we use the fixed image's center of mass
+  //  to initialize the fixed parameters of the Affine transform.
+  //  \doxygen{ImageMomentsCalculator} filter is used for this purpose.
   //
   //  Software Guide : EndLatex
 
-  AffineOptimizerType::Pointer      affineOptimizer     = AffineOptimizerType::New();
-  MetricType::Pointer         affineMetric        = MetricType::New();
-  AffineRegistrationType::Pointer   affineRegistration  = AffineRegistrationType::New();
+  AOptimizerType::Pointer      affineOptimizer     = AOptimizerType::New();
+  MetricType::Pointer          affineMetric        = MetricType::New();
+  ARegistrationType::Pointer   affineRegistration  = ARegistrationType::New();
 
   affineRegistration->SetOptimizer(     affineOptimizer     );
   affineRegistration->SetMetric( affineMetric  );
 
-  //  Software Guide : BeginLatex
-  //
-  //  The current stage can be initialized using the initial moving transform
-  //  and the result transform of the previous stage that both are concatenated
-  //  into a composite transform.
-  //
-  //  Software Guide : EndLatex
+  affineMetric->SetNumberOfHistogramBins( 24 );
+  if( argc > 7 )
+    {
+     // optionally, override the values with numbers taken from the command line arguments.
+    affineMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
+    }
 
   // Software Guide : BeginCodeSnippet
-  affineRegistration->SetMovingInitialTransformInput( transRegistration->GetTransformOutput() );
+  typedef itk::ImageMomentsCalculator< FixedImageType >  FixedImageCalculatorType;
+
+  FixedImageCalculatorType::Pointer fixedCalculator =
+                                                  FixedImageCalculatorType::New();
+  fixedCalculator->SetImage( fixedImageReader->GetOutput() );
+  fixedCalculator->Compute();
+
+  FixedImageCalculatorType::VectorType fixedCenter = fixedCalculator->GetCenterOfGravity();
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
   //
-  //  Metric parameters are set as follows.
+  // Then, we initialize the fixed parameters (center of rotation) in Affine transform
+  //  and connect that to the registration object.
   //
   //  Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
+  ATransformType::Pointer   affineTx  = ATransformType::New();
+
+  const unsigned int numberOfFixedParameters = affineTx->GetFixedParameters().Size();
+  ATransformType::ParametersType fixedParameters( numberOfFixedParameters );
+  for (unsigned int i = 0; i < numberOfFixedParameters; ++i)
+     {
+     fixedParameters[i] = fixedCenter[i];
+     }
+  affineTx->SetFixedParameters( fixedParameters );
+
+  affineRegistration->SetInitialTransform(  affineTx  );
+  affineRegistration->InPlaceOn();
+  // Software Guide : EndCodeSnippet
 
   affineRegistration->SetFixedImage( fixedImageReader->GetOutput() );
   affineRegistration->SetMovingImage( movingImageReader->GetOutput() );
   affineRegistration->SetObjectName("AffineRegistration");
 
-  affineMetric->SetNumberOfHistogramBins( 24 );
-
-  if( argc > 7 )
-    {
-    // optionally, override the values with numbers taken from the command line arguments.
-    affineMetric->SetNumberOfHistogramBins( atoi( argv[7] ) );
-    }
-
-  // Initialize the fixed parameters (center of rotation) in Affine transform
-  //
-  AffineTransformType::Pointer affineTrans = AffineTransformType::New();
-
-  fixedImageReader->Update();
-  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
-/*
-  // Compute center of mass of the fixed image and set that as the center of AffineTransform
-  //
-  typedef itk::ImageMomentsCalculator< FixedImageType >  FixedImageCalculatorType;
-  FixedImageCalculatorType::Pointer fixedCalculator = FixedImageCalculatorType::New();
-  fixedCalculator->SetImage( fixedImage );
-  fixedCalculator->Compute();
-  FixedImageCalculatorType::VectorType fixedCenter = fixedCalculator->GetCenterOfGravity();
-
-  const unsigned int numberOfFixedParameters = affineTrans->GetFixedParameters().Size(); // =3
-  AffineTransformType::ParametersType fixedParameters( numberOfFixedParameters );
-  for (unsigned int i = 0; i < numberOfFixedParameters; ++i)
-    {
-    fixedParameters[i] = fixedCenter[i];
-    }
-  affineTrans->SetFixedParameters( fixedParameters );
-*/
-
-  // Compute center of the fixed image and set that as the center of AffineTransform
-  //
-  typedef FixedImageType::SpacingType    SpacingType;
-  typedef FixedImageType::PointType      OriginType;
-  typedef FixedImageType::RegionType     RegionType;
-  typedef FixedImageType::SizeType       SizeType;
-
-  const SpacingType fixedSpacing = fixedImage->GetSpacing();
-  const OriginType  fixedOrigin  = fixedImage->GetOrigin();
-  const RegionType  fixedRegion  = fixedImage->GetLargestPossibleRegion();
-  const SizeType    fixedSize    = fixedRegion.GetSize();
-
-  AffineTransformType::InputPointType centerFixed;
-  centerFixed[0] = fixedOrigin[0] + fixedSpacing[0] * fixedSize[0] / 2.0;
-  centerFixed[1] = fixedOrigin[1] + fixedSpacing[1] * fixedSize[1] / 2.0;
-
-  const unsigned int numberOfFixedParameters = affineTrans->GetFixedParameters().Size();
-  AffineTransformType::ParametersType fixedParameters( numberOfFixedParameters );
-  for (unsigned int i = 0; i < numberOfFixedParameters; ++i)
-    {
-    fixedParameters[i] = centerFixed[i];
-    }
-  affineTrans->SetFixedParameters( fixedParameters );
-
-  affineRegistration->SetInitialTransform(affineTrans);
-
   //  Software Guide : BeginLatex
   //
-  //  The set of parameters in the AffineTransform have different
-  //  dynamic ranges. Typically the parameters associated with the matrix
-  //  have values around $[-1:1]$, although they are not restricted to this
-  //  interval.  Parameters associated with translations, on the other hand,
-  //  tend to have much higher values, typically in the order of $10.0$ to
-  //  $100.0$. This difference in dynamic range negatively affects the
-  //  performance of gradient descent optimizers. ITK provides some mechanisms to
-  //  compensate for such differences in values among the parameters when
-  //  they are passed to the optimizer.
-  //
-  //  The first mechanism consists of providing an
-  //  array of scale factors to the optimizer. These factors re-normalize the
-  //  gradient components before they are used to compute the step of the
-  //  optimizer at the current iteration.
-  //  These scales are estimated by the user intuitively as shown in previous
-  //  examples of this chapter. In our particular case, a common choice
-  //  for the scale parameters is to set to $1.0$ all those associated
-  //  with the matrix coefficients, that is, the first $N \times N$
-  //  factors. Then, we set the remaining scale factors to a small value.
-  //
-  //  Software Guide : EndLatex
-
-  //  Software Guide : BeginLatex
-  //
-  //  Here the affine transform is represented by the matrix $\bf{M}$ and the
-  //  vector $\bf{T}$. The transformation of a point $\bf{P}$ into $\bf{P'}$
-  //  is expressed as
-  //
-  //  \begin{equation}
-  //  \left[
-  //  \begin{array}{c}
-  //  {P'}_x  \\  {P'}_y  \\  \end{array}
-  //  \right]
-  //  =
-  //  \left[
-  //  \begin{array}{cc}
-  //  M_{11} & M_{12} \\ M_{21} & M_{22} \\  \end{array}
-  //  \right]
-  //  \cdot
-  //  \left[
-  //  \begin{array}{c}
-  //  P_x  \\ P_y  \\  \end{array}
-  //  \right]
-  //  +
-  //  \left[
-  //  \begin{array}{c}
-  //  T_x  \\ T_y  \\  \end{array}
-  //  \right]
-  //  \end{equation}
-  //
-  //
-  //  Software Guide : EndLatex
-
-  //  Software Guide : BeginLatex
-  //
-  //  Based on the above discussion, we need very smaller scales for translation
-  //  parameters of vector $\bf{T}$ ($T_x$, $T_y$) in compare with the parameters
-  //  of matrix $\bf{M}$ ($M_{11}$, $M_{12}$, $M_{21}$, $M_{22}$).
-  //  However, it is not that easy to have an intuitive estimation of all parameter
-  //  scales when we have to deal with a large paramter space.
-  //
-  //  Fortunately, a framework for automated parameter scaling is provided by
-  //  ITKv4. \doxygen{RegistrationParameterScalesEstimator} vastly reduce the
-  //  difficulty of tuning parameters for different transform/metric combination.
-  //  Parameter scales are estimated by analyzing the result of a small parameter
-  //  update on the change in the magnitude of physical space deformation induced
-  //  by the transformation.
-  //
-  //  The impact from a unit change of a parameter may be defined in multiple ways,
-  //  such as the maximum shift of voxels in index or physical space, or the average
-  //  norm of transform Jacobina.
-  //  Filters \doxygen{RegistrationParameterScalesFromPhysicalShift}
-  //  and \doxygen{RegistrationParameterScalesFromIndexShift} use the first definition
-  //  to estimate the scales, while the \doxygen{RegistrationParameterScalesFromJacobian}
-  //  filter estimates scales based on the later definition.
-  //  In all methods, the goal is to rescale the transform parameters such that
-  //  a unit change of each \emph{scaled parameter} will have the same impact on deformation.
-  //
-  //  In this example the first filter is chosen to estimate the paramter scales. Then
-  //  scales estimator will be passed to optimizer.
+  //  Now, the output of the first stage is wrapped through a
+  //  \doxygen{DataObjectDecorator} and is passed to the input
+  //  of the second stage as the moving initial transform via
+  //  \code{SetMovingInitialTransformInput()} method. Note that
+  //  this API has an "Input" word attached to already used method
+  //  \code{SetMovingInitialTransform()} in the previous example.
+  //  This extension means that the following API expects
+  //  a data object decorator type.
   //
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
+  affineRegistration->SetMovingInitialTransformInput(
+                                                     transRegistration->GetTransformOutput() );
+  // Software Guide : EndCodeSnippet
+
+
   typedef itk::RegistrationParameterScalesFromPhysicalShift<
                                                       MetricType>   ScalesEstimatorType;
   ScalesEstimatorType::Pointer scalesEstimator =
@@ -546,34 +411,8 @@ int main( int argc, char *argv[] )
   scalesEstimator->SetTransformForward( true );
 
   affineOptimizer->SetScalesEstimator( scalesEstimator );
-  // Software Guide : EndCodeSnippet
-
-  //  Software Guide : BeginLatex
-  //
-  //  The step length has to be proportional to the expected values of the
-  //  parameters in the search space. Since the expected values of the matrix
-  //  coefficients are around $1.0$, the initial step of the optimization
-  //  should be a small number compared to $1.0$. As a guideline, it is
-  //  useful to think of the matrix coefficients as combinations of
-  //  $cos(\theta)$ and $sin(\theta)$.  This leads to use values close to the
-  //  expected rotation measured in radians. For example, a rotation of $1.0$
-  //  degree is about $0.017$ radians.
-  //
-  //  However, we do not need to be much woried about the above considerations.
-  //  Thanks to the \emph{ScalesEstimator}, the initial step size can also be
-  //  estimated automatically, either at each iteration or only at the first
-  //  iteration. Here, in this example we choose to estimate learning rate
-  //  once at the begining of the registration process.
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
   affineOptimizer->SetDoEstimateLearningRateOnce( true );
   affineOptimizer->SetDoEstimateLearningRateAtEachIteration( false );
-  // Software Guide : EndCodeSnippet
-
-  // Set the other parameters of optimizer
-  //
   affineOptimizer->SetLowerLimit( 0 );
   affineOptimizer->SetUpperLimit( 2 );
   affineOptimizer->SetEpsilon( 0.2 );
@@ -588,13 +427,11 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  At the second stage, we run two levels of registration, where the second
-  //  level is run in full resolution in which we do the final adjustments
-  //  of the output parameters.
+  //  Second stage runs two levels of registration, where the second
+  //  level is run in full resolution.
   //
   //  Software Guide : EndLatex
 
-  // Software Guide : BeginCodeSnippet
   const unsigned int numberOfLevels2 = 2;
 
   AffineRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel2;
@@ -610,7 +447,6 @@ int main( int argc, char *argv[] )
   affineRegistration->SetNumberOfLevels ( numberOfLevels2 );
   affineRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel2 );
   affineRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel2 );
-  // Software Guide : EndCodeSnippet
 
   // Create the Command interface observer and register it with the optimizer.
   //
@@ -620,13 +456,10 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  Finally we triger the registration process by calling \code{Update()} once
-  //  all the registration components are in place.
-  //  Then, the result transform of the last stage is also added to the output
-  //  composite transform that will be considered as the final transform of
-  //  this multistage registration process and will be used by the resampler
-  //  to resample the moving image in to the virtual domain space (fixed image space
-  //  if there is no fixed initial transform).
+  //  Once all the registration components are in place,
+  //  finally we triger the whole registration process, including two cascaded
+  //  registration stages, by calling \code{Update()} for the registration filter
+  //  of the last stage that causes both stages be updated consequently.
   //
   //  Software Guide : EndLatex
 
@@ -644,88 +477,83 @@ int main( int argc, char *argv[] )
     std::cout << err << std::endl;
     return EXIT_FAILURE;
     }
+  // Software Guide : EndCodeSnippet
 
+  //  Software Guide : BeginLatex
+  //
+  //  After all, a composite transform is used to concatenate the results of
+  //  all stages together, which will be considered as the
+  //  final output of this multistage process and will be passed to the resampler
+  //  to resample the moving image in to the virtual domain space (fixed image space
+  //  if there is no fixed initial transform).
+  //
+  //  Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
   typedef itk::CompositeTransform< double,
                                    Dimension >  CompositeTransformType;
   CompositeTransformType::Pointer   compositeTransform  = CompositeTransformType::New();
-  compositeTransform->AddTransform( transRegistration->GetModifiableTransform() );
-  compositeTransform->AddTransform( affineRegistration->GetModifiableTransform() );
+  compositeTransform->AddTransform( translationTx );
+  compositeTransform->AddTransform( affineTx );
   // Software Guide : EndCodeSnippet
 
-  std::cout << " Translation parameters after registration: " << std::endl
+  std::cout << " Translation transform parameters after registration: " << std::endl
             << transOptimizer->GetCurrentPosition() << std::endl
             << " Last LearningRate: " << transOptimizer->GetCurrentStepLength() << std::endl;
 
-  std::cout << " Affine parameters after registration: " << std::endl
+  std::cout << " Affine transform parameters after registration: " << std::endl
             << affineOptimizer->GetCurrentPosition() << std::endl
             << " Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl;
 
-///////////////////////////////
-/*
-  std::cout << "Optimizer Stopping Condition = "
-            << optimizer->GetStopCondition() << std::endl;
-
-  typedef RegistrationType::ParametersType ParametersType;
-  ParametersType finalParameters = registration->GetLastTransformParameters();
-
-  double TranslationAlongX = finalParameters[4];
-  double TranslationAlongY = finalParameters[5];
-
-  unsigned int numberOfIterations = optimizer->GetCurrentIteration();
-
-  double bestValue = optimizer->GetValue();
-
-  // Print out results
-  //
-  std::cout << "Result = " << std::endl;
-  std::cout << " Translation X = " << TranslationAlongX  << std::endl;
-  std::cout << " Translation Y = " << TranslationAlongY  << std::endl;
-  std::cout << " Iterations    = " << numberOfIterations << std::endl;
-  std::cout << " Metric value  = " << bestValue          << std::endl;
-
-*/
-////////////////////////////
 
   //  Software Guide : BeginLatex
   //
   //  Let's execute this example using the same multi-modality images as
-  //  before.  The registration converges after $5$ iterations in the first
-  //  level, $7$ in the second level and $4$ in the third level. The final
-  //  results when printed as an array of parameters are
+  //  before. The registration converges after $5$ iterations in the first
+  //  stage, also in $46$ and $6$ iterations corresponding to the first level
+  //  and second level of the Affine stage.
+  //  The final results when printed as an array of parameters are:
   //
   //  \begin{verbatim}
-  // [1.00164, 0.00147688, 0.00168372, 1.0027, 12.6296, 16.4768]
+  //  Translation parameters after first registration stage:
+  //  [9.0346, 10.8303]
+  //
+  //  Affine parameters after second registration stage:
+  //  [0.9864, -0.1733, 0.1738, 0.9863, 0.9693, 0.1482]
   //  \end{verbatim}
   //
-  //  By reordering them as coefficient of matrix $\bf{M}$ and vector $\bf{T}$
-  //  they can now be seen as
+  //  Let's reorder the Affine array of parameters agian as coefficients of matrix
+  //  $\bf{M}$ and vector $\bf{T}$ they can now be seen as
   //
   //  \begin{equation}
   //  M =
   //  \left[
   //  \begin{array}{cc}
-  //  1.00164 & 0.0014 \\ 0.00168 & 1.0027 \\  \end{array}
+  //  0.9864 & -0.1733 \\ 0.1738 & 0.9863 \\  \end{array}
   //  \right]
   //  \mbox{ and }
   //  T =
   //  \left[
   //  \begin{array}{c}
-  //  12.6296  \\  16.4768  \\  \end{array}
+  //  0.9693  \\  0.1482  \\  \end{array}
   //  \right]
   //  \end{equation}
   //
-  //  In this form, it is easier to interpret the effect of the
-  //  transform. The matrix $\bf{M}$ is responsible for scaling, rotation and
-  //  shearing while $\bf{T}$ is responsible for translations.  It can be seen
-  //  that the translation values in this case closely match the true
-  //  misalignment introduced in the moving image.
+  //  $9.975$ degrees is the rotation value computed from the affine matrix
+  //  paramters, which is approximately the intentional misalignment of $10.0$ degrees.
   //
-  //  It is important to note that once the images are registered at a
-  //  sub-pixel level, any further improvement of the registration relies
-  //  heavily on the quality of the interpolator. It may then be reasonable to
-  //  use a coarse and fast interpolator in the lower resolution levels and
-  //  switch to a high-quality but slow interpolator in the final resolution
-  //  level.
+  //  Also for the totall translation value resulted from both transforms, we have:
+  //
+  //  In $X$ direction:
+  //  \begin{equation}
+  //  3 + 9.0346 + 0.9693 = 13.0036
+  //  \end{equation}
+  //  In $Y$ direction:
+  //  \begin{equation}
+  //  5 + 10.8303 + 0.1482 = 15.9785
+  //  \end{equation}
+  //
+  //  That is closely match the true misalignment introduced in the moving image.
   //
   //  Software Guide : EndLatex
 
@@ -736,8 +564,6 @@ int main( int argc, char *argv[] )
 
   resample->SetTransform( compositeTransform );
   resample->SetInput( movingImageReader->GetOutput() );
-
-//  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
 
   PixelType backgroundGrayLevel = 100;
   if( argc > 4 )
@@ -771,38 +597,19 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration2Output}
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration2CheckerboardBefore}
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration2CheckerboardAfter}
-  // \itkcaption[Multi-Resolution Registration Input Images]{Mapped moving image
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration2Output}
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration2CheckerboardBefore}
+  // \includegraphics[width=0.32\textwidth]{MultiStageImageRegistration2CheckerboardAfter}
+  // \itkcaption[Multistage registration input images]{Mapped moving image
   // (left) and composition of fixed and moving images before (center) and
-  // after (right) multi-resolution registration with the AffineTransform class.}
-  // \label{fig:MultiResImageRegistration2Output}
+  // after (right) registration.}
+  // \label{fig:MultiStageImageRegistration2Outputs}
   // \end{figure}
   //
-  //  The result of resampling the moving image is shown in the left image
-  //  of Figure \ref{fig:MultiResImageRegistration2Output}. The center and
-  //  right images of the figure present a checkerboard composite of the fixed
+  //  The result of resampling the moving image is presented in the left image
+  //  of Figure \ref{fig:MultiStageImageRegistration2Outputs}. The center and
+  //  right images of the figure depict a checkerboard composite of the fixed
   //  and moving images before and after registration.
-  //
-  //  Software Guide : EndLatex
-
-  //  Software Guide : BeginLatex
-  //
-  // \begin{figure}
-  // \center
-  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration2TraceTranslations}
-  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration2TraceMetric}
-  // \itkcaption[Multi-Resolution Registration output plots]{Sequence of
-  // translations and metric values at each iteration of the optimizer for
-  // multi-resolution with the AffineTransform class.}
-  // \label{fig:MultiResImageRegistration2Trace}
-  // \end{figure}
-  //
-  //  Figure \ref{fig:MultiResImageRegistration2Trace} (left) presents the
-  //  sequence of translations followed by the optimizer as it searched the
-  //  parameter space. The right side of the same figure shows the sequence of
-  //  metric values computed as the optimizer explored the parameter space.
   //
   //  Software Guide : EndLatex
 
