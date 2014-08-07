@@ -436,14 +436,15 @@ itk_add_test(NAME DeformableRegistration5Test COMMAND ${ITK_TEST_DRIVER}
         ${TEMP}/DeformableRegistration5Test.png
 )
 
-#Disable until BSplineDeformableTransform is fully implemented.
 itk_add_test(NAME DeformableRegistration6Test COMMAND ${ITK_TEST_DRIVER}
-  --compare DATA{Baseline/DeformableRegistration6TestPixelCentered.png}
-            ${TEMP}/DeformableRegistration6TestPixelCentered.png
+  --compare DATA{Baseline/DeformableRegistration1v4Test.png}
+            ${TEMP}/DeformableRegistration6Test.png
+  --compareNumberOfPixelsTolerance 20
+  --compareIntensityTolerance 70
   $<TARGET_FILE:DeformableRegistration6>
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySliceBorder20.png
         ${ITK_SOURCE_DIR}/Examples/Data/BrainProtonDensitySliceBSplined10.png
-        ${TEMP}/DeformableRegistration6TestPixelCentered.png
+        ${TEMP}/DeformableRegistration6Test.png
 )
 
 itk_add_test(NAME BSplineWarping1Test COMMAND ${ITK_TEST_DRIVER}
