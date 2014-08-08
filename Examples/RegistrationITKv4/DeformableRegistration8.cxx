@@ -30,8 +30,8 @@
 //
 // Software Guide : EndLatex
 
-#include "itkImageRegistrationMethod.h"
-#include "itkMattesMutualInformationImageToImageMetric.h"
+#include "itkImageRegistrationMethodv4.h"
+#include "itkMattesMutualInformationImageToImageMetricv4.h"
 
 #include "itkTimeProbesCollectorBase.h"
 #include "itkMemoryProbesCollectorBase.h"
@@ -48,7 +48,7 @@
 
 // Software Guide : BeginCodeSnippet
 #include "itkBSplineTransform.h"
-#include "itkLBFGSBOptimizer.h"
+#include "itkLBFGSBOptimizerv4.h"
 // Software Guide : EndCodeSnippet
 
 //  Software Guide : BeginLatex
@@ -121,8 +121,7 @@ int main( int argc, char *argv[] )
     std::cerr << " fixedImageFile  movingImageFile outputImagefile  ";
     std::cerr << " [differenceOutputfile] [differenceBeforeRegistration] ";
     std::cerr << " [deformationField] ";
-    std::cerr << " [useExplicitPDFderivatives ] [useCachingBSplineWeights ] ";
-    std::cerr << " [filenameForFinalTransformParameters] ";
+    std::cerr << " [filenameForFinalTransformParameters] [numberOfGridNodesInOneDimension]";
     std::cerr << std::endl;
     return EXIT_FAILURE;
     }
@@ -157,45 +156,25 @@ int main( int argc, char *argv[] )
   // Software Guide : EndCodeSnippet
 
 
-  typedef itk::LBFGSBOptimizer       OptimizerType;
+  typedef itk::LBFGSBOptimizerv4       OptimizerType;
 
 
-  typedef itk::MattesMutualInformationImageToImageMetric<
+  typedef itk::MattesMutualInformationImageToImageMetricv4<
                                     FixedImageType,
                                     MovingImageType >    MetricType;
 
-  typedef itk:: LinearInterpolateImageFunction<
-                                    MovingImageType,
-                                    double          >    InterpolatorType;
-
-  typedef itk::ImageRegistrationMethod<
+  typedef itk::ImageRegistrationMethodv4<
                                     FixedImageType,
-                                    MovingImageType >    RegistrationType;
+                                    MovingImageType,
+                                    TransformType >    RegistrationType;
 
   MetricType::Pointer         metric        = MetricType::New();
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
-  InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
   RegistrationType::Pointer   registration  = RegistrationType::New();
 
 
   registration->SetMetric(        metric        );
   registration->SetOptimizer(     optimizer     );
-  registration->SetInterpolator(  interpolator  );
-
-
-  //  Software Guide : BeginLatex
-  //
-  //  The transform object is constructed below and passed to the registration
-  //  method.
-  //  \index{itk::RegistrationMethod!SetTransform()}
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
-  TransformType::Pointer  transform = TransformType::New();
-  registration->SetTransform( transform );
-  // Software Guide : EndCodeSnippet
-
 
   typedef itk::ImageFileReader< FixedImageType  > FixedImageReaderType;
   typedef itk::ImageFileReader< MovingImageType > MovingImageReaderType;
@@ -213,15 +192,24 @@ int main( int argc, char *argv[] )
 
   fixedImageReader->Update();
 
-  FixedImageType::RegionType fixedRegion = fixedImage->GetBufferedRegion();
+  //  Software Guide : BeginLatex
+  //
+  //  The transform object is constructed below and passed to the registration
+  //  method.
+  //  \index{itk::RegistrationMethod!SetTransform()}
+  //
+  //  Software Guide : EndLatex
 
- registration->SetFixedImageRegion( fixedRegion );
+  // Software Guide : BeginCodeSnippet
+  TransformType::Pointer  transform = TransformType::New();
+  // Software Guide : EndCodeSnippet
+
 
   unsigned int numberOfGridNodesInOneDimension = 5;
 
-  if( argc > 10 )
+  if( argc > 8 )
     {
-    numberOfGridNodesInOneDimension = atoi( argv[10] );
+    numberOfGridNodesInOneDimension = atoi( argv[8] );
     }
 
   // Software Guide : BeginCodeSnippet
@@ -240,8 +228,7 @@ int main( int argc, char *argv[] )
   meshSize.Fill( numberOfGridNodesInOneDimension - SplineOrder );
 
   transform->SetTransformDomainOrigin( fixedOrigin );
-  transform->SetTransformDomainPhysicalDimensions(
-    fixedPhysicalDimensions );
+  transform->SetTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
   transform->SetTransformDomainMeshSize( meshSize );
   transform->SetTransformDomainDirection( fixedImage->GetDirection() );
 
@@ -265,7 +252,8 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  registration->SetInitialTransformParameters( transform->GetParameters() );
+  registration->SetInitialTransform( transform );
+  registration->InPlaceOn();
   // Software Guide : EndCodeSnippet
 
 
@@ -302,6 +290,23 @@ int main( int argc, char *argv[] )
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
+  const unsigned int numberOfLevels = 1;
+
+  RegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
+  shrinkFactorsPerLevel.SetSize( numberOfLevels );
+  shrinkFactorsPerLevel[0] = 1;
+    // shrinkFactorsPerLevel[1] = 2;
+    // shrinkFactorsPerLevel[2] = 1;
+
+  RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
+  smoothingSigmasPerLevel.SetSize( numberOfLevels );
+  smoothingSigmasPerLevel[0] = 0;
+    // smoothingSigmasPerLevel[1] = 1;
+    // smoothingSigmasPerLevel[2] = 0;
+
+  registration->SetNumberOfLevels( numberOfLevels );
+  registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
+  registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
 
   //  Software Guide : BeginLatex
   //
@@ -311,11 +316,6 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   metric->SetNumberOfHistogramBins( 50 );
-
-  const unsigned int numberOfSamples =
-    static_cast<unsigned int>( fixedRegion.GetNumberOfPixels() * 0.2F );
-
-  metric->SetNumberOfSpatialSamples( numberOfSamples );
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -329,27 +329,8 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  metric->ReinitializeSeed( 76926294 );
+//  metric->ReinitializeSeed( 76926294 );
   // Software Guide : EndCodeSnippet
-
-  if( argc > 7 )
-    {
-    // Define whether to calculate the metric derivative by explicitly
-    // computing the derivatives of the joint PDF with respect to the Transform
-    // parameters, or doing it by progressively accumulating contributions from
-    // each bin in the joint PDF.
-    metric->SetUseExplicitPDFDerivatives( atoi( argv[7] ) );
-    }
-
-  if( argc > 8 )
-    {
-    // Define whether to cache the BSpline weights and indexes corresponding to
-    // each one of the samples used to compute the metric. Enabling caching will
-    // make the algorithm run faster but it will have a cost on the amount of memory
-    // that needs to be allocated. This option is only relevant when using the
-    // BSplineTransform.
-    metric->SetUseCachingOfBSplineWeights( atoi( argv[8] ) );
-    }
 
 
   // Add time and memory probes
@@ -499,6 +480,7 @@ int main( int argc, char *argv[] )
   // the registration.
   if( argc > 6 )
     {
+    FixedImageType::RegionType fixedRegion = fixedImage->GetBufferedRegion();
 
     typedef itk::Vector< float, ImageDimension >      VectorType;
     typedef itk::Image< VectorType, ImageDimension >  DisplacementFieldType;
@@ -550,10 +532,10 @@ int main( int argc, char *argv[] )
     }
 
   // Optionally, save the transform parameters in a file
-  if( argc > 9 )
+  if( argc > 7 )
     {
     std::ofstream parametersFile;
-    parametersFile.open( argv[9] );
+    parametersFile.open( argv[7] );
     parametersFile << finalParameters << std::endl;
     parametersFile.close();
     }
