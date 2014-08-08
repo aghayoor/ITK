@@ -564,7 +564,6 @@ if( ITK_USE_BRAINWEB_DATA )
             ${TEMP}/DeformableRegistration8Test1DifferenceAfter.mhd
             ${TEMP}/DeformableRegistration8Test1DifferenceBefore.mhd
             ${TEMP}/DeformableRegistration8Test1DisplacementField.mhd
-            0 0
             ${TEMP}/DeformableRegistration8Test1FinalTransformParameters.txt
             ${NUMBER_OF_BSPLINE_GRID_NODES}
             ${ITK_SOURCE_DIR}/Examples/Data/IdentityTransform.tfm
@@ -700,7 +699,6 @@ if( ITK_USE_BRAINWEB_DATA )
             ${TEMP}/DeformableRegistration8Test2DifferenceAfter.mhd
             ${TEMP}/DeformableRegistration8Test2DifferenceBefore.mhd
             ${TEMP}/DeformableRegistration8Test2DisplacementField.mhd
-            0 0
             ${TEMP}/DeformableRegistration8Test2FinalTransformParameters.txt
             ${NUMBER_OF_BSPLINE_GRID_NODES}
     )
@@ -716,7 +714,6 @@ if( ITK_USE_BRAINWEB_DATA )
             ${TEMP}/DeformableRegistration8Test3DifferenceAfter.mhd
             ${TEMP}/DeformableRegistration8Test3DifferenceBefore.mhd
             ${TEMP}/DeformableRegistration8Test3DisplacementField.mhd
-            0 0
             ${TEMP}/DeformableRegistration8Test3FinalTransformParameters.txt
             ${NUMBER_OF_BSPLINE_GRID_NODES}
     )
