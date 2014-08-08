@@ -314,7 +314,7 @@ int main( int argc, char *argv[] )
     }
 
   OptimizerType::ParametersType finalParameters =
-                                      transform->GetParameters();
+                                      outputBSplineTransform->GetParameters();
 
   std::cout << "Last Transform Parameters" << std::endl;
   std::cout << finalParameters << std::endl;
