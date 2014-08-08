@@ -89,8 +89,8 @@ protected:
   CommandIterationUpdate() {};
 
 public:
-  typedef itk::LBFGSBOptimizer    OptimizerType;
-  typedef   const OptimizerType * OptimizerPointer;
+  typedef itk::LBFGSBOptimizerv4    OptimizerType;
+  typedef   const OptimizerType *   OptimizerPointer;
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
@@ -106,7 +106,7 @@ public:
       return;
       }
     std::cout << optimizer->GetCurrentIteration() << "   ";
-    std::cout << optimizer->GetCachedValue() << "   ";
+    std::cout << optimizer->GetCurrentMetricValue() << "   ";
     std::cout << optimizer->GetInfinityNormOfProjectedGradient() << std::endl;
     }
 };
@@ -127,7 +127,7 @@ int main( int argc, char *argv[] )
     }
 
   const    unsigned int    ImageDimension = 3;
-  typedef  signed short    PixelType;
+  typedef  float           PixelType;
 
   typedef itk::Image< PixelType, ImageDimension >  FixedImageType;
   typedef itk::Image< PixelType, ImageDimension >  MovingImageType;
@@ -279,9 +279,9 @@ int main( int argc, char *argv[] )
   optimizer->SetLowerBound( lowerBound );
 
   optimizer->SetCostFunctionConvergenceFactor( 1.e7 );
-  optimizer->SetProjectedGradientTolerance( 1e-6 );
-  optimizer->SetMaximumNumberOfIterations( 200 );
-  optimizer->SetMaximumNumberOfEvaluations( 30 );
+  optimizer->SetGradientConvergenceTolerance( 1e-6 );
+  optimizer->SetNumberOfIterations( 200 );
+  optimizer->SetMaximumNumberOfFunctionEvaluations( 30 );
   optimizer->SetMaximumNumberOfCorrections( 5 );
   // Software Guide : EndCodeSnippet
 
@@ -361,7 +361,7 @@ int main( int argc, char *argv[] )
     }
 
   OptimizerType::ParametersType finalParameters =
-                    registration->GetLastTransformParameters();
+                    transform->GetParameters();
 
 
   // Report the time and memory taken by the registration
@@ -369,7 +369,7 @@ int main( int argc, char *argv[] )
   memorymeter.Report( std::cout );
 
   // Software Guide : BeginCodeSnippet
-  transform->SetParameters( finalParameters );
+//  transform->SetParameters( finalParameters );
   // Software Guide : EndCodeSnippet
 
 
