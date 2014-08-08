@@ -28,7 +28,7 @@
 // Each level of each stage is defined by a transform adaptor
 // which describes how to adapt the transform to the current level by
 // increasing the resolution from previous level.
-// Here, we have used \dexygen{BSplineTransformParametersAdaptor} class
+// Here, we have used \doxygen{BSplineTransformParametersAdaptor} class
 // to adapt the BSpline transform parameters at each resolution level.
 // You should also note that for many transforms, such as affine, the
 // concept of an adaptor may be nonsensical since the number of transform
