@@ -21,8 +21,9 @@
 // This example illustrates the use of the \doxygen{BSplineTransform}
 // class for performing registration of two $2D$ images in an ITKv4
 // registration framework. Due to the large number of parameters of
-// the BSpline transform, we will use a \doxygen{LBFGSOptimizerv4} instead of a
-// simple steepest descent or a conjugate gradient descent optimizer.
+// the BSpline transform, we will use a \doxygen{LBFGSOptimizerv4}
+// instead of a simple steepest descent or a conjugate gradient
+// descent optimizer.
 //
 //
 // \index{itk::BSplineTransform}
