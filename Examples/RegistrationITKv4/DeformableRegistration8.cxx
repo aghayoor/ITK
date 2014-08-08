@@ -21,17 +21,15 @@
 // This example illustrates the use of the \doxygen{BSplineTransform}
 // class for performing registration of two $3D$ images and for the case of
 // multi-modality images. The image metric of choice in this case is the
-// \doxygen{MattesMutualInformationImageToImageMetric}.
+// \doxygen{MattesMutualInformationImageToImageMetricv4}.
 //
 // \index{itk::BSplineTransform}
 // \index{itk::BSplineTransform!DeformableRegistration}
-// \index{itk::LBFGSBOptimizer}
-//
+// \index{itk::LBFGSBOptimizerv4}
 //
 // Software Guide : EndLatex
 
 #include "itkImageRegistrationMethodv4.h"
-#include "itkMattesMutualInformationImageToImageMetricv4.h"
 
 #include "itkTimeProbesCollectorBase.h"
 #include "itkMemoryProbesCollectorBase.h"
@@ -42,26 +40,15 @@
 //  The following are the most relevant headers to this example.
 //
 //  \index{itk::BSplineTransform!header}
-//  \index{itk::LBFGSBOptimizer!header}
+//  \index{itk::LBFGSBOptimizerv4!header}
 //
 //  Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
 #include "itkBSplineTransform.h"
 #include "itkLBFGSBOptimizerv4.h"
+#include "itkMattesMutualInformationImageToImageMetricv4.h"
 // Software Guide : EndCodeSnippet
-
-//  Software Guide : BeginLatex
-//
-//  The parameter space of the \code{BSplineTransform} is composed by
-//  the set of all the deformations associated with the nodes of the BSpline
-//  grid.  This large number of parameters makes possible to represent a wide
-//  variety of deformations, but it also has the price of requiring a
-//  significant amount of computation time.
-//
-//  \index{itk::BSplineTransform!header}
-//
-//  Software Guide : EndLatex
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -194,9 +181,11 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  The transform object is constructed below and passed to the registration
-  //  method.
-  //  \index{itk::RegistrationMethod!SetTransform()}
+  //  The transform object is constructed, initialized like previous example
+  //  and passed to the registration method.
+  //
+  //  \index{itk::ImageRegistrationMethodv4!SetInitialTransform()}
+  //  \index{itk::ImageRegistrationMethodv4!InPlaceOn()}
   //
   //  Software Guide : EndLatex
 
@@ -204,15 +193,13 @@ int main( int argc, char *argv[] )
   TransformType::Pointer  transform = TransformType::New();
   // Software Guide : EndCodeSnippet
 
-
+  // Initialize the transform
   unsigned int numberOfGridNodesInOneDimension = 5;
 
   if( argc > 8 )
     {
     numberOfGridNodesInOneDimension = atoi( argv[8] );
     }
-
-  // Software Guide : BeginCodeSnippet
 
   TransformType::PhysicalDimensionsType   fixedPhysicalDimensions;
   TransformType::MeshSizeType             meshSize;
@@ -232,6 +219,7 @@ int main( int argc, char *argv[] )
   transform->SetTransformDomainMeshSize( meshSize );
   transform->SetTransformDomainDirection( fixedImage->GetDirection() );
 
+  // Set transform to identity
   typedef TransformType::ParametersType     ParametersType;
 
   const unsigned int numberOfParameters =
@@ -242,14 +230,6 @@ int main( int argc, char *argv[] )
   parameters.Fill( 0.0 );
 
   transform->SetParameters( parameters );
-  //  Software Guide : EndCodeSnippet
-
-  //  Software Guide : BeginLatex
-  //
-  //  We now pass the parameters of the current transform as the initial
-  //  parameters to be used when the registration process starts.
-  //
-  //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
   registration->SetInitialTransform( transform );
@@ -262,7 +242,6 @@ int main( int argc, char *argv[] )
   //  Next we set the parameters of the LBFGSB Optimizer.
   //
   //  Software Guide : EndLatex
-
 
   // Software Guide : BeginCodeSnippet
   const unsigned int numParameters = transform->GetNumberOfParameters();
@@ -290,19 +269,18 @@ int main( int argc, char *argv[] )
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
+  //  A single level registration process is run using
+  //  the shrink factor 1 and smoothing sigma 0.
+  //
   const unsigned int numberOfLevels = 1;
 
   RegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
   shrinkFactorsPerLevel.SetSize( numberOfLevels );
   shrinkFactorsPerLevel[0] = 1;
-    // shrinkFactorsPerLevel[1] = 2;
-    // shrinkFactorsPerLevel[2] = 1;
 
   RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
   smoothingSigmasPerLevel.SetSize( numberOfLevels );
   smoothingSigmasPerLevel[0] = 0;
-    // smoothingSigmasPerLevel[1] = 1;
-    // smoothingSigmasPerLevel[2] = 0;
 
   registration->SetNumberOfLevels( numberOfLevels );
   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
@@ -317,21 +295,6 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   metric->SetNumberOfHistogramBins( 50 );
   // Software Guide : EndCodeSnippet
-
-  //  Software Guide : BeginLatex
-  //
-  //  Given that the Mattes Mutual Information metric uses a random iterator in
-  //  order to collect the samples from the images, it is usually convenient to
-  //  initialize the seed of the random number generator.
-  //
-  //  \index{itk::Mattes\-Mutual\-Information\-Image\-To\-Image\-Metric!ReinitializeSeed()}
-  //
-  //  Software Guide : EndLatex
-
-  // Software Guide : BeginCodeSnippet
-//  metric->ReinitializeSeed( 76926294 );
-  // Software Guide : EndCodeSnippet
-
 
   // Add time and memory probes
   itk::TimeProbesCollectorBase chronometer;
@@ -368,11 +331,14 @@ int main( int argc, char *argv[] )
   chronometer.Report( std::cout );
   memorymeter.Report( std::cout );
 
-  // Software Guide : BeginCodeSnippet
-//  transform->SetParameters( finalParameters );
-  // Software Guide : EndCodeSnippet
+  OptimizerType::ParametersType finalParameters =
+                                      transform->GetParameters();
 
+  std::cout << "Last Transform Parameters" << std::endl;
+  std::cout << finalParameters << std::endl;
 
+  // Finally we use the last transform in order to resample the image.
+  //
   typedef itk::ResampleImageFilter<
                             MovingImageType,
                             FixedImageType >    ResampleFilterType;
