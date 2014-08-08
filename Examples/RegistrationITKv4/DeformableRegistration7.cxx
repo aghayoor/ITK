@@ -19,15 +19,14 @@
 // Software Guide : BeginLatex
 //
 // This example illustrates the use of the \doxygen{BSplineTransform}
-// class for performing registration of two $3D$ images. The example code is
-// for the most part identical to the code presented in
-// Section~\ref{sec:BSplinesMultiGridImageRegistration}. The major difference is
-// that this example we set the image dimension to 3 and replace the
-// \doxygen{LBFGSOptimizer} optimizer with the \doxygen{LBFGSBOptimizer}. We
-// made the modification because we found that LBFGS does not behave well when
-// the starting positions is at or close to optimal; instead we used LBFGSB in
-// unconstrained mode.
-//
+// class in a manually controlled multi-resolution scheme. Here we define two
+// transforms at two different resolution levels. A first registration is
+// performed with the spline grid of low resolution, and the results are then
+// used for initializing a higher resolution grid. Since this example is quite
+// similar to the previous example on the use of the
+// \code{BSplineTransform} we omit here most of the details already
+// discussed and will focus on the aspects related to the multi-resolution
+// approach.
 //
 // \index{itk::BSplineTransform}
 // \index{itk::BSplineTransform!DeformableRegistration}
@@ -36,15 +35,12 @@
 //
 // Software Guide : EndLatex
 
-#include "itkImageRegistrationMethod.h"
-#include "itkMeanSquaresImageToImageMetric.h"
-
-#include "itkTimeProbesCollectorBase.h"
-#include "itkMemoryProbesCollectorBase.h"
+#include "itkImageRegistrationMethodv4.h"
+#include "itkMeanSquaresImageToImageMetricv4.h"
 
 //  Software Guide : BeginLatex
 //
-//  The following are the most relevant headers to this example.
+//  We include the header files for the transform and the optimizer.
 //
 //  \index{itk::BSplineTransform!header}
 //  \index{itk::LBFGSOptimizer!header}
@@ -53,20 +49,9 @@
 
 // Software Guide : BeginCodeSnippet
 #include "itkBSplineTransform.h"
-#include "itkLBFGSBOptimizer.h"
+#include "itkLBFGSBOptimizerv4.h"
 // Software Guide : EndCodeSnippet
 
-//  Software Guide : BeginLatex
-//
-//  The parameter space of the \code{BSplineTransform} is composed by
-//  the set of all the deformations associated with the nodes of the BSpline
-//  grid.  This large number of parameters makes possible to represent a wide
-//  variety of deformations, but it also has the price of requiring a
-//  significant amount of computation time.
-//
-//  \index{itk::BSplineTransform!header}
-//
-//  Software Guide : EndLatex
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -75,44 +60,12 @@
 #include "itkCastImageFilter.h"
 #include "itkSquaredDifferenceImageFilter.h"
 
+//#include "itkBSplineResampleImageFunction.h"
+#include "itkIdentityTransform.h"
+//#include "itkBSplineDecompositionImageFilter.h"
+#include "itkBSplineTransformParametersAdaptor.h"
 
-//  The following section of code implements a Command observer
-//  used to monitor the evolution of the registration process.
-//
-#include "itkCommand.h"
-class CommandIterationUpdate : public itk::Command
-{
-public:
-  typedef  CommandIterationUpdate   Self;
-  typedef  itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>   Pointer;
-  itkNewMacro( Self );
-
-protected:
-  CommandIterationUpdate() {};
-
-public:
-  typedef itk::LBFGSBOptimizer       OptimizerType;
-  typedef   const OptimizerType *    OptimizerPointer;
-
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-    {
-    Execute( (const itk::Object *)caller, event);
-    }
-
-  void Execute(const itk::Object * object, const itk::EventObject & event)
-    {
-    OptimizerPointer optimizer =
-      dynamic_cast< OptimizerPointer >( object );
-    if( !(itk::IterationEvent().CheckEvent( &event )) )
-      {
-      return;
-      }
-    std::cout << optimizer->GetCurrentIteration() << "   ";
-    std::cout << optimizer->GetValue() << "   ";
-    std::cout << optimizer->GetInfinityNormOfProjectedGradient() << std::endl;
-    }
-};
+// NOTE: the LBFGSOptimizer does not invoke events
 
 
 int main( int argc, char *argv[] )
@@ -127,7 +80,7 @@ int main( int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  const    unsigned int    ImageDimension = 3;
+  const    unsigned int    ImageDimension = 2;
   typedef  float           PixelType;
 
   typedef itk::Image< PixelType, ImageDimension >  FixedImageType;
@@ -157,43 +110,40 @@ int main( int argc, char *argv[] )
   // Software Guide : EndCodeSnippet
 
 
-  typedef itk::LBFGSBOptimizer       OptimizerType;
+  typedef itk::LBFGSBOptimizerv4       OptimizerType;
 
 
-  typedef itk::MeanSquaresImageToImageMetric<
+  typedef itk::MeanSquaresImageToImageMetricv4<
                                     FixedImageType,
                                     MovingImageType >    MetricType;
 
-  typedef itk:: LinearInterpolateImageFunction<
-                                    MovingImageType,
-                                    double          >    InterpolatorType;
-
-  typedef itk::ImageRegistrationMethod<
+  typedef itk::ImageRegistrationMethodv4<
                                     FixedImageType,
-                                    MovingImageType >    RegistrationType;
+                                    MovingImageType,
+                                    TransformType >      RegistrationType;
 
   MetricType::Pointer         metric        = MetricType::New();
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
-  InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
   RegistrationType::Pointer   registration  = RegistrationType::New();
 
 
   registration->SetMetric(        metric        );
   registration->SetOptimizer(     optimizer     );
-  registration->SetInterpolator(  interpolator  );
 
 
   //  Software Guide : BeginLatex
   //
-  //  The transform object is constructed below and passed to the registration
-  //  method.
+  //  We construct two transform objects, each one will be configured for a resolution level.
+  //  Notice than in this multi-resolution scheme we are not modifying the
+  //  resolution of the image, but rather the flexibility of the deformable
+  //  transform itself.
+  //
   //  \index{itk::RegistrationMethod!SetTransform()}
   //
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  TransformType::Pointer  transform = TransformType::New();
-  registration->SetTransform( transform );
+  TransformType::Pointer  outputBSplineTransform = TransformType::New();
   // Software Guide : EndCodeSnippet
 
   typedef itk::ImageFileReader< FixedImageType  > FixedImageReaderType;
@@ -212,11 +162,7 @@ int main( int argc, char *argv[] )
 
   fixedImageReader->Update();
 
-  FixedImageType::RegionType fixedRegion = fixedImage->GetBufferedRegion();
-
- registration->SetFixedImageRegion( fixedRegion );
-
-  // Software Guide : BeginCodeSnippet
+  // Initialize the transform
   unsigned int numberOfGridNodes = 8;
 
   TransformType::PhysicalDimensionsType   fixedPhysicalDimensions;
@@ -227,27 +173,23 @@ int main( int argc, char *argv[] )
     {
     fixedOrigin[i] = fixedImage->GetOrigin()[i];
     fixedPhysicalDimensions[i] = fixedImage->GetSpacing()[i] *
-      static_cast<double>(
-      fixedImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
+      static_cast<double>( fixedImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
     }
   meshSize.Fill( numberOfGridNodes - SplineOrder );
 
-  transform->SetTransformDomainOrigin( fixedOrigin );
-  transform->SetTransformDomainPhysicalDimensions(
-    fixedPhysicalDimensions );
-  transform->SetTransformDomainMeshSize( meshSize );
-  transform->SetTransformDomainDirection( fixedImage->GetDirection() );
+  outputBSplineTransform->SetTransformDomainOrigin( fixedOrigin );
+  outputBSplineTransform->SetTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
+  outputBSplineTransform->SetTransformDomainMeshSize( meshSize );
+  outputBSplineTransform->SetTransformDomainDirection( fixedImage->GetDirection() );
 
+  // Set transform to identity
   typedef TransformType::ParametersType     ParametersType;
-
   const unsigned int numberOfParameters =
-               transform->GetNumberOfParameters();
-
+               outputBSplineTransform->GetNumberOfParameters();
   ParametersType parameters( numberOfParameters );
-
   parameters.Fill( 0.0 );
+  outputBSplineTransform->SetParameters( parameters );
 
-  transform->SetParameters( parameters );
   //  Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -258,20 +200,83 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  registration->SetInitialTransformParameters( transform->GetParameters() );
-  // Software Guide : EndCodeSnippet
+  registration->SetInitialTransform( outputBSplineTransform );
+  registration->InPlaceOn();
 
-  std::cout << "Intial Parameters = " << std::endl;
-  std::cout << transform->GetParameters() << std::endl;
+  //  A single level registration process is run using
+  //  the shrink factor 1 and smoothing sigma 0.
+  //
+  const unsigned int numberOfLevels = 1;
 
-  //  Software Guide : BeginLatex
+  RegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
+  shrinkFactorsPerLevel.SetSize( numberOfLevels );
+  shrinkFactorsPerLevel[0] = 1;
+ // shrinkFactorsPerLevel[1] = 2;
+ // shrinkFactorsPerLevel[2] = 1;
+
+  RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
+  smoothingSigmasPerLevel.SetSize( numberOfLevels );
+  smoothingSigmasPerLevel[0] = 0;
+ // smoothingSigmasPerLevel[1] = 1;
+ // smoothingSigmasPerLevel[2] = 0;
+
+  registration->SetNumberOfLevels( numberOfLevels );
+  registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
+  registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
+/*
+  // Create the transform adaptors
   //
-  //  Next we set the parameters of the LBFGSB Optimizer.
-  //
-  //  Software Guide : EndLatex
-  OptimizerType::BoundSelectionType boundSelect( transform->GetNumberOfParameters() );
-  OptimizerType::BoundValueType upperBound( transform->GetNumberOfParameters() );
-  OptimizerType::BoundValueType lowerBound( transform->GetNumberOfParameters() );
+  RegistrationType::TransformParametersAdaptorsContainerType adaptors;
+  // Create the transform adaptors specific to B-splines
+  for( unsigned int level = 0; level < numberOfLevels; level++ )
+    {
+    typedef itk::ShrinkImageFilter<FixedImageType, FixedImageType> ShrinkFilterType;
+    ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
+    shrinkFilter->SetShrinkFactors( shrinkFactorsPerLevel[level] );
+    shrinkFilter->SetInput( fixedImage );
+    shrinkFilter->Update();
+
+    // A good heuristic is to double the b-spline mesh resolution at each level
+    //
+    TransformType::MeshSizeType requiredMeshSize;
+    for( unsigned int d = 0; d < ImageDimension; d++ )
+      {
+      requiredMeshSize[d] = meshSize[d] << level;
+      }
+
+    typedef itk::BSplineTransformParametersAdaptor<TransformType> BSplineAdaptorType;
+    BSplineAdaptorType::Pointer bsplineAdaptor = BSplineAdaptorType::New();
+    bsplineAdaptor->SetTransform( outputBSplineTransform );
+    bsplineAdaptor->SetRequiredTransformDomainMeshSize( requiredMeshSize );
+    bsplineAdaptor->SetRequiredTransformDomainOrigin( shrinkFilter->GetOutput()->GetOrigin() );
+    bsplineAdaptor->SetRequiredTransformDomainDirection( shrinkFilter->GetOutput()->GetDirection() );
+    bsplineAdaptor->SetRequiredTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
+
+    adaptors.push_back( bsplineAdaptor.GetPointer() );
+    }
+
+  registration->SetTransformParametersAdaptorsPerLevel( adaptors );
+*/
+  // Scale estimator
+  typedef itk::RegistrationParameterScalesFromPhysicalShift<MetricType> ScalesEstimatorType;
+  ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
+  scalesEstimator->SetMetric( metric );
+  scalesEstimator->SetTransformForward( true );
+  scalesEstimator->SetSmallParameterVariation( 1.0 );
+
+  // Set Optimizer
+  /*
+  optimizer->SetScalesEstimator( scalesEstimator );
+  optimizer->SetGradientConvergenceTolerance( 0.05 );
+  optimizer->SetLineSearchAccuracy( 0.9 );
+  optimizer->SetDefaultStepLength( 1.5 );
+  optimizer->TraceOn();
+  optimizer->SetMaximumNumberOfFunctionEvaluations( 1000 );
+  */
+  const unsigned int numParameters = outputBSplineTransform->GetNumberOfParameters();
+  OptimizerType::BoundSelectionType boundSelect( numParameters );
+  OptimizerType::BoundValueType upperBound( numParameters );
+  OptimizerType::BoundValueType lowerBound( numParameters );
 
   boundSelect.Fill( 0 );
   upperBound.Fill( 0.0 );
@@ -282,33 +287,17 @@ int main( int argc, char *argv[] )
   optimizer->SetLowerBound( lowerBound );
 
   optimizer->SetCostFunctionConvergenceFactor( 1e+12 );
-  optimizer->SetProjectedGradientTolerance( 1.0 );
-  optimizer->SetMaximumNumberOfIterations( 500 );
-  optimizer->SetMaximumNumberOfEvaluations( 500 );
+  optimizer->SetGradientConvergenceTolerance( 1.0e-35 );
+  optimizer->SetNumberOfIterations( 500 );
+  optimizer->SetMaximumNumberOfFunctionEvaluations( 500 );
   optimizer->SetMaximumNumberOfCorrections( 5 );
 
-  // Create the Command observer and register it with the optimizer.
-  //
-  CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
-  optimizer->AddObserver( itk::IterationEvent(), observer );
-
-
-  // Add a time probe
-  itk::TimeProbesCollectorBase chronometer;
-  itk::MemoryProbesCollectorBase memorymeter;
-
-  std::cout << std::endl << "Starting Registration" << std::endl;
+  std::cout << "Starting Registration "
+            << std::endl;
 
   try
     {
-    memorymeter.Start( "Registration" );
-    chronometer.Start( "Registration" );
-
     registration->Update();
-
-    chronometer.Stop( "Registration" );
-    memorymeter.Stop( "Registration" );
-
     std::cout << "Optimizer stop condition = "
               << registration->GetOptimizer()->GetStopConditionDescription()
               << std::endl;
@@ -319,30 +308,142 @@ int main( int argc, char *argv[] )
     std::cerr << err << std::endl;
     return EXIT_FAILURE;
     }
-
-  OptimizerType::ParametersType finalParameters =
-                    registration->GetLastTransformParameters();
-
-  std::cout << "Last Transform Parameters" << std::endl;
-  std::cout << finalParameters << std::endl;
-
-
-  // Report the time taken by the registration
-  chronometer.Report( std::cout );
-  memorymeter.Report( std::cout );
-
-  // Software Guide : BeginCodeSnippet
-  transform->SetParameters( finalParameters );
   // Software Guide : EndCodeSnippet
 
 
+  //  Software Guide : BeginLatex
+  //
+  //  Once the registration has finished with the low resolution grid, we
+  //  proceed to instantiate a higher resolution
+  //  \code{BSplineTransform}.
+  //
+  //  Software Guide : EndLatex
+
+/*
+  TransformType::Pointer  transformHigh = TransformType::New();
+
+  numberOfGridNodes = 12;
+
+  for( unsigned int i=0; i< SpaceDimension; i++ )
+    {
+    fixedOrigin[i] = fixedImage->GetOrigin()[i];
+    fixedPhysicalDimensions[i] = fixedImage->GetSpacing()[i] *
+      static_cast<double>(
+      fixedImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
+    }
+  meshSize.Fill( numberOfGridNodes - SplineOrder );
+
+  transformHigh->SetTransformDomainOrigin( fixedOrigin );
+  transformHigh->SetTransformDomainPhysicalDimensions(
+    fixedPhysicalDimensions );
+  transformHigh->SetTransformDomainMeshSize( meshSize );
+  transformHigh->SetTransformDomainDirection( fixedImage->GetDirection() );
+
+  ParametersType parametersHigh( transformHigh->GetNumberOfParameters() );
+  parametersHigh.Fill( 0.0 );
+
+  //  Software Guide : BeginLatex
+  //
+  //  Now we need to initialize the BSpline coefficients of the higher resolution
+  //  transform. This is done by first computing the actual deformation field
+  //  at the higher resolution from the lower resolution BSpline coefficients.
+  //  Then a BSpline decomposition is done to obtain the BSpline coefficient of
+  //  the higher resolution transform.
+  //
+  //  Software Guide : EndLatex
+
+  unsigned int counter = 0;
+
+  for ( unsigned int k = 0; k < SpaceDimension; k++ )
+    {
+    typedef TransformType::ImageType ParametersImageType;
+    typedef itk::ResampleImageFilter<ParametersImageType,ParametersImageType> ResamplerType;
+    ResamplerType::Pointer upsampler = ResamplerType::New();
+
+    typedef itk::BSplineResampleImageFunction<ParametersImageType,double> FunctionType;
+    FunctionType::Pointer function = FunctionType::New();
+
+    typedef itk::IdentityTransform<double,SpaceDimension> IdentityTransformType;
+    IdentityTransformType::Pointer identity = IdentityTransformType::New();
+
+    upsampler->SetInput( transformLow->GetCoefficientImages()[k] );
+    upsampler->SetInterpolator( function );
+    upsampler->SetTransform( identity );
+    upsampler->SetSize( transformHigh->GetCoefficientImages()[k]->
+      GetLargestPossibleRegion().GetSize() );
+    upsampler->SetOutputSpacing(
+      transformHigh->GetCoefficientImages()[k]->GetSpacing() );
+    upsampler->SetOutputOrigin(
+      transformHigh->GetCoefficientImages()[k]->GetOrigin() );
+    upsampler->SetOutputDirection( fixedImage->GetDirection() );
+
+    typedef itk::BSplineDecompositionImageFilter<ParametersImageType,ParametersImageType>
+      DecompositionType;
+    DecompositionType::Pointer decomposition = DecompositionType::New();
+
+    decomposition->SetSplineOrder( SplineOrder );
+    decomposition->SetInput( upsampler->GetOutput() );
+    decomposition->Update();
+
+    ParametersImageType::Pointer newCoefficients = decomposition->GetOutput();
+
+    // copy the coefficients into the parameter array
+    typedef itk::ImageRegionIterator<ParametersImageType> Iterator;
+    Iterator it( newCoefficients,
+      transformHigh->GetCoefficientImages()[k]->GetLargestPossibleRegion() );
+    while ( !it.IsAtEnd() )
+      {
+      parametersHigh[ counter++ ] = it.Get();
+      ++it;
+      }
+
+    }
+
+  transformHigh->SetParameters( parametersHigh );
+
+  //  Software Guide : BeginLatex
+  //
+  //  We now pass the parameters of the high resolution transform as the initial
+  //  parameters to be used in a second stage of the registration process.
+  //
+  //  Software Guide : EndLatex
+
+  std::cout << "Starting Registration with high resolution transform" << std::endl;
+
+  // Software Guide : BeginCodeSnippet
+  registration->SetInitialTransformParameters(transformHigh->GetParameters());
+  registration->SetTransform( transformHigh );
+  //  Software Guide : BeginLatex
+  //
+  //  Typically, we will also want to tighten the optimizer parameters
+  //  when we move from lower to higher resolution grid.
+  //
+  //  Software Guide : EndLatex
+  optimizer->SetGradientConvergenceTolerance( 0.01 );
+  optimizer->SetDefaultStepLength( 0.25 );
+  try
+    {
+    registration->Update();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
+    }
+  // Software Guide : EndCodeSnippet
+
+  // Finally we use the last transform parameters in order to resample the image.
+  //
+  transformHigh->SetParameters( registration->GetLastTransformParameters() );
+*/
   typedef itk::ResampleImageFilter<
                             MovingImageType,
                             FixedImageType >    ResampleFilterType;
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
-  resample->SetTransform( transform );
+  resample->SetTransform( outputBSplineTransform );
   resample->SetInput( movingImageReader->GetOutput() );
 
   resample->SetSize(    fixedImage->GetLargestPossibleRegion().GetSize() );
@@ -436,45 +537,46 @@ int main( int argc, char *argv[] )
 
   // Generate the explicit deformation field resulting from
   // the registration.
+  FixedImageType::RegionType fixedRegion = fixedImage->GetBufferedRegion();
+
+  typedef itk::Vector< float, ImageDimension >      VectorType;
+  typedef itk::Image< VectorType, ImageDimension >  DisplacementFieldType;
+
+  DisplacementFieldType::Pointer field = DisplacementFieldType::New();
+  field->SetRegions( fixedRegion );
+  field->SetOrigin( fixedImage->GetOrigin() );
+  field->SetSpacing( fixedImage->GetSpacing() );
+  field->SetDirection( fixedImage->GetDirection() );
+  field->Allocate();
+
+  typedef itk::ImageRegionIterator< DisplacementFieldType > FieldIterator;
+  FieldIterator fi( field, fixedRegion );
+
+  fi.GoToBegin();
+
+  TransformType::InputPointType  fixedPoint;
+  TransformType::OutputPointType movingPoint;
+  DisplacementFieldType::IndexType index;
+
+  VectorType displacement;
+
+  while( ! fi.IsAtEnd() )
+    {
+    index = fi.GetIndex();
+    field->TransformIndexToPhysicalPoint( index, fixedPoint );
+    movingPoint = outputBSplineTransform->TransformPoint( fixedPoint );
+    displacement = movingPoint - fixedPoint;
+    fi.Set( displacement );
+    ++fi;
+    }
+
+  typedef itk::ImageFileWriter< DisplacementFieldType >  FieldWriterType;
+  FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
+
+  fieldWriter->SetInput( field );
+
   if( argc >= 7 )
     {
-
-    typedef itk::Vector< float, ImageDimension >      VectorType;
-    typedef itk::Image< VectorType, ImageDimension >  DisplacementFieldType;
-
-    DisplacementFieldType::Pointer field = DisplacementFieldType::New();
-    field->SetRegions( fixedRegion );
-    field->SetOrigin( fixedImage->GetOrigin() );
-    field->SetSpacing( fixedImage->GetSpacing() );
-    field->SetDirection( fixedImage->GetDirection() );
-    field->Allocate();
-
-    typedef itk::ImageRegionIterator< DisplacementFieldType > FieldIterator;
-    FieldIterator fi( field, fixedRegion );
-
-    fi.GoToBegin();
-
-    TransformType::InputPointType  fixedPoint;
-    TransformType::OutputPointType movingPoint;
-    DisplacementFieldType::IndexType index;
-
-    VectorType displacement;
-
-    while( ! fi.IsAtEnd() )
-      {
-      index = fi.GetIndex();
-      field->TransformIndexToPhysicalPoint( index, fixedPoint );
-      movingPoint = transform->TransformPoint( fixedPoint );
-      displacement = movingPoint - fixedPoint;
-      fi.Set( displacement );
-      ++fi;
-      }
-
-    typedef itk::ImageFileWriter< DisplacementFieldType >  FieldWriterType;
-    FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
-
-    fieldWriter->SetInput( field );
-
     fieldWriter->SetFileName( argv[6] );
     try
       {
