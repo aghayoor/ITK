@@ -298,7 +298,7 @@ int main( int argc, char *argv[] )
   // \item \code{RatLungSlice2.mha}
   // \end{itemize}
   //
-  //  The \emph{transform} object is update during the registration process
+  //  The \emph{transform} object is updated during the registration process
   //  and is passed to the resampler to map the moving image space onto the
   //  fixed image space.
   //

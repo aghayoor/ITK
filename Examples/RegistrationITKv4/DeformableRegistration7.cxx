@@ -264,9 +264,12 @@ int main( int argc, char *argv[] )
   //  Also, we should set the boundary condition for each variable, where
   //
   //  boundSelect[i] = 0 if x[i] is unbounded,
+  //
   //                 = 1 if x[i] has only a lower bound,
+  //
   //                 = 2 if x[i] has both lower and upper bounds, and
-  //                 = 3 if x[1] has only an upper bound
+  //
+  //                 = 3 if x[1] has only an upper bound.
   //
   //  Software Guide : EndLatex
 
