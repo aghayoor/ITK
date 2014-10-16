@@ -23,6 +23,7 @@
 #include "itkVersorRigid3DTransform.h"
 #include "itkRigid2DTransform.h"
 #include "itkAffineTransform.h"
+#include "itkBSplineTransform.h"
 #include <vector>
 #include <iostream>
 
@@ -140,6 +141,12 @@ public:
   typedef VersorRigid3DTransform< ParameterValueType >                          VersorRigid3DTransformType;
   typedef Rigid2DTransform< ParameterValueType >                                Rigid2DTransformType;
   typedef AffineTransform< ParameterValueType, FixedImageType::ImageDimension > AffineTransformType;
+
+  const unsigned int SplineOrder = 3;
+  typedef itk::BSplineTransform< ParameterValueType,
+                                 FixedImageType::ImageDimension,
+                                 SplineOrder>                                   BSplineTransformType;
+
   /** Initialize the transform from the landmarks */
   virtual void InitializeTransform();
 
