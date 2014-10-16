@@ -177,6 +177,8 @@ private:
   void InternalInitializeTransform(Rigid2DTransformType *);
   /** Initializer for AffineTransform */
   void InternalInitializeTransform(AffineTransformType *);
+  /** Initializer for BSplineTransform */
+  void InternalInitializeTransform(BSplineTransformType *);
 
   FixedImagePointer  m_FixedImage;
   MovingImagePointer m_MovingImage;
