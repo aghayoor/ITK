@@ -46,6 +46,31 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   m_Transform->SetIdentity();
 }
 
+/** Compute an BSpline transform from landmark set.
+ *  Implemented by Ali Ghayoor.
+ */
+template< typename TTransform, typename TFixedImage, typename TMovingImage >
+void
+LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
+::InternalInitializeTransform(BSplineTransformType *)
+{
+  BSplineTransformType *transform =
+  dynamic_cast<BSplineTransformType *>(this->m_Transform.GetPointer());
+  if ( transform == ITK_NULLPTR )
+    {
+    itkExceptionMacro( << "BSplineTransform Expected but transform is "
+                      << this->m_Transform->GetNameOfClass() );
+    }
+
+  if( m_MovingLandmarks.size() != m_FixedLandmarks.size() )
+    {
+    itkExceptionMacro( << " size mismatch between Fixed and Moving Landmarks" );
+    }
+  const unsigned int NumberOfLandMarks = m_MovingLandmarks.size();
+
+
+}
+
 /** Compute an affine transform from landmark set.
  *  This was implemented by Eun Young Kim based on method
  *  described in the paper "Closed-form solution of absolute
