@@ -107,14 +107,20 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform>
 
     if( initialTransform.IsNotNull() )
       {
-      this->m_MovingToMiddleTransform->SetDisplacementField( initialTransform->GetModifiableDisplacementField() );
+      OutputTransformPointer localMovingToMiddleTransformInverse = OutputTransformType::New();
+      localMovingToMiddleTransformInverse->SetDisplacementField( initialTransform->GetModifiableDisplacementField() );
       if( initialTransform->GetInverseDisplacementField() )
         {
-        this->m_MovingToMiddleTransform->SetInverseDisplacementField( initialTransform->GetModifiableInverseDisplacementField() );
+        localMovingToMiddleTransformInverse->SetInverseDisplacementField( initialTransform->GetModifiableInverseDisplacementField() );
         }
       else
         {
         itkExceptionMacro("ERROR: Missed InverseDisplacementField in the initial transform.");
+        }
+      this->m_MovingToMiddleTransform = dynamic_cast<OutputTransformType *>(localMovingToMiddleTransformInverse->GetInverseTransform().GetPointer() );
+      if( this->m_MovingToMiddleTransform.IsNull() )
+        {
+        itkExceptionMacro("ERROR: Failed to initialize MovingToMiddleTransform.");
         }
       }
     else
