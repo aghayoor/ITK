@@ -46,9 +46,6 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   m_Transform->SetIdentity();
 }
 
-/** Compute an BSpline transform from landmark set.
- *  Implemented by Ali Ghayoor.
- */
 template< typename TTransform, typename TFixedImage, typename TMovingImage >
 void
 LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
@@ -94,7 +91,69 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     }
 
   // Instantiating B-spline filter and creating B-spline domain
+  //
+  typedef typename itk::BSplineScatteredDataPointSetToImageFilter<PointSetType, VectorImageType> FilterType;
 
+  VectorImageType::SizeType size;
+  size.Fill( 100 );
+  VectorImageType::PointType origin;
+  origin.Fill( 0 );
+  VectorImageType::SpacingType spacing;
+  spacing.Fill( 1 );
+  VectorImageType::DirectionType direction;
+  direction.SetIdentity();
+
+  typename FilterType::Pointer filter = FilterType::New();
+  // Define the parametric domain.
+  filter->SetOrigin( origin );
+  filter->SetSpacing( spacing );
+  filter->SetSize( size );
+  filter->SetDirection( direction );
+  filter->SetInput( pointSet );
+  filter->SetPointWeights( m_LandmarkWeight );
+  filter->SetGenerateOutputImage( false );
+  filter->SetSplineOrder( SplineOrder );
+  filter->SetNumberOfLevels( 3 );
+
+  FilterType::ArrayType ncps;
+  ncps.Fill( 4 ); // should be greater than SplineOrder
+  filter->SetNumberOfControlPoints( ncps );
+
+  FilterType::ArrayType close;
+  close.Fill( 0 );
+  filter->SetCloseDimension( close );
+
+  try
+    {
+    filter->Update();
+    }
+  catch (...)
+    {
+    std::cerr << "Test: itkBSplineScatteredDataImageFilter4 exception thrown" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //Instantiate the BSpline transform
+  //
+  typename TransformType::Pointer transform = TransformType::New();
+
+  typedef typename TransformType::ImageType CoefficientImageType;
+
+  typename TransformType::CoefficientImageArray coefficientImages;
+  for( unsigned int j = 0; j < DataDimension; j++ )
+    {
+    typedef typename itk::VectorIndexSelectionCastImageFilter<VectorImageType,
+                                                              CoefficientImageType> SelectorType;
+    typename SelectorType::Pointer selector = SelectorType::New();
+    selector->SetInput( filter->GetPhiLattice() );
+    selector->SetIndex( j );
+
+    coefficientImages[j] = selector->GetOutput();
+    coefficientImages[j]->Update();
+    coefficientImages[j]->DisconnectPipeline();
+    }
+
+  transform->SetCoefficientImages( coefficientImages );
 }
 
 /** Compute an affine transform from landmark set.

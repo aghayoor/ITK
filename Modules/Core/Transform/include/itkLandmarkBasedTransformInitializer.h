@@ -25,6 +25,8 @@
 #include "itkAffineTransform.h"
 #include "itkBSplineTransform.h"
 #include "itkPointSet.h"
+#include "itkBSplineScatteredDataPointSetToImageFilter.h"
+#include "itkVectorIndexSelectionCastImageFilter.h"
 #include <vector>
 #include <iostream>
 
