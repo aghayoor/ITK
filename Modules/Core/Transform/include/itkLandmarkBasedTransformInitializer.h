@@ -156,21 +156,13 @@ protected:
 
   virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  // Supported Transform types
-  typedef enum {
-    VersorRigid3Dtransform = 1,
-    Rigid2Dtransfrom,
-    Else
-    } InputTransformType;
-
 private:
   LandmarkBasedTransformInitializer(const Self &); //purposely not implemented
   void operator=(const Self &);                    //purposely not implemented
 
 
   /** fallback Initializer just sets transform to identity */
-  template <typename TTransform2>
-    void InternalInitializeTransform(TTransform *);
+  void InternalInitializeTransform(TTransform *);
   /** Initializer for VersorRigid3D */
   void InternalInitializeTransform(VersorRigid3DTransformType *);
   /** Initializer for Rigid2DTransform */

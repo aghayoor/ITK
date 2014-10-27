@@ -36,7 +36,6 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
  * specifically handled.
  */
 template< typename TTransform, typename TFixedImage, typename TMovingImage >
-template <typename TTransform2>
 void
 LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
 ::InternalInitializeTransform(TTransform *)
