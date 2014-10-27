@@ -76,8 +76,24 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
       }
     }
 
-  // Define a pointSet for the landmarks
+  // Set a pointSet from the input landmarks
+  typename PointSetType::Pointer pointSet = PointSetType::New();
+  pointSet->Initialize();
 
+  PointsContainerConstIterator fixedIt = m_FixedLandmarks.begin();
+  PointsContainerConstIterator movingIt = m_MovingLandmarks.begin();
+  for(int i = 0; fixedIt != m_FixedLandmarks.end(); ++i, ++fixedIt, ++movingIt )
+    {
+    pointSet->SetPoint( i, (*fixedIt) );
+    VectorType vectorTmp;
+    for( int d =0; d<ImageDimension; d++ )
+      {
+      vectorTmp[d] = (*movingIt)[d] - (*fixedIt)[d];
+      }
+    pointSet->SetPointData( i, vectorTmp );
+    }
+
+  // Instantiating B-spline filter and creating B-spline domain
 
 }
 
