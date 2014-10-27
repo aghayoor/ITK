@@ -24,6 +24,7 @@
 #include "itkRigid2DTransform.h"
 #include "itkAffineTransform.h"
 #include "itkBSplineTransform.h"
+#include "itkPointSet.h"
 #include <vector>
 #include <iostream>
 
@@ -109,9 +110,15 @@ public:
   /** Convenience typedefs */
   typedef typename TransformType::InputPointType                  InputPointType;
   typedef typename TransformType::OutputVectorType                OutputVectorType;
-  typedef Point< double, itkGetStaticConstMacro(ImageDimension) > LandmarkPointType;
-  typedef std::vector< LandmarkPointType >                        LandmarkPointContainer;
-  typedef typename LandmarkPointContainer::const_iterator         PointsContainerConstIterator;
+
+  typedef typename itk::Vector<double, itkGetStaticConstMacro(ImageDimension)>        VectorType;
+  typedef typename itk::Image<VectorType, itkGetStaticConstMacro(ImageDimension)>     VectorImageType;
+  typedef typename itk::PointSet<typename VectorImageType::PixelType,
+                                 itkGetStaticConstMacro(ImageDimension)>              PointSetType;
+  typedef typename PointSetType::PointType                                            LandmarkPointType;
+  typedef typename std::vector< LandmarkPointType >                                   LandmarkPointContainer;
+  typedef typename LandmarkPointContainer::const_iterator                             PointsContainerConstIterator;
+
   typedef typename TransformType::ParametersType                  ParametersType;
   typedef typename ParametersType::ValueType                      ParameterValueType;
   typedef std::vector< double >                                   LandmarkWeightType;
@@ -142,7 +149,7 @@ public:
   typedef Rigid2DTransform< ParameterValueType >                                Rigid2DTransformType;
   typedef AffineTransform< ParameterValueType, FixedImageType::ImageDimension > AffineTransformType;
 
-  const unsigned int SplineOrder = 3;
+  const static unsigned int SplineOrder = 3;
   typedef itk::BSplineTransform< ParameterValueType,
                                  FixedImageType::ImageDimension,
                                  SplineOrder>                                   BSplineTransformType;
@@ -162,7 +169,8 @@ private:
 
 
   /** fallback Initializer just sets transform to identity */
-  void InternalInitializeTransform(TTransform *);
+  template <typename TTransform2>
+    void InternalInitializeTransform(TTransform *);
   /** Initializer for VersorRigid3D */
   void InternalInitializeTransform(VersorRigid3DTransformType *);
   /** Initializer for Rigid2DTransform */
