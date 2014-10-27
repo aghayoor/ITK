@@ -36,6 +36,7 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
  * specifically handled.
  */
 template< typename TTransform, typename TFixedImage, typename TMovingImage >
+template <typename TTransform2>
 void
 LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
 ::InternalInitializeTransform(TTransform *)
@@ -66,6 +67,16 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     itkExceptionMacro( << " size mismatch between Fixed and Moving Landmarks" );
     }
   const unsigned int NumberOfLandMarks = m_MovingLandmarks.size();
+
+  if( !m_LandmarkWeight.empty() )
+    {
+    if( m_LandmarkWeight.size() != NumberOfLandMarks)
+      {
+      itkExceptionMacro( << " size mismatch between number of landmars pairs and weights" );
+      }
+    }
+
+  // Define a pointSet for the landmarks
 
 
 }
