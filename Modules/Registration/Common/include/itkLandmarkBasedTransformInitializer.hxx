@@ -29,7 +29,13 @@ namespace itk
 {
 template< typename TTransform, typename TFixedImage, typename TMovingImage >
 LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
-::LandmarkBasedTransformInitializer()
+::LandmarkBasedTransformInitializer():
+  m_ReferenceImage(NULL),
+  m_Transform(NULL),
+  m_FixedLandmarks(0),
+  m_MovingLandmarks(0),
+  m_LandmarkWeight(0),
+  m_BSplineNumberOfControlPoints(4)
 {}
 
 /** default transform initializer, if transform type isn't
@@ -111,14 +117,10 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     pointSet->SetPointData( i, vectorTmp );
     }
 
-  typename VectorImageType::SizeType size = m_BSplineReferenceImage->GetLargestPossibleRegion().GetSize();
-  //size.Fill( 100 );
-  typename VectorImageType::PointType origin = m_BSplineReferenceImage->GetOrigin();
-  //origin.Fill( 0 );
-  typename VectorImageType::SpacingType spacing = m_BSplineReferenceImage->GetSpacing();
-  //spacing.Fill( 1 );
-  typename VectorImageType::DirectionType direction = m_BSplineReferenceImage->GetDirection();
-  //direction.SetIdentity();
+  typename VectorImageType::SizeType size = this->m_ReferenceImage->GetLargestPossibleRegion().GetSize();
+  typename VectorImageType::PointType origin = this->m_ReferenceImage->GetOrigin();
+  typename VectorImageType::SpacingType spacing = this->m_ReferenceImage->GetSpacing();
+  typename VectorImageType::DirectionType direction = this->m_ReferenceImage->GetDirection();
 
   typename FilterType::Pointer filter = FilterType::New();
   // Define the parametric domain.
@@ -132,7 +134,7 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   filter->SetSplineOrder( SplineOrder );
 
   typename FilterType::ArrayType ncps;
-  ncps.Fill( 8 ); // should be greater than SplineOrder
+  ncps.Fill( this->m_BSplineNumberOfControlPoints ); // should be greater than SplineOrder
   filter->SetNumberOfControlPoints( ncps );
 
   filter->SetNumberOfLevels( 3 );
@@ -704,20 +706,10 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     os << indent << "None" << std::endl;
     }
 
-  os << indent << "FixedImage   = " << std::endl;
-  if ( m_FixedImage )
+  os << indent << "ReferenceImage   = " << std::endl;
+  if ( m_ReferenceImage )
     {
-    os << indent << m_FixedImage  << std::endl;
-    }
-  else
-    {
-    os << indent << "None" << std::endl;
-    }
-
-  os << indent << "MovingImage   = " << std::endl;
-  if ( m_MovingImage )
-    {
-    os << indent << m_MovingImage  << std::endl;
+    os << indent << m_ReferenceImage  << std::endl;
     }
   else
     {

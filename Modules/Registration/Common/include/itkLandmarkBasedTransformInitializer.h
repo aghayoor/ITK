@@ -102,7 +102,11 @@ public:
   typedef TFixedImage  FixedImageType;
   typedef TMovingImage MovingImageType;
 
-  itkSetObjectMacro(BSplineReferenceImage,   FixedImageType);
+  /** Set the reference image to define the parametric domain for the BSpline transform */
+  itkSetObjectMacro(ReferenceImage,   FixedImageType);
+
+  /** Set the number of control points to define the parametric domain for the BSpline transform */
+  itkSetMacro(BSplineNumberOfControlPoints, unsigned int);
 
   typedef   typename FixedImageType::ConstPointer  FixedImagePointer;
   typedef   typename MovingImageType::ConstPointer MovingImagePointer;
@@ -183,16 +187,13 @@ private:
   /** Initializer for BSplineTransform */
   void InternalInitializeTransform(BSplineTransformType *);
 
-  FixedImagePointer  m_BSplineReferenceImage;
-  FixedImagePointer  m_FixedImage;
-  MovingImagePointer m_MovingImage;
-
+  FixedImagePointer      m_ReferenceImage;
+  TransformPointer       m_Transform;
   LandmarkPointContainer m_FixedLandmarks;
   LandmarkPointContainer m_MovingLandmarks;
-
-  TransformPointer m_Transform;
   /** weights for affine landmarks */
-  LandmarkWeightType m_LandmarkWeight;
+  LandmarkWeightType     m_LandmarkWeight;
+  unsigned int           m_BSplineNumberOfControlPoints;
 
 }; //class LandmarkBasedTransformInitializer
 }  // namespace itk
