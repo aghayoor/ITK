@@ -52,7 +52,7 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
 ::InternalInitializeTransform(BSplineTransformType *)
 {
   BSplineTransformType *transform =
-  dynamic_cast<BSplineTransformType *>(this->m_Transform.GetPointer());
+    dynamic_cast<BSplineTransformType *>(this->m_Transform.GetPointer());
   if ( transform == ITK_NULLPTR )
     {
     itkExceptionMacro( << "BSplineTransform Expected but transform is "
@@ -94,13 +94,13 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   //
   typedef typename itk::BSplineScatteredDataPointSetToImageFilter<PointSetType, VectorImageType> FilterType;
 
-  VectorImageType::SizeType size;
+  typename VectorImageType::SizeType size;
   size.Fill( 100 );
-  VectorImageType::PointType origin;
+  typename VectorImageType::PointType origin;
   origin.Fill( 0 );
-  VectorImageType::SpacingType spacing;
+  typename VectorImageType::SpacingType spacing;
   spacing.Fill( 1 );
-  VectorImageType::DirectionType direction;
+  typename VectorImageType::DirectionType direction;
   direction.SetIdentity();
 
   typename FilterType::Pointer filter = FilterType::New();
@@ -115,11 +115,11 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   filter->SetSplineOrder( SplineOrder );
   filter->SetNumberOfLevels( 3 );
 
-  FilterType::ArrayType ncps;
+  typename FilterType::ArrayType ncps;
   ncps.Fill( 4 ); // should be greater than SplineOrder
   filter->SetNumberOfControlPoints( ncps );
 
-  FilterType::ArrayType close;
+  typename FilterType::ArrayType close;
   close.Fill( 0 );
   filter->SetCloseDimension( close );
 
@@ -129,18 +129,15 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     }
   catch (...)
     {
-    std::cerr << "Test: itkBSplineScatteredDataImageFilter4 exception thrown" << std::endl;
-    return EXIT_FAILURE;
+    itkExceptionMacro(<< "itkBSplineScatteredDataImageFilter4 exception thrown" << std::endl);
     }
 
-  //Instantiate the BSpline transform
+  //Set the BSpline transform
   //
-  typename TransformType::Pointer transform = TransformType::New();
-
   typedef typename TransformType::ImageType CoefficientImageType;
 
   typename TransformType::CoefficientImageArray coefficientImages;
-  for( unsigned int j = 0; j < DataDimension; j++ )
+  for( unsigned int j = 0; j < ImageDimension; j++ )
     {
     typedef typename itk::VectorIndexSelectionCastImageFilter<VectorImageType,
                                                               CoefficientImageType> SelectorType;
