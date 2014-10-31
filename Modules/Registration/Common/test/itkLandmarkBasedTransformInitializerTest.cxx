@@ -592,6 +592,12 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   movingImage->SetRequestedRegion( mRegion );
   movingImage->Allocate();
 
+  FixedImageType::PointType origin;
+  origin[0] = -5;
+  origin[1] = -5;
+  origin[2] = -5;
+  fixedImage->SetOrigin( origin );
+
   // Set the transform type...
   const unsigned int SplineOrder = 3;
   typedef itk::BSplineTransform< double, FixedImageType::ImageDimension, SplineOrder>  TransformType;
@@ -607,7 +613,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   const unsigned int numLandmarks = 4;
   double weights[numLandmarks] =
     {
-    1,1,1,1
+    1,3,0.01,0.5
     };
 
   TransformInitializerType::LandmarkWeightType landmarkWeights;
