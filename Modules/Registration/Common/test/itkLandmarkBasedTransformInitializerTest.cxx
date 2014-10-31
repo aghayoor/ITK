@@ -556,7 +556,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   }
 
   {
-  std::cout << "Testing Landmark alignment with BSplineTransform" << std::endl;
+  std::cout << "\nTesting Landmark alignment with BSplineTransform..." << std::endl;
 
   typedef  unsigned char  PixelType;
   const unsigned int Dimension = 3;
@@ -642,6 +642,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
     transform->TransformPoint( *fitr ) << std::endl;
 
     error = *mitr - transform->TransformPoint( *fitr);
+    std::cout << " error = " << error.GetNorm() << std::endl;
     if( error.GetNorm() > tolerance )
       {
       failed = true;
@@ -654,7 +655,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   if( failed )
     {
     std::cout << "  Fixed landmarks transformed by the transform did not match closely"
-              << " enough with the moving landmarks.  The transform computed was:\n";
+              << " enough with the moving landmarks.  The transform computed was:" << std::endl;
     transform->Print(std::cout);
     std::cout << "  [FAILED]" << std::endl;
     return EXIT_FAILURE;

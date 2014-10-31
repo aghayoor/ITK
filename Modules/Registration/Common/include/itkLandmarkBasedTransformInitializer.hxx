@@ -132,7 +132,7 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   filter->SetSplineOrder( SplineOrder );
 
   typename FilterType::ArrayType ncps;
-  ncps.Fill( 15 ); // should be greater than SplineOrder
+  ncps.Fill( 8 ); // should be greater than SplineOrder
   filter->SetNumberOfControlPoints( ncps );
 
   filter->SetNumberOfLevels( 3 );
