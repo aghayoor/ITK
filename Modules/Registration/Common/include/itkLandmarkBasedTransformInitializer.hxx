@@ -104,21 +104,21 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     {
     pointSet->SetPoint( i, (*fixedIt) );
     VectorType vectorTmp;
-    for( unsigned int d =0; d<ImageDimension; d++ )
+    for( unsigned int d=0; d<ImageDimension; d++ )
       {
       vectorTmp[d] = (*movingIt)[d] - (*fixedIt)[d];
       }
     pointSet->SetPointData( i, vectorTmp );
     }
 
-  typename VectorImageType::SizeType size;
-  size.Fill( 100 );
-  typename VectorImageType::PointType origin;
-  origin.Fill( 0 );
-  typename VectorImageType::SpacingType spacing;
-  spacing.Fill( 1 );
-  typename VectorImageType::DirectionType direction;
-  direction.SetIdentity();
+  typename VectorImageType::SizeType size = m_FixedImage->GetLargestPossibleRegion().GetSize();
+  //size.Fill( 100 );
+  typename VectorImageType::PointType origin = m_FixedImage->GetOrigin();
+  //origin.Fill( 0 );
+  typename VectorImageType::SpacingType spacing = m_FixedImage->GetSpacing();
+  //spacing.Fill( 1 );
+  typename VectorImageType::DirectionType direction = m_FixedImage->GetDirection();
+  //direction.SetIdentity();
 
   typename FilterType::Pointer filter = FilterType::New();
   // Define the parametric domain.
@@ -133,7 +133,7 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   filter->SetNumberOfLevels( 3 );
 
   typename FilterType::ArrayType ncps;
-  ncps.Fill( 4 ); // should be greater than SplineOrder
+  ncps.Fill( 8 ); // should be greater than SplineOrder
   filter->SetNumberOfControlPoints( ncps );
 
   typename FilterType::ArrayType close;
