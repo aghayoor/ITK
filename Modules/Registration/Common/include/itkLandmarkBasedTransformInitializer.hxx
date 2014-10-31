@@ -144,6 +144,12 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     {
     filter->Update();
     }
+  catch( itk::ExceptionObject &excp )
+    {
+    std::cerr << "Error Updating itkBSplineScatteredDataImageFilter4" << std::endl;
+    std::cerr << excp << std::endl;
+    throw;
+    }
   catch (...)
     {
     itkExceptionMacro(<< "itkBSplineScatteredDataImageFilter4 exception thrown" << std::endl);
