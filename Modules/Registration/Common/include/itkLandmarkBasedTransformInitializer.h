@@ -102,6 +102,7 @@ public:
   typedef TFixedImage  FixedImageType;
   typedef TMovingImage MovingImageType;
 
+  itkSetObjectMacro(BSplineReferenceImage,   FixedImageType);
 
   typedef   typename FixedImageType::ConstPointer  FixedImagePointer;
   typedef   typename MovingImageType::ConstPointer MovingImagePointer;
@@ -182,6 +183,7 @@ private:
   /** Initializer for BSplineTransform */
   void InternalInitializeTransform(BSplineTransformType *);
 
+  FixedImagePointer  m_BSplineReferenceImage;
   FixedImagePointer  m_FixedImage;
   MovingImagePointer m_MovingImage;
 

@@ -645,6 +645,7 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
   initializer->SetMovingLandmarks(movingLandmarks);
   initializer->SetLandmarkWeight(landmarkWeights);
   initializer->SetTransform(transform);
+  initializer->SetBSplineReferenceImage(fixedImage);
   initializer->InitializeTransform();
 
   // Transform the landmarks now and check for the mismatches.

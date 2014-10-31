@@ -111,13 +111,13 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
     pointSet->SetPointData( i, vectorTmp );
     }
 
-  typename VectorImageType::SizeType size = m_FixedImage->GetLargestPossibleRegion().GetSize();
+  typename VectorImageType::SizeType size = m_BSplineReferenceImage->GetLargestPossibleRegion().GetSize();
   //size.Fill( 100 );
-  typename VectorImageType::PointType origin = m_FixedImage->GetOrigin();
+  typename VectorImageType::PointType origin = m_BSplineReferenceImage->GetOrigin();
   //origin.Fill( 0 );
-  typename VectorImageType::SpacingType spacing = m_FixedImage->GetSpacing();
+  typename VectorImageType::SpacingType spacing = m_BSplineReferenceImage->GetSpacing();
   //spacing.Fill( 1 );
-  typename VectorImageType::DirectionType direction = m_FixedImage->GetDirection();
+  typename VectorImageType::DirectionType direction = m_BSplineReferenceImage->GetDirection();
   //direction.SetIdentity();
 
   typename FilterType::Pointer filter = FilterType::New();
@@ -130,11 +130,12 @@ LandmarkBasedTransformInitializer< TTransform, TFixedImage, TMovingImage >
   filter->SetPointWeights( weights );
   filter->SetGenerateOutputImage( false );
   filter->SetSplineOrder( SplineOrder );
-  filter->SetNumberOfLevels( 3 );
 
   typename FilterType::ArrayType ncps;
-  ncps.Fill( 8 ); // should be greater than SplineOrder
+  ncps.Fill( 15 ); // should be greater than SplineOrder
   filter->SetNumberOfControlPoints( ncps );
+
+  filter->SetNumberOfLevels( 3 );
 
   typename FilterType::ArrayType close;
   close.Fill( 0 );
