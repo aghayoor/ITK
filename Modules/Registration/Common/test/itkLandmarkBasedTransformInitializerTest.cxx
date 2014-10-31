@@ -554,5 +554,140 @@ int itkLandmarkBasedTransformInitializerTest(int, char * [])
     }
   } // Second test with dummy
   }
+
+  {
+  std::cout << "Testing Landmark alignment with BSplineTransform" << std::endl;
+
+  typedef  unsigned char  PixelType;
+  const unsigned int Dimension = 3;
+
+  typedef itk::Image< PixelType, Dimension >  FixedImageType;
+  typedef itk::Image< PixelType, Dimension >  MovingImageType;
+
+  FixedImageType::Pointer fixedImage   = FixedImageType::New();
+  MovingImageType::Pointer movingImage = MovingImageType::New();
+
+  // Create fixed and moving images of size 30 x 30 x 30
+  //
+  FixedImageType::RegionType fRegion;
+  FixedImageType::SizeType   fSize;
+  FixedImageType::IndexType  fIndex;
+  fSize.Fill(30);
+  fIndex.Fill(0);
+  fRegion.SetSize( fSize );
+  fRegion.SetIndex( fIndex );
+  MovingImageType::RegionType mRegion;
+  MovingImageType::SizeType   mSize;
+  MovingImageType::IndexType  mIndex;
+  mSize.Fill(30);
+  mIndex.Fill(0);
+  mRegion.SetSize( mSize );
+  mRegion.SetIndex( mIndex );
+  fixedImage->SetLargestPossibleRegion( fRegion );
+  fixedImage->SetBufferedRegion( fRegion );
+  fixedImage->SetRequestedRegion( fRegion );
+  fixedImage->Allocate();
+  movingImage->SetLargestPossibleRegion( mRegion );
+  movingImage->SetBufferedRegion( mRegion );
+  movingImage->SetRequestedRegion( mRegion );
+  movingImage->Allocate();
+
+  // Set the transform type...
+  const unsigned int SplineOrder = 3;
+  typedef itk::BSplineTransform< double, FixedImageType::ImageDimension, SplineOrder>  TransformType;
+  TransformType::Pointer transform = TransformType::New();
+
+  typedef itk::LandmarkBasedTransformInitializer< TransformType, FixedImageType, MovingImageType > TransformInitializerType;
+  TransformInitializerType::Pointer initializer = TransformInitializerType::New();
+
+  const unsigned int numLandmarks(6);
+  double fixedLandMarkInit[numLandmarks][3] =
+    {
+    { -1.33671, -279.739, 176.001 },
+    { 28.0989, -346.692, 183.367 },
+    { -1.36713, -257.43, 155.36 },
+    { -33.0851, -347.026, 180.865 },
+    { -0.16083, -268.529, 148.96 },
+    { -0.103873, -251.31, 122.973 }
+    };
+  double movingLandmarkInit[numLandmarks][3] =
+    {
+    { -1.65605+0.011, -30.0661      , 20.1656},
+    { 28.1409       , -93.1172+0.015, -5.34366},
+    {-1.55885       , -0.499696-0.04, 12.7584},
+    {-33.0151+0.001 , -92.0973      , -8.66965},
+    {-0.189769      , -7.3485       , 1.74263+0.008},
+    {0.1021         , 20.2155       , -12.8526-0.006}
+    };
+  double weights[numLandmarks] =
+    {
+    10,1,10,1,1,1
+    };
+
+  TransformInitializerType::LandmarkPointContainer fixedLandmarks;
+  TransformInitializerType::LandmarkPointContainer movingLandmarks;
+  TransformInitializerType::LandmarkWeightType landmarkWeights;
+  for(unsigned i = 0; i < numLandmarks; i++)
+    {
+    TransformInitializerType::LandmarkPointType fixedPoint, movingPoint;
+
+    for(unsigned j = 0; j < 3; j++)
+      {
+      fixedPoint[j] = fixedLandMarkInit[i][j];
+      movingPoint[j] = movingLandmarkInit[i][j];
+      }
+    fixedLandmarks.push_back(fixedPoint);
+    movingLandmarks.push_back(movingPoint);
+    landmarkWeights.push_back(weights[i]);
+    }
+
+  initializer->SetFixedLandmarks(fixedLandmarks);
+  initializer->SetMovingLandmarks(movingLandmarks);
+  initializer->SetLandmarkWeight(landmarkWeights);
+  initializer->SetTransform(transform);
+  initializer->InitializeTransform();
+
+  // Transform the landmarks now and check for the mismatches.
+  //
+  TransformInitializerType::PointsContainerConstIterator
+    fitr = fixedLandmarks.begin();
+  TransformInitializerType::PointsContainerConstIterator
+    mitr = movingLandmarks.begin();
+
+  typedef TransformInitializerType::OutputVectorType  OutputVectorType;
+  OutputVectorType error;
+  OutputVectorType::RealValueType tolerance = 0.1;
+  bool failed = false;
+
+  while( mitr != movingLandmarks.end() )
+    {
+    std::cout << "  Fixed Landmark: " << *fitr << " Moving landmark " << *mitr
+    << " Transformed fixed Landmark : " <<
+    transform->TransformPoint( *fitr ) << std::endl;
+
+    error = *mitr - transform->TransformPoint( *fitr);
+    if( error.GetNorm() > tolerance )
+      {
+      failed = true;
+      }
+
+    ++mitr;
+    ++fitr;
+    }
+
+  if( failed )
+    {
+    std::cout << "  Fixed landmarks transformed by the transform did not match closely"
+              << " enough with the moving landmarks.  The transform computed was:\n";
+    transform->Print(std::cout);
+    std::cout << "  [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "  Landmark alignment using BSplineTransform transform [PASSED]" << std::endl;
+    }
+  }
+
   return EXIT_SUCCESS;
 }
